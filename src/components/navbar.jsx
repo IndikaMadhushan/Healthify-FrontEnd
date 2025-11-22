@@ -18,11 +18,11 @@ export default function Navbar() {
         />
 
         {/* DESKTOP MENU */}
-        <div className="hidden xl:flex w-full h-full text-sm text-accent bg-white gap-[50px] items-center justify-center text-[18px]">
+        <div className="hidden xl:flex w-full h-full gap-[50px] items-center justify-center text-[18px]">
           <Link to="/home" className="text-mainblack hover:text-secondary/75">Home</Link>
-          <Link to="/products" className="text-mainblack hover:text-secondary/75">Products</Link>
           <Link to="/about" className="text-mainblack hover:text-secondary/75">About</Link>
-          <Link to="/contacts" className="text-mainblack hover:text-secondary/75">Contacts</Link>
+          <Link to="/works" className="text-mainblack hover:text-secondary/75">How It Works</Link>
+          <Link to="/contacts" className="text-mainblack hover:text-secondary/75">Contact Us</Link>
         </div>
 
         {/* DESKTOP LOGIN BUTTON */}
@@ -30,46 +30,36 @@ export default function Navbar() {
           <LoginButton />
         </div>
 
-        {/* MOBILE + TABLET HAMBURGER / CROSS */}
+        {/* MOBILE HAMBURGER / CROSS */}
         <button
-          className="xl:hidden ml-auto bg-transparent"
           onClick={() => setOpen(!open)}
+          className="xl:hidden ml-auto bg-transparent"
         >
           <img
             src={open ? "/cross.png" : "/hamburger.png"}
-            alt="Menu"
             className="w-7 h-7 object-contain"
           />
         </button>
       </div>
 
-      {/* MOBILE SLIDE MENU (from RIGHT) */}
-    <div
-      className={`xl:hidden absolute top-[80px] right-0 w-[250px] bg-white shadow-lg transform transition-transform duration-300 ${
-       open ? "translate-x-0" : "translate-x-full"
-      }`}
->
-      <div className="flex flex-col text-accent text-base p-6 space-y-5 text-[18px]">
+      {/* MOBILE SLIDE MENU */}
+      <div
+        className={`
+          fixed top-[80px] right-0 w-[250px] bg-white shadow-lg 
+          transition-transform duration-300
+          ${open ? "translate-x-0" : "translate-x-full"}
+        `}
+      >
+        <div className="flex flex-col text-[18px] p-6 space-y-5">
 
-        <Link onClick={() => setOpen(false)} to="/home" className="text-mainblack hover:text-secondary/75">
-          Home
-        </Link>
-        <Link onClick={() => setOpen(false)} to="/products" className="text-mainblack hover:text-secondary/75">
-          Products
-        </Link>
-        <Link onClick={() => setOpen(false)} to="/about" className="text-mainblack hover:text-secondary/75">
-          About
-        </Link>
-        <Link onClick={() => setOpen(false)} to="/contacts" className="text-mainblack hover:text-secondary/75">
-          Contacts
-        </Link>
+          <Link onClick={() => setOpen(false)} to="/home" className="hover:text-secondary/75">Home</Link>
+          <Link onClick={() => setOpen(false)} to="/about" className="hover:text-secondary/75">About</Link>
+          <Link onClick={() => setOpen(false)} to="/works" className="hover:text-secondary/75">How It Works</Link>
+          <Link onClick={() => setOpen(false)} to="/contacts" className="hover:text-secondary/75">Contact Us</Link>
 
-        {/* MOBILE LOGIN BUTTON */}
-        <LoginButton />
+          <LoginButton />
+        </div>
       </div>
-    </div>
-      
-     
     </>
   );
 }
