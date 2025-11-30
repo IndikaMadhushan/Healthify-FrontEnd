@@ -30,7 +30,7 @@ const Header = ({ colorDeep }) => {
   }, [screenWidth]);
 
   return (
-    <header className="flex lg:items-center lg:justify-between lg:flex-row lg:gap-0 w-full md:px-20 flex-col gap-4 px-6">
+    <header className="flex lg:items-center lg:justify-between lg:flex-row lg:gap-0 w-full lg:px-20 flex-col gap-4 px-6">
       {/* Logo */}
       <div className="flex flex-row items-center justify-between lg:w-full w-auto">
         <div className="flex justify-center items-center h-10 w-18 rounded-lg p-1">
@@ -56,14 +56,14 @@ const Header = ({ colorDeep }) => {
       </div>
 
       {/* Navbar Links */}
-      <nav className={`lg:flex ${openMenu ? 'absolute bg-white rounded-xl z-60 top-10 right-0 w-full' : 'hidden'} lg:block`}>
-        <ul className="flex lg:flex-row items-center lg:gap-0 flex-col justify-center gap-4 list-none">
+      <nav className={`lg:flex ${openMenu ? 'absolute bg-[#454545]  z-60 top-15 right-0 w-2/4 transition-all duration-300 ease-in-out   flex flex-col gap-7' : 'hidden'} lg:block`}>
+        <ul className="flex lg:flex-row  items-center lg:gap-0 flex-col justify-center gap-7 list-none">
           {navItems.map(item => (
             <li key={item.id}>
               <Link 
                 to={item.path}  // Use 'path' to route correctly
                 onClick={() => setOpenMenu(false)}  // Close the menu when a link is clicked
-                className="lg:px-4 py-2 lg:mt-8 md:text-base text-[#454545] transparent lg:ml-4 mt-2 text-sm  focus:outline-none focus:shadow-outline hover:text-amber-950 rounded-xl " 
+                className="lg:px-4 py-2 lg:mt-8  lg:text-[#454545] text-white text-sm transparent lg:ml-4 mt-2 lg:text-md font-bold focus:outline-none focus:shadow-outline hover:underline rounded-xl " 
               >
                 {item.label}
               </Link>

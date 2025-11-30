@@ -1,13 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-
-
-
-
 import './App.css'
-import Hero from "./pages/HomePage/Hero";
-import Home from "./pages/HomePage/HomePage";
+import HomePage from "./pages/HomePage/HomePage";
 
 
 function App() {
@@ -15,7 +9,7 @@ function App() {
 
   return (
     <>
-      <Home/>
+      <HomePage/>
     </>
   
     

@@ -7,12 +7,11 @@ import GridOverlay from './components/GridOverLay/GridOverLay.jsx';
 
 
 
+
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
    <BrowserRouter>
-      
-      
-    
       <App />
       
     </BrowserRouter>
