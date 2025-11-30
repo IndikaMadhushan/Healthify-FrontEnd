@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes fadeUpLetter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.letter-animated {
+  display: inline-block;
+  opacity: 0;
+  animation: fadeUpLetter 0.4s ease-out forwards;
+}
+
+@keyframes imageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Very subtle breathing effect (slow, professional) */
+@keyframes imageFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* On first load */
+.hero-image-animated {
+  animation: imageEnter 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  transform-origin: center;
+  transition: transform 0.5s ease, filter 0.5s ease;
+}
+
+/* Slow, minimal float */
+.hero-image-float {
+  animation: imageFloat 12s ease-in-out infinite;
+}
+
+/* Hover: tiny lift + sharpness (no crazy effect) */
+.hero-image-animated:hover {
+  transform: translateY(-6px) scale(1.02);
+  filter: drop-shadow(0 20px 35px rgba(15, 23, 42, 0.25));
+}

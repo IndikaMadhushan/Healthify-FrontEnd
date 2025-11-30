@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
 @import "tailwindcss";
+
 
 @theme{
   
   --color-primary : #86c443;
   --color-secondary: #18AAB0;
   --color-mainblack: #454545;
-  
+   --font-head: 'Abril Fatface', serif;
  
 }
