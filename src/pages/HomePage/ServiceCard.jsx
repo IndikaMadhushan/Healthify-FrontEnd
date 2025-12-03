@@ -7,7 +7,7 @@ export default function ServiceCard(props) {
       className="
         group bg-white rounded-xl shadow-md p-6  max-w-sm
         transition-all duration-300 ease-in-out 
-        hover:shadow-lg hover:scale-[1.01] hover:bg-primary/70 sm:h-[400px] lg:h-[350px]
+        hover:shadow-lg hover:scale-[1.01] hover:bg-primary/70 sm:h-[400px] h-[350px] 
       "
       role="article"
       aria-label={title}

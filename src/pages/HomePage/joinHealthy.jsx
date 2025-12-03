@@ -7,9 +7,11 @@ import p4 from "../../assets/p4.jpg"
 import p5 from "../../assets/p5.jpg"
 import p6 from "../../assets/p6.jpg"
 import p7 from "../../assets/p7.jpg"
-
+import { useNavigate } from "react-router-dom";
 
 export default function JoinHealthy() {
+  const navigate = useNavigate();
+  
   return (
     <div className="w-full h-[500px] flex items-center justify-center relative bg-white">
       {/* Seven positioned avatars using the SAME avatar-spin class (keeps your rotation animation) */}
@@ -141,7 +143,7 @@ export default function JoinHealthy() {
         <p className="mt-2 sm:px-26 px-4 text-[8px] md:text-sm text-gray-600">
          Your medical records stay organized, secure, and always accessible
         </p>
-          <Button
+          <Button onClick={() => navigate("/option")}
           className=" px-10 mt-5 py-4 md:text-3xl text-center text-sm "
           type="button"
           text="Join Healthify"

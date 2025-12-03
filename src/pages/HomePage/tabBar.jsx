@@ -43,10 +43,10 @@ export default function TagBar() {
 }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-auto bg-secondary sm:my-0 my-8">
+    <div ref={containerRef} className="w-full h-auto bg-secondary sm:my-0 my-8 flex justify-center ">
       <div className="h-full grid lg:grid-cols-4 grid-cols-2 justify-items-center place-content-center text-white font-bold gap-6 sm:px-16 px-10 py-8">
 
-        <div className="h-[150px] sm:w-[320px] flex flex-row items-center justify-center sm:gap-0 gap-2">
+        <div className="h-[150px] sm:w-[320px] flex flex-row items-center justify-center sm:gap-0 gap-2 ">
           <FaUserFriends className="sm:text-5xl text-3xl text-primary mb-1" />
           <div>
             <p className="sm:text-4xl text-2xl font-extrabold text-white leading-tight">
