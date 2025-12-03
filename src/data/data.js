@@ -4,7 +4,7 @@ export const data = [
     colorDeep: "#18AAB0",
     colorLite: "rgba(24, 170, 176, 0.2)",
     FirstText: "Collaborative " ,
-    mainText: "Care with Your Doctor",
+    mainText: "Care with  Your Doctor",
     subText: "Easily connect with your doctor for personalized care",
     shadow: "0px 4px 6px rgba(0, 0, 0, 0.2)",
     mobileShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
@@ -14,8 +14,8 @@ export const data = [
     id: 2,
     colorDeep: "#86C443",    // Primary color for the slide
     colorLite: "rgba(134, 196, 67, 0.2)",    // Lighter version of the color
-    FirstText: " Health Records, " ,
-    mainText: "One Secure Place",
+    FirstText: "Health Records" ,
+    mainText: "One Secure  Place",
     subText: "Manage all your health data in one place.", // Main text for the slidesubText: "Your trusted partner in fuel management",   // Subtext for the slide
     shadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",   // Shadow effect
     mobileShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",   // Shadow effect for mobile
@@ -26,7 +26,7 @@ export const data = [
     id: 3,
     colorDeep: "#54ae8f",
     colorLite: "rgba(180, 242, 236, 0.2)",
-    FirstText: "Stay on " ,
+    FirstText: "Stay on" ,
     mainText: " Top of Your Health",
     subText: "Monitor your vital signs and track improvements over time.",
     shadow: "0px 4px 6px rgba(0, 0, 0, 0.3)",

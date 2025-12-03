@@ -4,7 +4,7 @@ import doctor from "../../assets/doctor.png";
 export default function Empower() {
   return (
     <motion.div
-      className="w-full sm:py-16 md:px-26 px-4"
+      className="w-full sm:py-16 md:px-26 px-4" id="about"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}

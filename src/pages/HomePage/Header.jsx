@@ -1,86 +1,108 @@
-import { useState, useEffect } from 'react';
-import { navItems } from '../../data/data';  // Import navItems
-import Button from "./HomeButton";  // Import the Button component
-import { Link } from 'react-router-dom';  // Import Link for routing
+import { useNavigate} from "react-router-dom";
+import Button from "./HomeButton";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { useState } from "react";
+import { RxCross1 } from "react-icons/rx";
 
-const Header = ({ colorDeep }) => {
-  const [openMenu, setOpenMenu] = useState(false);  // State for toggling mobile menu
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Track screen width
-
-  // Effect to handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    // Add resize event listener
-    window.addEventListener('resize', handleResize);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  // Close the menu if the screen width is large (lg breakpoint or above)
-  useEffect(() => {
-    if (screenWidth >= 1024) {
-      setOpenMenu(false);  // Close the menu when screen size is large
-    }
-  }, [screenWidth]);
-
-  return (
-    <header className="flex lg:items-center lg:justify-between lg:flex-row lg:gap-0 w-full lg:px-20 flex-col gap-4 px-6">
-      {/* Logo */}
-      <div className="flex flex-row items-center justify-between lg:w-full w-auto">
-        <div className="flex justify-center items-center h-10 w-18 rounded-lg p-1">
-          <img
-            src="logo.png"
-            alt="logo"
-            className="w-[150px] h-auto max-w-[100px] md:max-w-[150px] lg:max-w-[200px]"
-            width="50"
-            height="80"
-          />
-        </div>
-
-        {/* Mobile Hamburger Icon */}
-        <div className="lg:hidden flex items-center ml-auto">
-          <button onClick={() => setOpenMenu(!openMenu)} className="text-xl">
-            {openMenu ? (
-              <span>&#10005;</span>  // Close icon (X)
-            ) : (
-              <span>&#9776;</span>  // Hamburger menu icon (3 horizontal lines)
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Navbar Links */}
-      <nav className={`lg:flex ${openMenu ? 'absolute bg-[#454545]  z-60 top-15 right-0 w-2/4 transition-all duration-300 ease-in-out   flex flex-col gap-7' : 'hidden'} lg:block`}>
-        <ul className="flex lg:flex-row  items-center lg:gap-0 flex-col justify-center gap-7 list-none">
-          {navItems.map(item => (
-            <li key={item.id}>
-              <Link 
-                to={item.path}  // Use 'path' to route correctly
-                onClick={() => setOpenMenu(false)}  // Close the menu when a link is clicked
-                className="lg:px-4 py-2 lg:mt-8  lg:text-[#454545] text-white text-sm transparent lg:ml-4 mt-2 lg:text-md font-bold focus:outline-none focus:shadow-outline hover:underline rounded-xl " 
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* Login Button */}
-        <Button
-          className="px-10 py-1 md:text-base text-center text-sm w-full"
-          type="button"
-          text="Login"
-          style={{ backgroundColor: `${colorDeep}` }}
-        />
-      </nav>
-    </header>
-  );
+const goToFooter = () => {
+  const element = document.getElementById("footer");
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
 };
 
-export default Header;
+const goToService = () => {
+  const element = document.getElementById("services");
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+  
+};
+
+const goToAbout = () => {
+  const element = document.getElementById("about");
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+  
+};
+
+export default function Header(){
+
+
+  const navigate = useNavigate();
+  const [openMenu, setOpenMenu] = useState(false);
+
+
+  return(
+    
+    
+    <div className="flex flex-row justify-between lg:px-14 px-4  md:px-6 ">
+        <div>
+            <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+        </div>
+        <div className="pt-5">
+        <div className="flex flex-row  text-sm text-mainblack font-semibold items-center lg:gap-10 md:gap-5">
+            <div>
+                  <p className="hidden md:block" onClick={() => navigate("/")}>Home</p>
+            </div>
+            <div>
+                  <p className="hidden md:block" onClick={goToService}>Services</p> 
+            </div>
+            <div>
+                  <p className="hidden md:block" onClick={goToAbout}>About Us</p> 
+            </div>
+            <div>
+                  <p className="hidden md:block" onClick={goToFooter}>Contact</p> 
+            </div>
+            <div>
+                <Button onClick={() => navigate("/login")}
+                type="button"
+                text="Login"
+                 className="py-1 px-6  font-bold  focus:outline-none hidden md:block"
+                style={{ backgroundColor: '#18AAB0'}}
+                />
+                
+            </div>
+            
+        </div>
+          <div className="md:hidden block text-xl text-secondary "onClick={() => setOpenMenu(true)}><RxHamburgerMenu /></div>
+        </div>
+
+        {/*mobile drop down*/}
+        {openMenu && (
+        <div className="fixed inset-0 bg-black/60 z-60 md:hidden block ">
+          <div className="bg-black  w-1/2 h-full p-6">
+            
+            <button
+              className="text-2xl mb-4 text-white"
+              onClick={() => setOpenMenu(false)}
+              
+            >
+              <RxCross1 />
+            </button>
+
+            <div className="flex flex-col gap-4 font-semibold text-secondary  text-center">
+              
+              <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+
+              <p className="hover:text-white"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
+              <p className="hover:text-white" onClick={goToService}>Services</p>
+              <p className="hover:text-white" onClick={goToAbout}>About Us</p>
+              <p className="hover:text-white" onClick={goToFooter}>Contact</p>
+              
+              <Button onClick={() => {navigate("/login"); setOpenMenu(false);}}
+                type="button"
+                text="Login"
+                 className="py-1 px-6  font-bold  focus:outline-none "
+                style={{ backgroundColor: '#18AAB0'}}
+                />
+            </div>
+
+          </div>
+        </div>
+      )}
+      </div>
+    
+  )
+}

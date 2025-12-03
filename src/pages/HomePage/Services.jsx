@@ -29,7 +29,7 @@ const cardVariants = {
 
 export default function ServicesExample() {
   return (
-    <div className="sm:pt-16 py-6 ">
+    <div id="services" className="sm:pt-16 py-6 ">
       
       <div>
         <h1 className="text-3xl font-bold text-center text-[#454545]">
