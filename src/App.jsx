@@ -6,7 +6,8 @@ import OptionPage from "./pages/SignupOptionPage/optionPage";
 import LoginPage from "./pages/LoginPage/loginPage";
 
 import PatientFormMain from "./pages/PatientFormPage/patientFormMain";
-
+import DoctorRegisterPage1 from "./pages/DoctorRegisterPage/DoctorRegisterPage1";
+import DoctorRegisterPage2 from "./pages/DoctorRegisterPage/DoctorRegisterPage2";
 
 function App() {
   
@@ -17,6 +18,9 @@ function App() {
        <Route path="/option" element={<OptionPage/>}/> 
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/form" element={<PatientFormMain />}/>
+
+      <Route path="/doctor-register-1" element={<DoctorRegisterPage1/>}/>
+      <Route path="/doctor-register-2" element={<DoctorRegisterPage2/>}/>
     </Routes>
   
     

@@ -1,5 +1,5 @@
 import Button from "../HomePage/HomeButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png"
 import Footer from "../../components/footer";
 import Header from "../HomePage/Header";
@@ -7,6 +7,7 @@ import { useState } from "react";
 
 
 export default function LoginPage(){
+     const navigate = useNavigate(); 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 

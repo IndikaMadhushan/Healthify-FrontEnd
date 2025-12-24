@@ -24,18 +24,20 @@ export default function OptionPage(){
                                 title="I’m a Doctor"
                                 subtitle="Access patient records and provide better care"
                                 link="Register as Doctor"
+                                path="/doctor-register-1"
                             />
                             <OptionCard 
                                 icon={<FaUser  />}
                                 title="I’m a Patient"
                                 subtitle="Manage health records and track your wellness journey"
                                 link="Register as Patient"
+                                path="/form"
                             />
                             
                     
             </div>
             <div className="md:text-sm text-[10px] text-center">
-                    Already have an account? 
+                    Already have an account?
                         <span className="text-secondary hover:underline">
                             <Link to="/login" className="">
                             Login here
