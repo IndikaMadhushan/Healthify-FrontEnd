@@ -31,7 +31,7 @@ export default function DoctorRegisterPage1() {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
   };
-
+ 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {

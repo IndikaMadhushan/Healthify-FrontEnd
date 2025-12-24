@@ -16,6 +16,10 @@ export default function DoctorRegisterPage2() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
     if (!step1Data) {
