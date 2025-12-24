@@ -6,20 +6,20 @@ import dRegImage2 from "../../assets/d-reg-image2.png";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
-    agreedToTerms: false
+    agreedToTerms: false,
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-   useEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
+
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
     if (!step1Data) {
@@ -28,13 +28,14 @@ export default function DoctorRegisterPage2() {
   }, [navigate]);
 
   const handleChange = (field) => (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setFormData(prev => ({
+    const value =
+      e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -46,7 +47,8 @@ export default function DoctorRegisterPage2() {
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = "Password must contain uppercase, lowercase, and number";
+      newErrors.password =
+        "Password must contain uppercase, lowercase, and number";
     }
 
     if (!formData.confirmPassword) {
@@ -72,11 +74,13 @@ export default function DoctorRegisterPage2() {
 
     setLoading(true);
 
-    const step1Data = JSON.parse(sessionStorage.getItem("doctorRegStep1") || "{}");
+    const step1Data = JSON.parse(
+      sessionStorage.getItem("doctorRegStep1") || "{}",
+    );
 
     const completeData = {
       ...step1Data,
-      password: formData.password
+      password: formData.password,
     };
 
     setTimeout(() => {
@@ -118,10 +122,12 @@ export default function DoctorRegisterPage2() {
           <div className="flex items-start gap-2">
             <span className="text-green-600 text-lg">ℹ</span>
             <div className="text-sm text-green-800">
-              <p className="font-semibold mb-1">Account Verification Required</p>
+              <p className="font-semibold mb-1">
+                Account Verification Required
+              </p>
               <p className="text-xs">
-                Your account will be activated after document verification (24-48 hours). 
-                You will receive an email once approved.
+                Your account will be activated after document verification
+                (24-48 hours). You will receive an email once approved.
               </p>
             </div>
           </div>
@@ -144,8 +150,8 @@ export default function DoctorRegisterPage2() {
                 className="text-secondary hover:underline"
               >
                 Terms & Conditions
-              </button>
-              {" "}and{" "}
+              </button>{" "}
+              and{" "}
               <button
                 type="button"
                 onClick={() => window.open("/privacy", "_blank")}

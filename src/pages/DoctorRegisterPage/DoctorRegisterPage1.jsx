@@ -8,7 +8,7 @@ import dRegImage1 from "../../assets/d-reg-image1.png";
 
 export default function DoctorRegisterPage1() {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     fullName: "",
     gender: "",
@@ -16,45 +16,50 @@ export default function DoctorRegisterPage1() {
     specialization: "",
     hospital: "",
     slmcNumber: "",
-    verificationDoc: null
+    verificationDoc: null,
   });
 
   const [errors, setErrors] = useState({});
   const [fileName, setFileName] = useState("");
 
   const handleChange = (field) => (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: e.target.value
+      [field]: e.target.value,
     }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
- 
+
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+      const validTypes = [
+        "application/pdf",
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+      ];
       if (!validTypes.includes(file.type)) {
-        setErrors(prev => ({ 
-          ...prev, 
-          verificationDoc: "Only PDF, JPG, or PNG files are allowed" 
-        }));
-        return;
-      }
-      
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ 
-          ...prev, 
-          verificationDoc: "File size must be less than 5MB" 
+        setErrors((prev) => ({
+          ...prev,
+          verificationDoc: "Only PDF, JPG, or PNG files are allowed",
         }));
         return;
       }
 
-      setFormData(prev => ({ ...prev, verificationDoc: file }));
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors((prev) => ({
+          ...prev,
+          verificationDoc: "File size must be less than 5MB",
+        }));
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, verificationDoc: file }));
       setFileName(file.name);
-      setErrors(prev => ({ ...prev, verificationDoc: "" }));
+      setErrors((prev) => ({ ...prev, verificationDoc: "" }));
     }
   };
 
@@ -68,10 +73,14 @@ export default function DoctorRegisterPage1() {
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = "Invalid email format";
     }
-    if (!formData.specialization.trim()) newErrors.specialization = "Specialization is required";
-    if (!formData.hospital.trim()) newErrors.hospital = "Hospital/Clinic is required";
-    if (!formData.slmcNumber.trim()) newErrors.slmcNumber = "SLMC Number is required";
-    if (!formData.verificationDoc) newErrors.verificationDoc = "Verification document is required";
+    if (!formData.specialization.trim())
+      newErrors.specialization = "Specialization is required";
+    if (!formData.hospital.trim())
+      newErrors.hospital = "Hospital/Clinic is required";
+    if (!formData.slmcNumber.trim())
+      newErrors.slmcNumber = "SLMC Number is required";
+    if (!formData.verificationDoc)
+      newErrors.verificationDoc = "Verification document is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -80,10 +89,13 @@ export default function DoctorRegisterPage1() {
   const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
-      sessionStorage.setItem("doctorRegStep1", JSON.stringify({
-        ...formData,
-        verificationDoc: fileName
-      }));
+      sessionStorage.setItem(
+        "doctorRegStep1",
+        JSON.stringify({
+          ...formData,
+          verificationDoc: fileName,
+        }),
+      );
       navigate("/doctor-register-2");
     }
   };
