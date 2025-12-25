@@ -30,6 +30,7 @@ export default function OptionPage() {
             title="I’m a Patient"
             subtitle="Manage health records and track your wellness journey"
             link="Register as Patient"
+            path="/patient-register-1"
           />
         </div>
         <div className="md:text-sm text-[10px] text-center">
