@@ -1,19 +1,20 @@
+//thathsara
 // Reusable file upload component
 
 import { FaFileUpload } from "react-icons/fa";
 
-export default function FileUpload({ 
-  label, 
-  fileName, 
-  onChange, 
+export default function FileUpload({
+  label,
+  fileName,
+  onChange,
   error,
   accept = ".pdf,.jpg,.jpeg,.png",
   helperText,
-  required = false
+  required = false,
 }) {
   const labelCss = "text-[15px] font-semibold text-gray-700";
 
-   return (
+  return (
     <div>
       <label className={labelCss}>
         {label}
@@ -40,11 +41,8 @@ export default function FileUpload({
         {helperText && (
           <p className="text-xs text-gray-500 mt-2">{helperText}</p>
         )}
-        {error && (
-          <p className="text-xs text-red-500 mt-1">{error}</p>
-        )}
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
     </div>
   );
 }
-

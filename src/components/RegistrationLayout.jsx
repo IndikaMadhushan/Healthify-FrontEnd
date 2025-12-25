@@ -1,9 +1,14 @@
+//thathsara
 // Reusable layout with fixed header, content area, and footer
 import React from "react";
 import Header from "../pages/HomePage/Header";
 import Footer from "./footer";
 
-export default function RegistrationLayout({ children, image, imageAlt = "Registration" }) {
+export default function RegistrationLayout({
+  children,
+  image,
+  imageAlt = "Registration",
+}) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Fixed Header */}
@@ -15,13 +20,12 @@ export default function RegistrationLayout({ children, image, imageAlt = "Regist
       <div className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
-            
             {/* Form Area - Left Side */}
             <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 lg:max-w-xl mx-auto w-full">
               {children}
             </div>
 
-{/* Image Area - Right Side */}
+            {/* Image Area - Right Side */}
             {image && (
               <div className="hidden lg:flex justify-center items-start lg:sticky lg:top-24">
                 <div className="relative w-full">
@@ -30,7 +34,7 @@ export default function RegistrationLayout({ children, image, imageAlt = "Regist
                     src={image}
                     alt={imageAlt}
                     className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
-                    style={{ maxHeight: '80vh' }}
+                    style={{ maxHeight: "80vh" }}
                   />
                 </div>
               </div>
@@ -39,8 +43,7 @@ export default function RegistrationLayout({ children, image, imageAlt = "Regist
         </div>
       </div>
 
-
-{/* Footer */}
+      {/* Footer */}
       <Footer />
 
       <style>{`

@@ -1,12 +1,13 @@
+//thathsara
 // Reusable radio button group
 
-export default function RadioGroup({ 
-  label, 
-  options, 
-  value, 
-  onChange, 
+export default function RadioGroup({
+  label,
+  options,
+  value,
+  onChange,
   error,
-  required = false 
+  required = false,
 }) {
   const labelCss = "text-[15px] font-semibold text-gray-700";
 
@@ -18,7 +19,10 @@ export default function RadioGroup({
       </label>
       <div className="mt-2 flex gap-6">
         {options.map((option) => (
-          <label key={option} className="flex items-center gap-2 cursor-pointer">
+          <label
+            key={option}
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <input
               type="radio"
               value={option}
@@ -31,9 +35,7 @@ export default function RadioGroup({
         ))}
       </div>
 
-      {error && (
-        <p className="text-xs text-red-500 mt-1">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }
