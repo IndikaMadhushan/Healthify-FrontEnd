@@ -3,11 +3,14 @@
 import React from "react";
 import Header from "../pages/HomePage/Header";
 import Footer from "./footer";
+import AnimatedRegistrationImage from "./AnimatedRegistrationImage";
 
 export default function RegistrationLayout({
   children,
   image,
   imageAlt = "Registration",
+  gradientFrom,
+  gradientTo,
 }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -25,19 +28,14 @@ export default function RegistrationLayout({
               {children}
             </div>
 
-            {/* Image Area - Right Side */}
+            {/* Animated Image Area - Right Side */}
             {image && (
-              <div className="hidden lg:flex justify-center items-start lg:sticky lg:top-24">
-                <div className="relative w-full">
-                  <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-full blur-3xl"></div>
-                  <img
-                    src={image}
-                    alt={imageAlt}
-                    className="relative z-10 w-full h-auto object-contain drop-shadow-2xl"
-                    style={{ maxHeight: "80vh" }}
-                  />
-                </div>
-              </div>
+              <AnimatedRegistrationImage
+                src={image}
+                alt={imageAlt}
+                gradientFrom={gradientFrom}
+                gradientTo={gradientTo}
+              />
             )}
           </div>
         </div>
