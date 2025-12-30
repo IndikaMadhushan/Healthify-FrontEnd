@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
+import SuccessModal from "../../components/SuccessModal";
 import dRegImage2 from "../../assets/d-reg-image2.png";
 
 export default function DoctorRegisterPage2() {
@@ -15,6 +16,7 @@ export default function DoctorRegisterPage2() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -22,8 +24,18 @@ export default function DoctorRegisterPage2() {
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
+    const registrationComplete = sessionStorage.getItem(
+      "doctorRegistrationComplete",
+    );
+
+    if (registrationComplete) {
+      sessionStorage.removeItem("doctorRegistrationComplete");
+      navigate("/login", { replace: true });
+      return;
+    }
+
     if (!step1Data) {
-      navigate("/doctor-register-1");
+      navigate("/doctor-register-1", { replace: true });
     }
   }, [navigate]);
 
@@ -85,11 +97,19 @@ export default function DoctorRegisterPage2() {
 
     setTimeout(() => {
       console.log("Doctor Registration data:", completeData);
+
+      sessionStorage.setItem("doctorRegistrationComplete", "true");
       sessionStorage.removeItem("doctorRegStep1");
-      alert("Registration successful! Redirecting to login...");
+
       setLoading(false);
-      navigate("/login");
+      setShowSuccessModal(true);
     }, 1500);
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    sessionStorage.removeItem("doctorRegistrationComplete");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -178,8 +198,8 @@ export default function DoctorRegisterPage2() {
           <button
             type="button"
             onClick={handleFinish}
-            disabled={loading}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !formData.agreedToTerms}
+            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? "Processing..." : "Finish"}
           </button>
@@ -195,6 +215,15 @@ export default function DoctorRegisterPage2() {
           Login here
         </button>
       </p>
+
+      {/* Reusable Success Modal */}
+      <SuccessModal
+        show={showSuccessModal}
+        title="Registration Successful!"
+        message="Your account has been submitted for verification. You will receive an email once your account is approved (24-48 hours)."
+        buttonText="Go to Login"
+        onClose={handleModalClose}
+      />
     </RegistrationLayout>
   );
 }

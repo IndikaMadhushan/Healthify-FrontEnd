@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
+import SuccessModal from "../../components/SuccessModal";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 
 export default function PatientRegisterPage2() {
@@ -15,6 +16,7 @@ export default function PatientRegisterPage2() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -22,8 +24,16 @@ export default function PatientRegisterPage2() {
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("patientRegStep1");
+    const registrationComplete = sessionStorage.getItem("registrationComplete");
+
+    if (registrationComplete) {
+      sessionStorage.removeItem("registrationComplete");
+      navigate("/form", { replace: true });
+      return;
+    }
+
     if (!step1Data) {
-      navigate("/patient-register-1");
+      navigate("/patient-register-1", { replace: true });
     }
   }, [navigate]);
 
@@ -85,13 +95,19 @@ export default function PatientRegisterPage2() {
 
     setTimeout(() => {
       console.log("Patient Registration data:", completeData);
+
+      sessionStorage.setItem("registrationComplete", "true");
       sessionStorage.removeItem("patientRegStep1");
-      alert("Registration successful! Redirecting...");
+
       setLoading(false);
-      // TODO: Navigate to user profile page when it's built
-      // For now, redirect to login
-      navigate("/login");
+      setShowSuccessModal(true);
     }, 1500);
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    sessionStorage.removeItem("registrationComplete");
+    navigate("/form", { replace: true });
   };
 
   return (
@@ -100,7 +116,6 @@ export default function PatientRegisterPage2() {
         <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
           Patient Registration
         </h1>
-        {/* Progress indicators */}
         <div className="flex gap-2">
           <span className="w-3 h-3 rounded-full bg-gray-300"></span>
           <span className="w-3 h-3 rounded-full bg-secondary"></span>
@@ -126,7 +141,6 @@ export default function PatientRegisterPage2() {
           required
         />
 
-        {/* Terms Checkbox */}
         <div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -159,7 +173,6 @@ export default function PatientRegisterPage2() {
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4 pt-4">
           <button
             type="button"
@@ -188,6 +201,15 @@ export default function PatientRegisterPage2() {
           Login here
         </button>
       </p>
+
+      {/* Reusable Success Modal */}
+      <SuccessModal
+        show={showSuccessModal}
+        title="Registration Successful!"
+        message="Welcome to Healthify! Your account has been created successfully."
+        buttonText="Continue to Dashboard"
+        onClose={handleModalClose}
+      />
     </RegistrationLayout>
   );
 }
