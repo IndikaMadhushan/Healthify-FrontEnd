@@ -9,6 +9,7 @@ import DoctorRegisterPage1 from "./pages/DoctorRegisterPage/DoctorRegisterPage1"
 import DoctorRegisterPage2 from "./pages/DoctorRegisterPage/DoctorRegisterPage2";
 import PatientRegisterPage1 from "./pages/PatientRegisterPage/PatientRegisterPage1";
 import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPage2";
+import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
       {/* Patient Registration Routes */}
       <Route path="/patient-register-1" element={<PatientRegisterPage1 />} />
       <Route path="/patient-register-2" element={<PatientRegisterPage2 />} />
+
+      {/* Doctor Profile Page */}
+      <Route path="/doctor-profile" element={<DoctorDashBoard />} />
     </Routes>
   );
 }
