@@ -10,6 +10,8 @@ import DoctorRegisterPage2 from "./pages/DoctorRegisterPage/DoctorRegisterPage2"
 import PatientRegisterPage1 from "./pages/PatientRegisterPage/PatientRegisterPage1";
 import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPage2";
 import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
+import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
+import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 
 function App() {
   return (
@@ -29,6 +31,12 @@ function App() {
 
       {/* Doctor Profile Page */}
       <Route path="/doctor-profile" element={<DoctorDashBoard />} />
+
+      {/* Doctor Consult Page */}
+      <Route path="/doctor-consult" element={<DoctorConsultPage />} />
+
+      {/* Doctor Clinic Book Page */}
+      <Route path="/doctor-clinic-book" element={<DoctorClinicBookPage />} />
     </Routes>
   );
 }
