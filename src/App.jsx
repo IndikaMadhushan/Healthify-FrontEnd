@@ -33,10 +33,16 @@ function App() {
       <Route path="/doctor-profile" element={<DoctorDashBoard />} />
 
       {/* Doctor Consult Page */}
-      <Route path="/doctor-consult" element={<DoctorConsultPage />} />
+      <Route
+        path="/doctor-consult/:patientId"
+        element={<DoctorConsultPage />}
+      />
 
       {/* Doctor Clinic Book Page */}
-      <Route path="/doctor-clinic-book" element={<DoctorClinicBookPage />} />
+      <Route
+        path="/doctor-clinic-book/:patientId/:bookId"
+        element={<DoctorClinicBookPage />}
+      />
     </Routes>
   );
 }
