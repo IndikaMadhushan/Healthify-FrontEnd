@@ -23,7 +23,7 @@ export default function DoctorClinicBookPage() {
 
   // ==================== MOCK PATIENT DATA ====================
   const patientInfo = {
-    patientId: "UR234567",
+    patientId: "UR5678",
     fullName: "Parindya Hewage",
     age: 23,
     gender: "Female",
@@ -47,6 +47,12 @@ export default function DoctorClinicBookPage() {
       id: 3,
       date: "2025-08-23",
       time: "10:08AM",
+      reason: "Medication adjustment",
+    },
+    {
+      id: 4,
+      date: "2025-09-23",
+      time: "10:00AM",
       reason: "Medication adjustment",
     },
   ]);
