@@ -1,7 +1,7 @@
 //thathsara
 // DoctorConsultPage.jsx (REFACTORED VERSION)
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Import reusable card components
 import { DoctorNavBar } from "../../components/DoctorNavBar";
@@ -10,6 +10,7 @@ import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCar
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
+import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 
 /**
  * DOCTOR CONSULT PAGE (REFACTORED)
@@ -19,11 +20,12 @@ import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNote
 
 export default function DoctorConsultPage() {
   const navigate = useNavigate();
+  const { patientId } = useParams();
 
   // ==================== MOCK PATIENT DATA ====================
   // In real app: fetch from API using patient ID from route params
   const patientInfo = {
-    patientId: "UR234567", // This is NIC
+    patientId: patientId || "UR5678", // This is NIC
     fullName: "Parindya Hewage",
     age: 23,
     gender: "Female",
@@ -184,6 +186,11 @@ export default function DoctorConsultPage() {
           {/* ========== ADDITIONAL NOTES (Full Width) ========== */}
           <div className="mt-6">
             <AdditionalNotesCard formData={formData} onChange={handleChange} />
+          </div>
+
+          {/* Medication Section */}
+          <div>
+            <MedicationCard formData={formData} onChange={handleChange} />
           </div>
 
           {/* ========== COMPLETE BUTTON ========== */}
