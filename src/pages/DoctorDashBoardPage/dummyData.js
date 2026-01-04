@@ -13,7 +13,7 @@ export const dummyPatients = [
   {
     id: 1,
     name: "Parindya Hewage",
-    nic: "UR56783",
+    nic: "UR5678",
     gender: "Female",
     lastVisit: "2025-09-23",
   },
