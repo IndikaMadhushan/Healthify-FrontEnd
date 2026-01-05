@@ -39,16 +39,15 @@ export default function DoctorProfilePage() {
         <DoctorInfoCard doctor={doctor} onProfileUpdate={setDoctor} />
 
         <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            <SearchPatientsCard
-              patients={dummyPatients}
-              onViewProfile={handleViewProfile}
-            />
-          </div>
-
           <div className="lg:col-span-2">
             <LatestPatientsCard
               recentPatients={recentPatients}
+              onViewProfile={handleViewProfile}
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <SearchPatientsCard
+              patients={dummyPatients}
               onViewProfile={handleViewProfile}
             />
           </div>
