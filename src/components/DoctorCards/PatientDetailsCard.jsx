@@ -6,7 +6,7 @@ export function PatientDetailsCard({
   showMedicationPurpose = true,
 }) {
   const patient = patientInfo || {
-    patientId: "UR234567",
+    patientId: "UR5678",
     fullName: "Parindya Hewage",
     age: 23,
     gender: "Female",
