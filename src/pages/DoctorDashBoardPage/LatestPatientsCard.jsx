@@ -5,7 +5,7 @@
 import { useState } from "react";
 
 export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery] = useState("");
 
   // Filter patients by name
   const filteredPatients =
@@ -23,28 +23,6 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
       <p className="text-sm text-gray-600 mb-4">
         View and manage patients who have granted you access to their records
       </p>
-
-      {/* Search by Name */}
-      <div className="relative mb-4">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <input
-          type="text"
-          placeholder="Search by patient name"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition"
-        />
-      </div>
 
       {/* Patient List */}
       <div className="space-y-3 max-h-96 overflow-y-auto">
