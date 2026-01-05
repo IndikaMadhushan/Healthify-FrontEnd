@@ -1,4 +1,5 @@
 // thathsara
+// Doctor Navigation Bar Component in doctor consultation and clinic book pages
 import { useState } from "react";
 
 export function DoctorNavBar({

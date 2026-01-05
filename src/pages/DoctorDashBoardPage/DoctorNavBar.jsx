@@ -1,6 +1,4 @@
-// ============================================
-// FILE 2: src/pages/DoctorProfilePage/DoctorNavBar.jsx
-// ============================================
+// doctor navigation bar component in doctor dashboard page. mekedi doctorge pages walata withary nav bar eken yanne
 
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
