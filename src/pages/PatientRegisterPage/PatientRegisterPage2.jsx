@@ -107,7 +107,7 @@ export default function PatientRegisterPage2() {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     sessionStorage.removeItem("registrationComplete");
-    navigate("/form", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -207,7 +207,7 @@ export default function PatientRegisterPage2() {
         show={showSuccessModal}
         title="Registration Successful!"
         message="Welcome to Healthify! Your account has been created successfully."
-        buttonText="Continue to Dashboard"
+        buttonText="Continue to Login"
         onClose={handleModalClose}
       />
     </RegistrationLayout>

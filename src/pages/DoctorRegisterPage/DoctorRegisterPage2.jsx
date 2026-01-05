@@ -109,7 +109,7 @@ export default function DoctorRegisterPage2() {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     sessionStorage.removeItem("doctorRegistrationComplete");
-    navigate("/doctor-profile", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -221,7 +221,7 @@ export default function DoctorRegisterPage2() {
         show={showSuccessModal}
         title="Registration Successful!"
         message="Your account has been submitted for verification. You will receive an email once your account is approved (24-48 hours)."
-        buttonText="Go to Dashboard"
+        buttonText="Go to Login"
         onClose={handleModalClose}
       />
     </RegistrationLayout>
