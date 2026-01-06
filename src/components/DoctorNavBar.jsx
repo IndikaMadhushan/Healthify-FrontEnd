@@ -177,7 +177,7 @@ export function DoctorNavBar({
           />
           <div>
             <p className="text-xs font-semibold text-gray-800">
-              Patient: {patient.fullName}
+              Viewing Patient: {patient.fullName}
             </p>
             <p className="text-[10px] text-gray-600">{patient.email}</p>
           </div>
