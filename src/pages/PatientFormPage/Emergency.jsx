@@ -167,13 +167,14 @@ export default function EmergencyContactForm() {
         </div>
       </div>
 
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="mt-2 px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-lg text-[16px] font-semibold transition"
-      >
-        Save
-      </button>
+      <div className="mt-2 flex justify-end">
+        <button
+          type="submit"
+          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        >
+          Save
+        </button>
+      </div>
     </form>
   );
 }
