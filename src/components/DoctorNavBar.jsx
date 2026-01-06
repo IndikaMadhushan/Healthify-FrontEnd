@@ -60,12 +60,12 @@ export function DoctorNavBar({
           <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-secondary/10 rounded-lg">
             <img
               src={patient.profilePic}
-              alt={patient.fullName}
+              //alt={patient.fullName}
               className="w-10 h-10 rounded-full border-2 border-secondary object-cover"
             />
             <div>
               <p className="text-sm font-semibold text-gray-800">
-                Viewing Patient: {patient.fullName}
+                Patient: {patient.fullName}
               </p>
               <p className="text-xs text-gray-600">{patient.email}</p>
             </div>
@@ -127,10 +127,10 @@ export function DoctorNavBar({
                 </button>
 
                 <button
-                  onClick={() => handleNavigation("/patient-dashboard")}
+                  onClick={() => handleNavigation("/patient-files-upload")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
-                  📊 Dashboard
+                  📊 File Upload
                 </button>
 
                 <button
