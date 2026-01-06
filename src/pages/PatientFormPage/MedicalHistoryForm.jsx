@@ -21,7 +21,7 @@ const emptySurgery = {
   complications: ""
 };
 
-export default function PatientMedicalForm() {
+export default function PatientMedicalForm({ onNext }) {
   const [patientChronic, setPatientChronic] = useState(initialChronic);
   const [vaccineData, setVaccineData] = useState(vaccineInitial);
   const [surgeries, setSurgeries] = useState([]);
@@ -147,11 +147,15 @@ export default function PatientMedicalForm() {
 
       <div className="mt-2 flex justify-end">
         <button
-          type="submit"
-          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
-        >
-          Next
-        </button>
+        type="button"
+        className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        onClick={() => {
+          // if you want validation later, put it here
+          onNext(); // ✅ GO TO NEXT PAGE
+        }}
+      >
+        Next
+      </button>
       </div>
 
       

@@ -12,7 +12,7 @@ const initialHabits = {
   drugAllergies: ""
 };
 
-export default function HabitsAndAllergiesForm() {
+export default function HabitsAndAllergiesForm({ onNext }) {
   const [form, setForm] = useState(initialHabits);
 
   const handleChange = (field) => (e) => {
@@ -368,11 +368,15 @@ export default function HabitsAndAllergiesForm() {
 
       <div className="mt-2 flex justify-end">
         <button
-          type="submit"
-          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
-        >
-          Next
-        </button>
+        type="button"
+        className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        onClick={() => {
+          // if you want validation later, put it here
+          onNext(); // ✅ GO TO NEXT PAGE
+        }}
+      >
+        Next
+      </button>
       </div>
     </form>
   );

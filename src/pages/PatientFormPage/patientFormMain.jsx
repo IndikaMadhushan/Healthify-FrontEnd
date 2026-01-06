@@ -17,16 +17,20 @@ export default function PatientFormMain() {
   const [active, setActive] = useState("Basic Info");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  const handleNext = (nextSection) => {
+  setActive(nextSection);
+};
+
   const renderSection = () => {
     switch (active) {
       case "Basic Info":
-        return <BasicInfoForm />;
+        return <BasicInfoForm onNext={() => handleNext("Medical Info")} />;
       case "Medical Info":
-        return <MedicalHistoryForm />;
+        return <MedicalHistoryForm onNext={() => handleNext("Life Style and Allergies")} />;
       case "Life Style and Allergies":
-        return <HabitsAndAllergiesForm />;
+        return <HabitsAndAllergiesForm onNext={() => handleNext("Parent Info")} />;
       case "Parent Info":
-        return <ParentMedicalForm />;
+        return <ParentMedicalForm onNext={() => handleNext("Emergency Contact")} />;
       case "Emergency Contact":
         return <EmergencyContactForm />;
       default:

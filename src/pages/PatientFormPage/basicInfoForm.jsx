@@ -15,7 +15,7 @@ const basic_form = {
   nationalId: ""
 };
 
-export default function BasicInfoForm() {
+export default function BasicInfoForm({ onNext }) {
   const [form, setForm] = useState(basic_form);
   const [errors, setErrors] = useState({});
 
@@ -343,7 +343,16 @@ if (!form.contactNumber) {
 
         {/* Submit */}
         <div className="px-2 mt-2 flex justify-end">
-          <button type="submit" className="px-5 py-2  bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold">
+          <button
+            type="button"
+            className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+            onClick={() => {
+              const ok = validateAll();   // 1️⃣ validate
+              if (ok) {
+                onNext();               // 2️⃣ go next
+              }
+            }}
+          >
             Next
           </button>
         </div>
