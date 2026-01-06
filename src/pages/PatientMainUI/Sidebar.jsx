@@ -1,149 +1,119 @@
-// import { useState } from "react";
-
-// import {
-//   FaHome,
-//   FaUser,
-//   FaNotesMedical,
-//   FaFileUpload,
-//   FaBell
-// } from "react-icons/fa";
-
-// import PatientFormMain from "../PatientFormPage/patientFormMain";
-// import { PatinetNavBar } from "../../components/PatientNavBar";
-
-
-// export default function Dashboard() {
-//   const [active, setActive] = useState("Summary");
-
-//   return (
-//     <div className=" h-screen bg-[#F2FBFA] ">
-//        <PatinetNavBar />
-//         <div className="flex ">
-//             {/* LEFT SIDEBAR */}
-//             <div className="w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED] ">
-
-//                 <SidebarButton text="Summary" icon={<FaHome />} active={active} setActive={setActive} />
-//                 <SidebarButton text="My Profile" icon={<FaUser />} active={active} setActive={setActive} />
-//                 <SidebarButton text="Medical Info" icon={<FaNotesMedical />} active={active} setActive={setActive} />
-//                 <SidebarButton text="Upload Report" icon={<FaFileUpload />} active={active} setActive={setActive} />
-//                 <SidebarButton text="Reminders" icon={<FaBell />} active={active} setActive={setActive} />
-//             </div>
-
-//             {/* RIGHT SIDE */}
-//             <div className="flex-1 p-10 bg-[#FFFFFF]">
-//                 {renderContent(active)}
-//             </div>
-//         </div>
-//     </div>
-//   );
-// }
-
-
-
-// //SIDE BAR BUTTONS
-
-// function SidebarButton({ text, icon, active, setActive }) {
-//   const isActive = active === text;
-
-//   return (
-//     <button
-//       onClick={() => setActive(text)}
-//       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-2 text-[15px]
-//         ${isActive ? "bg-secondary text-white" : "text-gray-700 hover:bg-secondary/30"}
-//       `}
-//     >
-//       <span>{icon}</span>
-//       {text}
-//     </button>
-//   );
-// }
-
-
-// function renderContent(active) {
-//   switch (active) {
-//     case "Summary":
-//       return <UnderConstruction/>;
-//     case "My Profile":
-//       return <UnderConstruction/>;
-//     case "Medical Info":
-//       return <PatientFormMain />;
-//     case "Upload Report":
-//       return <PatientFormMain />;
-//     case "Reminders":
-//       return <UnderConstruction/>;
-//     default:
-//       return null;
-//   }
-// }
-
-
-// function UnderConstruction({ active }) {
-//   return (
-//     <div className="flex-1 bg-white p-10">
-//       <h1 className="text-[28px] font-semibold text-[#18AAB0]">
-//         {active}
-//       </h1>
-
-//       <p className="text-gray-500 mt-2 mb-8">
-//         This section is under development
-//       </p>
-
-//       <div className="border-2 border-dashed border-[#86C443] rounded-xl h-[300px] flex items-center justify-center">
-//         <span className="text-[#86C443] text-[18px]">
-//           🚧 Waiting for implementation
-//         </span>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 import { useState } from "react";
 import {
   FaHome,
   FaUser,
   FaNotesMedical,
   FaFileUpload,
-  FaBell
+  FaBell,
 } from "react-icons/fa";
 
 import PatientFormMain from "../PatientFormPage/patientFormMain";
+import MedicalReportsPage from "../MedicalReportsPage/MedicalReportsPage";
+import FileUploadView from "../MedicalReportsPage/FileUploadView";
 import { PatinetNavBar } from "../../components/PatientNavBar";
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
+  const [uploadCategory, setUploadCategory] = useState(null);
+  const [userId] = useState("user_123"); // Replace with actual user ID from auth
+
+  // Handle navigation to upload from Medical Reports page
+  const handleNavigateToUpload = (category) => {
+    setUploadCategory(category);
+    setActive("Upload Report");
+  };
+
+  // Handle back from upload to Medical Reports
+  const handleBackToReports = () => {
+    setUploadCategory(null);
+    setActive("Medical Reports");
+  };
 
   return (
     <div className="h-screen bg-[#F2FBFA] flex flex-col">
-      
       {/* TOP NAVBAR */}
       <PatinetNavBar />
 
       {/* MAIN LAYOUT */}
       <div className="flex flex-1 overflow-hidden">
-
         {/* LEFT SIDEBAR (DESKTOP ONLY) */}
         <div className="hidden sm:block w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
-          <SidebarButton text="Summary" icon={<FaHome />} active={active} setActive={setActive} />
-          <SidebarButton text="My Profile" icon={<FaUser />} active={active} setActive={setActive} />
-          <SidebarButton text="Medical Info" icon={<FaNotesMedical />} active={active} setActive={setActive} />
-          <SidebarButton text="Upload Report" icon={<FaFileUpload />} active={active} setActive={setActive} />
-          <SidebarButton text="Reminders" icon={<FaBell />} active={active} setActive={setActive} />
+          <SidebarButton
+            text="Summary"
+            icon={<FaHome />}
+            active={active}
+            setActive={setActive}
+          />
+          <SidebarButton
+            text="My Profile"
+            icon={<FaUser />}
+            active={active}
+            setActive={setActive}
+          />
+          <SidebarButton
+            text="Medical Info"
+            icon={<FaNotesMedical />}
+            active={active}
+            setActive={setActive}
+          />
+          <SidebarButton
+            text="Medical Reports"
+            icon={<FaFileUpload />}
+            active={active}
+            setActive={setActive}
+          />
+          <SidebarButton
+            text="Reminders"
+            icon={<FaBell />}
+            active={active}
+            setActive={setActive}
+          />
         </div>
 
         {/* RIGHT CONTENT */}
         <div className="flex-1 p-6 sm:p-10 bg-white overflow-y-auto">
-          {renderContent(active)}
+          {renderContent(
+            active,
+            handleNavigateToUpload,
+            uploadCategory,
+            handleBackToReports,
+            userId,
+          )}
         </div>
       </div>
 
       {/* MOBILE BOTTOM NAV */}
       <div className="fixed bottom-0 left-0 right-0 sm:hidden bg-white border-t border-[#D3F0ED] flex justify-around py-2 z-50">
-        <MobileNavButton icon={<FaHome />} text="Summary" active={active} setActive={setActive} />
-        <MobileNavButton icon={<FaUser />} text="My Profile" active={active} setActive={setActive} />
-        <MobileNavButton icon={<FaNotesMedical />} text="Medical Info" active={active} setActive={setActive} />
-        <MobileNavButton icon={<FaFileUpload />} text="Upload Report" active={active} setActive={setActive} />
-        <MobileNavButton icon={<FaBell />} text="Reminders" active={active} setActive={setActive} />
+        <MobileNavButton
+          icon={<FaHome />}
+          text="Summary"
+          active={active}
+          setActive={setActive}
+        />
+        <MobileNavButton
+          icon={<FaUser />}
+          text="My Profile"
+          active={active}
+          setActive={setActive}
+        />
+        <MobileNavButton
+          icon={<FaNotesMedical />}
+          text="Medical Info"
+          active={active}
+          setActive={setActive}
+        />
+        <MobileNavButton
+          icon={<FaFileUpload />}
+          text="Reports"
+          active={active === "Medical Reports" || active === "Upload Report"}
+          setActive={() => setActive("Medical Reports")}
+        />
+        <MobileNavButton
+          icon={<FaBell />}
+          text="Reminders"
+          active={active}
+          setActive={setActive}
+        />
       </div>
     </div>
   );
@@ -152,7 +122,9 @@ export default function Dashboard() {
 /* ---------------- SIDEBAR BUTTON ---------------- */
 
 function SidebarButton({ text, icon, active, setActive }) {
-  const isActive = active === text;
+  const isActive =
+    active === text ||
+    (text === "Medical Reports" && active === "Upload Report");
 
   return (
     <button
@@ -193,15 +165,35 @@ function MobileNavButton({ icon, text, active, setActive }) {
 
 /* ---------------- CONTENT RENDER ---------------- */
 
-function renderContent(active) {
+function renderContent(
+  active,
+  handleNavigateToUpload,
+  uploadCategory,
+  handleBackToReports,
+  userId,
+) {
   switch (active) {
     case "Summary":
     case "My Profile":
     case "Reminders":
       return <UnderConstruction active={active} />;
+
     case "Medical Info":
-    case "Upload Report":
       return <PatientFormMain />;
+
+    case "Medical Reports":
+      return <MedicalReportsPage onNavigateToUpload={handleNavigateToUpload} />;
+
+    case "Upload Report":
+      return (
+        <FileUploadView
+          userId={userId}
+          category={uploadCategory?.id || "general"}
+          title={uploadCategory?.title || "Upload Report"}
+          onBack={handleBackToReports}
+        />
+      );
+
     default:
       return null;
   }
@@ -212,9 +204,7 @@ function renderContent(active) {
 function UnderConstruction({ active }) {
   return (
     <div className="bg-white p-6 sm:p-10">
-      <h1 className="text-[28px] font-semibold text-[#18AAB0]">
-        {active}
-      </h1>
+      <h1 className="text-[28px] font-semibold text-[#18AAB0]">{active}</h1>
 
       <p className="text-gray-500 mt-2 mb-8">
         This section is under development
