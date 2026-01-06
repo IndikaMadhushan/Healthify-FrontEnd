@@ -200,7 +200,7 @@ function renderContent(active) {
     case "Reminders":
       return <UnderConstruction active={active} />;
     case "Medical Info":
-    case "Upload Report":
+    // case "Upload Report":
       return <PatientFormMain />;
     default:
       return null;

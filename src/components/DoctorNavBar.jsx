@@ -1,6 +1,7 @@
 // thathsara
 // Doctor Navigation Bar Component in doctor consultation and clinic book pages
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export function DoctorNavBar({
   patientData,
@@ -16,10 +17,11 @@ export function DoctorNavBar({
     profilePic: "/profilePic.png",
     patientId: "UR234567",
   };
+  
 
   const doctor = doctorData || {
-    fullName: "Dr. Samantha Silva",
-    email: "samantha@hospital.com",
+    fullName: "Dr. Hasal Kenula",
+    // email: "samantha@hospital.com",
     profilePic: "/profilePic.png",
   };
 
@@ -36,13 +38,17 @@ export function DoctorNavBar({
   const handleLogout = () => {
     setDropdownOpen(false);
 
-    if (onLogout) {
-      onLogout();
-    } else {
-      console.log("Logging out doctor:", doctor.email);
-      sessionStorage.clear();
-    }
+    navigate("/");
+
+    // if (onLogout) {
+    //   onLogout();
+    // } else {
+    //   console.log("Logging out doctor:", doctor.email);
+    //   sessionStorage.clear();
+    // }
   };
+
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -120,21 +126,21 @@ export function DoctorNavBar({
                 </div>
 
                 <button
-                  onClick={() => handleNavigation("/patient-profile")}
+                  onClick={() => handleNavigation("/doctor-dashboard")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   👤 Profile
                 </button>
 
                 <button
-                  onClick={() => handleNavigation("/patient-files-upload")}
+                  // onClick={() => handleNavigation("/patient-files-upload")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   📊 File Upload
                 </button>
 
                 <button
-                  onClick={() => handleNavigation("/form")}
+                  // onClick={() => handleNavigation("/form")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   📝 Form Page
@@ -142,15 +148,15 @@ export function DoctorNavBar({
 
                 <hr className="my-2 border-gray-200" />
 
-                <button
+                {/* <button
                   onClick={() => handleNavigation("/doctor-profile")}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   👨‍⚕️ My Profile
-                </button>
+                </button> */}
 
                 <button
-                  onClick={() => handleNavigation("/doctor-dashboard")}
+                  onClick={() => handleNavigation("/doctor-profile")}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   📈 My Dashboard
@@ -159,7 +165,10 @@ export function DoctorNavBar({
                 <hr className="my-2 border-gray-200" />
 
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    navigate("/");
+                    setDropdownOpen(false);
+                  }}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
                 >
                   🚪 Logout
