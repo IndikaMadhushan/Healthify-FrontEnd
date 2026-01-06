@@ -24,7 +24,7 @@ export default function Home(){
         >
             {data.map(({ id, colorDeep, colorLite,FirstText, mainText, subText, shadow, mobileShadow, img }) => (
                 <SwiperSlide key={id} style={{ backgroundColor: `${colorLite}` }} className="w-full h-screen flex flex-col md:gap-10 ">
-                    <Header />
+                    
                     <Hero 
                         colorDeep = {colorDeep}
                         mainText={mainText}
