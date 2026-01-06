@@ -1,5 +1,6 @@
 import Footer from "../../components/footer";
 import Empower from "./Empower";
+import Header from "./Header";
 import Home from "./HeroSection";
 import JoinHealthy from "./joinHealthy";
 import Services3DCarousel from "./Review";
@@ -10,6 +11,9 @@ import TagBar from "./tabBar";
 export default function HomePage(){
     return(
         <>
+            <div className="sticky top-0 z-50 bg-white shadow-sm">
+                        <Header />
+            </div>
             <Home/>
             <Empower/>
             <TagBar/>
@@ -17,6 +21,7 @@ export default function HomePage(){
             <Services3DCarousel/>
             <JoinHealthy/>
             <Footer />
+            
         </>
     )
 }

@@ -259,9 +259,9 @@ export default function BasicInfoForm() {
         </div>
 
         {/* Submit */}
-        <div className="px-2 mt-2">
-          <button type="submit" className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-md text-[15px] font-semibold">
-            Save
+        <div className="px-2 mt-2 flex justify-end">
+          <button type="submit" className="px-5 py-2  bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold">
+            Next
           </button>
         </div>
 

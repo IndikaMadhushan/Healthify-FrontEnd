@@ -12,6 +12,7 @@ import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPag
 import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
+import Dashboard from "./pages/PatientMainUI/Sidebar";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/form" element={<PatientFormMain />} />
+      <Route path="/patientMain" element={<Dashboard />} />
 
       {/* Doctor Registration Routes */}
       <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />

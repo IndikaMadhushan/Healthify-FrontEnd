@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <div id="footer" className="w-full bg-white text-black pt-8 border-t-2 border-t-secondary ">
+    <div id="footer" className="w-full bg-white text-[#454545] pt-8 border-t-2 border-t-secondary ">
 
       {/* MAIN FOOTER CONTENT */}
       <div className="
@@ -22,7 +22,7 @@ export default function Footer() {
         {/* Logo + Description */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <img src="logo.png" className="w-[160px] md:w-[200px] mb-3" alt="Logo" />
-          <p className="text-[16px] md:text-[18px] leading-relaxed font-light">
+          <p className="text-[12px] md:text-[14px] leading-relaxed font-light">
             Healthify makes tracking your health simple and secure.
             <br />
             Your health, your control.
@@ -30,17 +30,17 @@ export default function Footer() {
         </div>
 
         {/* Contact Info */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center mb-4 md:mb-6">
             <img src="Phone.png" className="w-[30px] md:w-[40px] mb-1" alt="Phone" />
-            <p className="text-[16px] md:text-[18px] font-light">Have a question?</p>
-            <p className="text-[16px] md:text-[18px] font-medium">+94 114545678</p>
+            <p className="text-[12px] md:text-[14px] font-light">Have a question?</p>
+            <p className="text-[12px] md:text-[14px] font-medium">+94 114545678</p>
           </div>
 
           <div className="flex flex-col items-center">
             <img src="Email.png" className="w-[30px] md:w-[40px] mb-1" alt="Email" />
-            <p className="text-[16px] md:text-[18px] font-light">Email us</p>
-            <p className="text-[16px] md:text-[18px] font-medium">healthify@gmail.com</p>
+            <p className="text-[12px] md:text-[14px] font-light">Email us</p>
+            <p className="text-[12px] md:text-[14px] font-medium">healthify@gmail.com</p>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ export default function Footer() {
             Quick Links
           </p>
 
-          <div className="flex flex-col gap-[6px] md:gap-[10px] text-[16px] md:text-[18px] font-light">
+          <div className="flex flex-col gap-[6px] md:gap-[10px] text-[12px] md:text-[14px] font-light">
             <Link to="/home" className="hover:text-secondary/75">Home</Link>
             <Link to="/about" className="hover:text-secondary/75">About</Link>
             <Link to="/contacts" className="hover:text-secondary/75">Contact Us</Link>
