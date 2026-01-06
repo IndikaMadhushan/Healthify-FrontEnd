@@ -33,13 +33,12 @@ export default function ParentMedicalForm() {
         onChange={setParentChronic}
       />
 
-      {/* Save button */}
-      <div className="mt-2">
+      <div className="mt-2 flex justify-end">
         <button
           type="submit"
-          className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-md text-[15px] font-semibold"
+          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
         >
-          Save
+          Next
         </button>
       </div>
     </form>
