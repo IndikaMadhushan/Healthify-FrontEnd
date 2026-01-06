@@ -39,24 +39,25 @@ export default function Header(){
     
     <div className="flex flex-row justify-between lg:px-14 px-4  md:px-6 ">
         <div>
-            <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+            <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain cursor-pointer " onClick={() => navigate("/")}/>
         </div>
         <div className="pt-5">
-        <div className="flex flex-row  text-sm text-mainblack font-semibold items-center lg:gap-10 md:gap-5">
+        <div className="flex flex-row  text-sm text-mainblack font-semibold items-center lg:gap-10 md:gap-5 ">
             <div>
-                  <p className="hidden md:block" onClick={() => navigate("/")}>Home</p>
+                  <p className="hidden md:block cursor-pointer" onClick={() => navigate("/")}>Home</p>
+            </div>
+            
+            <div>
+                  <p className="hidden md:block cursor-pointer" onClick={goToAbout}>About Us</p> 
             </div>
             <div>
-                  <p className="hidden md:block" onClick={goToService}>Services</p> 
+                  <p className="hidden md:block cursor-pointer" onClick={goToService}>Services</p> 
             </div>
             <div>
-                  <p className="hidden md:block" onClick={goToAbout}>About Us</p> 
+                  <p className="hidden md:block cursor-pointer" onClick={goToFooter}>Contact</p> 
             </div>
             <div>
-                  <p className="hidden md:block" onClick={goToFooter}>Contact</p> 
-            </div>
-            <div>
-                <Button onClick={() => navigate("/login")}
+                <Button onClick={() => navigate("/option")}
                 type="button"
                 text="Login"
                  className="py-1 px-6  font-bold  focus:outline-none hidden md:block"
@@ -84,12 +85,12 @@ export default function Header(){
 
             <div className="flex flex-col gap-4 font-semibold text-secondary  text-center">
               
-              <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+              <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain hover:cursor-pointer"/>
 
-              <p className="hover:text-white"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
-              <p className="hover:text-white" onClick={goToService}>Services</p>
-              <p className="hover:text-white" onClick={goToAbout}>About Us</p>
-              <p className="hover:text-white" onClick={goToFooter}>Contact</p>
+              <p className="hover:text-white cursor-pointer"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToService}>Services</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToAbout}>About Us</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToFooter}>Contact</p>
               
               <Button onClick={() => {navigate("/login"); setOpenMenu(false);}}
                 type="button"

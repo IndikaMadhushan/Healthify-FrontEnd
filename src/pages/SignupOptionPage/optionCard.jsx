@@ -1,11 +1,13 @@
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
-export default function OptionCard({ icon, title, subtitle, link, path }) {
+export default function OptionCard({ icon, title, subtitle, role, path }) {
   const navigate = useNavigate();
   
   const handleClick = () => {
-    navigate(path);
+    navigate(path, {
+      state: { role }, //  pass role
+    });
   };
   
   return( 
@@ -28,7 +30,7 @@ export default function OptionCard({ icon, title, subtitle, link, path }) {
       </div> 
 
       <div className="text-center text-primary flex items-center group-hover:underline text-sm"> 
-        {link} <IoIosArrowRoundForward className="text-2xl" /> 
+        {/* {link} <IoIosArrowRoundForward className="text-2xl" />  */}
       </div> 
     </div> 
   );
