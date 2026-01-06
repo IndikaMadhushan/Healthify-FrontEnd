@@ -72,7 +72,15 @@ function App() {
         path="/doctor-clinic-book/:patientId/:bookId"
         element={<DoctorClinicBookPage />}
       />
+
+      <Route
+        path="/patient-dashboard"
+        element={<Dashboard />}
+      />
+    
+ 
     </Routes>
+    
   );
 }
 
