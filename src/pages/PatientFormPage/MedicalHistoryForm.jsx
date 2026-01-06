@@ -138,12 +138,23 @@ export default function PatientMedicalForm() {
       </div>
 
       {/* Main save button */}
-      <button
+      {/* <button
         type="submit"
         className="mt-2 px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-md text-[15px] font-semibold"
       >
-        Save
-      </button>
+        Next
+      </button> */}
+
+      <div className="mt-2 flex justify-end">
+        <button
+          type="submit"
+          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        >
+          Next
+        </button>
+      </div>
+
+      
     </form>
   );
 }
