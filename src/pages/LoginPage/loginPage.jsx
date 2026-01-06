@@ -89,7 +89,7 @@
 
 //   return (
 //     <div className="min-h-screen flex flex-col">
-     
+
 
 //       {/* BACKGROUND IMAGE SECTION */}
 //       <div
@@ -200,24 +200,39 @@
 // }
 
 import Button from "../HomePage/HomeButton";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
-import Footer from "../../components/footer";
-import Header from "../HomePage/Header";
+// import Footer from "../../components/footer";
+// import Header from "../HomePage/Header";
 import { useState, useEffect } from "react";
+import { q } from "framer-motion/client";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const location = useLocation();
+
+  const role = location.state?.role;
+  const registerLink = role === "DOCTOR" ? "/doctor-register-1" : "/patient-register-1";
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleLogin = () => {
+    if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
+      navigate("/");
+    } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
+      navigate("/");
+    } else {
+      alert("Invalid password");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
-   
+
 
       {/* MAIN CONTENT */}
       <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
@@ -278,8 +293,10 @@ export default function LoginPage() {
 
               {/* LOGIN BUTTON */}
               <div className="mt-6">
+
                 <Button
-                  onClick={() => navigate("/option")}
+                  // onClick={() => navigate("/option")}
+                  onClick={handleLogin}
                   className="w-full py-3 text-[18px] rounded-xl"
                   type="button"
                   text="Login"
@@ -289,9 +306,9 @@ export default function LoginPage() {
 
               {/* SIGNUP */}
               <p className="text-center text-gray-600 mt-6">
-                Don’t have an account?{" "}
+                Don't have an account?{" "}
                 <Link
-                  to="/option"
+                  to={registerLink}
                   className="text-secondary font-medium hover:underline"
                 >
                   Signup here
