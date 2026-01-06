@@ -127,10 +127,10 @@ export function DoctorNavBar({
                 </button>
 
                 <button
-                  onClick={() => handleNavigation("/patient-dashboard")}
+                  onClick={() => handleNavigation("/patient-files-upload")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
-                  📊 Dashboard
+                  📊 File Upload
                 </button>
 
                 <button
