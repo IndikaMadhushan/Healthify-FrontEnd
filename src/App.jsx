@@ -13,6 +13,7 @@ import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
+import AfterRegisterPatient from "./pages/AfterRegisterPatient/AfterRegisterPatient";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/form" element={<PatientFormMain />} />
+      <Route path="/Afterform" element={  <AfterRegisterPatient/>} />
+    
       <Route path="/patientMain" element={<Dashboard />} />
 
       {/* Doctor Registration Routes */}
@@ -44,6 +47,11 @@ function App() {
       <Route
         path="/doctor-clinic-book/:patientId/:bookId"
         element={<DoctorClinicBookPage />}
+      />
+      
+      <Route
+        path="/patient-dashboard"
+        element={<Dashboard />}
       />
     </Routes>
   );

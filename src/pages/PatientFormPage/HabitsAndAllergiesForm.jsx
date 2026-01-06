@@ -367,7 +367,7 @@ export default function HabitsAndAllergiesForm({ onNext }) {
       </div>
 
       <div className="mt-2 flex justify-end">
-        <button
+        {/* <button
         type="button"
         className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
         onClick={() => {
@@ -376,7 +376,7 @@ export default function HabitsAndAllergiesForm({ onNext }) {
         }}
       >
         Next
-      </button>
+      </button> */}
       </div>
     </form>
   );
