@@ -60,12 +60,12 @@ export function DoctorNavBar({
           <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-secondary/10 rounded-lg">
             <img
               src={patient.profilePic}
-              alt={patient.fullName}
+              //alt={patient.fullName}
               className="w-10 h-10 rounded-full border-2 border-secondary object-cover"
             />
             <div>
               <p className="text-sm font-semibold text-gray-800">
-                Viewing Patient: {patient.fullName}
+                Patient: {patient.fullName}
               </p>
               <p className="text-xs text-gray-600">{patient.email}</p>
             </div>
@@ -172,13 +172,12 @@ export function DoctorNavBar({
         <div className="md:hidden flex items-center gap-2 pb-3 px-2 bg-secondary/5 rounded-lg mb-2">
           <img
             src={patient.profilePic}
-            //alt={patient.fullName}
+            alt={patient.fullName}
             className="w-8 h-8 rounded-full border-2 border-secondary object-cover"
           />
           <div>
             <p className="text-xs font-semibold text-gray-800">
-              {/*Patient: {patient.fullName} */}
-              {patient.fullName}
+              Patient: {patient.fullName}
             </p>
             <p className="text-[10px] text-gray-600">{patient.email}</p>
           </div>
