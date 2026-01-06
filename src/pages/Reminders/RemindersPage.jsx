@@ -8,7 +8,7 @@ import OtherSection from "./OtherSection";
 import PeriodSection from "./PeriodSection";
 import Footer from "./Footer";
 import { useState } from "react";
-import logo from "../../assets/logo.png";
+// import logo from "../../assets/logo.png";
 
 export default function RemindersPage(){
   const [activeTab, setActiveTab] = useState("today");
@@ -42,18 +42,18 @@ export default function RemindersPage(){
     <div className="min-h-screen bg-gray-50 flex flex-col">
       
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      {/* <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <img src={logo} className="w-28" />
-          <div className="text-right">
+          <div className="text-right"> */}
             {/* <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg">
                 
               </div> */}
-            <UserProfile />
+            {/* <UserProfile />
           </div>
         
         </div>
-      </header>
+      </header> */}
 
       <div className="max-w-6xl mx-auto p-6 flex-grow w-full">
 
@@ -103,7 +103,7 @@ export default function RemindersPage(){
 
       </div>
       
-     <Footer/>
+     
 
           
     </div>

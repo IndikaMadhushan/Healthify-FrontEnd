@@ -27,13 +27,14 @@ export default function TodaySection({
         <div className="space-y-3">
           {medicines.map(med => (
             <div key={med.id} className="flex items-center justify-between border rounded-lg p-4">
-              <div className="flex items-center space-x-4">
-                <Bell className="text-red-400 w-6 h-6" />
-                <span className="text-teal-600">{med.type}</span>
-                <span>{med.time}</span>
-                <span>{med.date}</span>
-                <span className="text-red-400 text-sm">{med.category}</span>
-              </div>
+              <div className="flex items-center justify-between w-full">
+  <span className="text-teal-600">{med.type}</span>
+  <span>{med.time}</span>
+  <span>{med.date}</span>
+  
+  <span className="text-red-400 text-sm pr-5">{med.category}</span>
+</div>
+
               <button 
   onClick={() => onMarkAsDone('medicine', med.id)}
   className={`px-4 py-1 rounded border ${
@@ -66,6 +67,7 @@ export default function TodaySection({
             <div key={apt.id} className="flex items-center justify-between border rounded-lg p-4">
               <div className="flex items-center space-x-4">
                 <div>
+                  
                   <div className="font-semibold">{apt.date}</div>
                   <div className="text-sm text-gray-600">{apt.time}</div>
                 </div>

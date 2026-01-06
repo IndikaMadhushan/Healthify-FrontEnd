@@ -109,6 +109,7 @@ import {
 
 import PatientFormMain from "../PatientFormPage/patientFormMain";
 import { PatinetNavBar } from "../../components/PatientNavBar";
+import RemindersPage from "../Reminders/RemindersPage";
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
@@ -198,7 +199,7 @@ function renderContent(active) {
     case "Summary":
     case "My Profile":
     case "Reminders":
-      return <UnderConstruction active={active} />;
+      return <RemindersPage />;
     case "Medical Info":
     // case "Upload Report":
       return <PatientFormMain />;
