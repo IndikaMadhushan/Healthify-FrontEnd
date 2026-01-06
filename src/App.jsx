@@ -14,6 +14,19 @@ import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
 
+import RemindersPage from "./pages/Reminders/RemindersPage";
+
+
+import UserProfile from "./pages/Reminders/UserProfile";
+import AppointmentSection from "./pages/Reminders/AppointmentSection";
+import Footer from "./components/footer";
+import Header from "./pages/HomePage/Header";
+import MedicineSection from "./pages/Reminders/MedicineSection";
+import OtherSection from "./pages/Reminders/OtherSection";
+import PeriodSection from "./pages/Reminders/PeriodSection";
+import Tabs from "./pages/Reminders/Tabs";
+import TodaySection from "./pages/Reminders/TodaySection";
+
 function App() {
   return (
     <Routes>
@@ -22,6 +35,20 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/form" element={<PatientFormMain />} />
       <Route path="/patientMain" element={<Dashboard />} />
+
+      <Route path="/reminders" element={<RemindersPage />} />
+
+
+      {/* Reminder page
+      <Route path="/Reminders" element={<UserProfile />} />
+      <Route path="/Reminders" element={<AppointmentSection />} />
+      <Route path="/Reminders" element={<Footer />} />
+      <Route path="/Reminders" element={<Header />} />
+      <Route path="/Reminders" element={<MedicineSection />} />
+      <Route path="/Reminders" element={<OtherSection />} />
+      <Route path="/Reminders" element={<PeriodSection />} />
+      <Route path="/Reminders" element={<Tabs />} />
+      <Route path="/Reminders" element={<TodaySection />} /> */}
 
       {/* Doctor Registration Routes */}
       <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
@@ -45,7 +72,15 @@ function App() {
         path="/doctor-clinic-book/:patientId/:bookId"
         element={<DoctorClinicBookPage />}
       />
+
+      <Route
+        path="/patient-dashboard"
+        element={<Dashboard />}
+      />
+    
+ 
     </Routes>
+    
   );
 }
 
