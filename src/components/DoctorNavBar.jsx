@@ -111,7 +111,7 @@ export function DoctorNavBar({
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                 <button
-                  onClick={() => handleNavigation("/")}
+                  onClick={() => handleNavigation("/doctor-dashboard")}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   🏠 Home
@@ -126,7 +126,7 @@ export function DoctorNavBar({
                 </div>
 
                 <button
-                  onClick={() => handleNavigation("/doctor-dashboard")}
+                  // onClick={() => handleNavigation("/doctor-consult")}
                   className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   👤 Profile
@@ -156,7 +156,7 @@ export function DoctorNavBar({
                 </button> */}
 
                 <button
-                  onClick={() => handleNavigation("/doctor-profile")}
+                  // onClick={() => handleNavigation("/doctor-profile")}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   📈 My Dashboard
