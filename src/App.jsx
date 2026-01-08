@@ -9,7 +9,7 @@ import DoctorRegisterPage1 from "./pages/DoctorRegisterPage/DoctorRegisterPage1"
 import DoctorRegisterPage2 from "./pages/DoctorRegisterPage/DoctorRegisterPage2";
 import PatientRegisterPage1 from "./pages/PatientRegisterPage/PatientRegisterPage1";
 import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPage2";
-import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
+import DoctorDashBoardPage from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
@@ -58,8 +58,14 @@ function App() {
       <Route path="/patient-register-1" element={<PatientRegisterPage1 />} />
       <Route path="/patient-register-2" element={<PatientRegisterPage2 />} />
 
+
+      <Route path="/patient-dashboard" element={<Dashboard />} />
+
+
+      
+
       {/* Doctor dashboard Page */}
-      <Route path="/doctor-dashboard" element={<DoctorDashBoard />} />
+      <Route path="/doctor-dashboard" element={<DoctorDashBoardPage />} />
 
       {/* Doctor Consult Page */}
       <Route

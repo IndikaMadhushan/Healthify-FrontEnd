@@ -1,5 +1,6 @@
 // Patient Navigation Bar Component
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function PatinetNavBar({
   patientData,
@@ -35,6 +36,8 @@ export function PatinetNavBar({
       sessionStorage.clear();
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -94,7 +97,11 @@ export function PatinetNavBar({
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    navigate("/");
+                    setDropdownOpen(false);
+                  }}
+                  // onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
                 >
                   🚪 Logout
