@@ -222,9 +222,9 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
-      navigate("/");
+      navigate("/doctor-dashboard");
     } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
-      navigate("/");
+      navigate("/patient-dashboard");
     } else {
       alert("Invalid password");
     }

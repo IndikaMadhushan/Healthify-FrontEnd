@@ -109,7 +109,7 @@ export default function DoctorRegisterPage2() {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     sessionStorage.removeItem("doctorRegistrationComplete");
-    navigate("/doctor-dashboard", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (

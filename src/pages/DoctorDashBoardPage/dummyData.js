@@ -1,12 +1,13 @@
 // FILE 1: src/pages/DoctorProfilePage/dummyData.js
+import pic from "../../assets/p1.jpg"
 
 export const dummyDoctor = {
-  fullName: "Dr. Sarah Johnson",
+  fullName: "Dr. Samantha Silva",
   slmcNumber: "SLMC23456",
   specialization: "Cardiologist",
   hospital: "Colombo General Hospital",
-  nic: "8M123456",
-  profileImage: "/profilePic.png",
+  nic: "200213402187",
+  profileImage: pic,
 };
 
 export const dummyPatients = [

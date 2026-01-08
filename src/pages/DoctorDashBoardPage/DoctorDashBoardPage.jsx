@@ -28,7 +28,7 @@ export default function DoctorProfilePage() {
     });
 
     // Navigate to patient profile placeholder
-    navigate(`/patient-profile/${patient.id}`);
+    navigate(`/doctor-consult/${patient.id}`);
   };
 
   return (
