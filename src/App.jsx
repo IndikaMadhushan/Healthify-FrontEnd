@@ -3,8 +3,6 @@ import "./App.css";
 import HomePage from "./pages/HomePage/HomePage";
 import OptionPage from "./pages/SignupOptionPage/optionPage";
 import LoginPage from "./pages/LoginPage/loginPage";
-
-import PatientFormMain from "./pages/PatientFormPage/patientFormMain";
 import DoctorRegisterPage1 from "./pages/DoctorRegisterPage/DoctorRegisterPage1";
 import DoctorRegisterPage2 from "./pages/DoctorRegisterPage/DoctorRegisterPage2";
 import PatientRegisterPage1 from "./pages/PatientRegisterPage/PatientRegisterPage1";
@@ -12,7 +10,9 @@ import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPag
 import DoctorDashBoardPage from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
-import Dashboard from "./pages/PatientMainUI/Sidebar";
+import Dashboard from "./pages/PatientMainUI/Dashboard";
+import PatientFormDoctorView from "./pages/PatientFormPage/patientFormDoctorView";
+import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 
 import RemindersPage from "./pages/Reminders/RemindersPage";
 
@@ -33,7 +33,10 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/form" element={<PatientFormMain />} />
+      <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
+      <Route path="/firstFillForm" element={<PatientFirstFillForm/> } />
+    
+    
       <Route path="/patientMain" element={<Dashboard />} />
 
       <Route path="/reminders" element={<RemindersPage />} />
@@ -78,13 +81,11 @@ function App() {
         path="/doctor-clinic-book/:patientId/:bookId"
         element={<DoctorClinicBookPage />}
       />
-
+      
       <Route
         path="/patient-dashboard"
         element={<Dashboard />}
       />
-    
- 
     </Routes>
     
   );
