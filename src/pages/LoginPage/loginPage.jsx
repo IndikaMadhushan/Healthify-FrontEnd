@@ -202,15 +202,16 @@
 import Button from "../HomePage/HomeButton";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
-// import Footer from "../../components/footer";
-// import Header from "../HomePage/Header";
 import { useState, useEffect } from "react";
+import { loginApi } from "../../api/authApi"
 import { q } from "framer-motion/client";
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const location = useLocation();
 
   const role = location.state?.role;
@@ -220,15 +221,48 @@ export default function LoginPage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleLogin = () => {
-    if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
-      navigate("/doctor-dashboard");
-    } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
-      navigate("/patient-dashboard");
-    } else {
-      alert("Invalid password");
+
+  // THE HARDCODE LOG IN PART
+
+  // const handleLogin = () => {
+  //   if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
+  //     navigate("/doctor-dashboard");
+  //   } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
+  //     navigate("/patient-dashboard");
+  //   } else {
+  //     alert("Invalid password");
+  //   }
+  // };
+
+  const handleLogin = async () => {
+    try {
+      setError("");
+      // call for backend
+      const data = await loginApi(email, password);
+      // store token in local storage
+      localStorage.setItem("token", data.token);
+
+      //decode JWT
+      const decode = jwtDecode(data.token);
+      const role = decode.role;
+
+      // redirecting according to the role
+      if(role === "PATIENT"){
+        navigate("/patient-dashboard");
+      } else if(role === "DOCTOR"){
+        navigate("/doctor-dashboard");
+      } else if (role === "ADMIN"){
+        //navigate("/admin-dashboard");
+      } else {
+        setError("Unknown User Role");
+      }
+
+    }catch (err){
+      setError(
+        err.response?.data?.message || "Invalid email or password"
+      );
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
