@@ -14,6 +14,8 @@ import { PatinetNavBar } from "../../components/PatientNavBar";
 import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 
 import RemindersPage from "../Reminders/RemindersPage";
+import MyProfile from "./PatientProfilePage";
+
 // import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
 export default function Dashboard() {
@@ -102,6 +104,7 @@ function renderContent(active) {
   switch (active) {
     case "Summary":
     case "My Profile":
+      return <MyProfile />;
     case "Upload Report":
       return <UnderConstruction active={active} />;
     
