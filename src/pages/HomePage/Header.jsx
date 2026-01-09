@@ -27,6 +27,13 @@ const goToAbout = () => {
   
 };
 
+const goToHome = () => {
+  const element = document.getElementById("home");
+  if(element) {
+    element.scrollIntoView({behavior : "smooth"})
+  }
+}
+
 export default function Header(){
 
 
@@ -44,7 +51,7 @@ export default function Header(){
         <div className="pt-5">
         <div className="flex flex-row  text-sm text-mainblack font-semibold items-center lg:gap-10 md:gap-5 ">
             <div>
-                  <p className="hidden md:block cursor-pointer" onClick={() => navigate("/")}>Home</p>
+                  <p className="hidden md:block cursor-pointer" onClick={goToHome}>Home</p>
             </div>
             
             <div>
@@ -57,7 +64,7 @@ export default function Header(){
                   <p className="hidden md:block cursor-pointer" onClick={goToFooter}>Contact</p> 
             </div>
             <div>
-                <Button onClick={() => navigate("/option")}
+                <Button onClick={() => navigate("/login")}
                 type="button"
                 text="Login"
                  className="py-1 px-6  font-bold  focus:outline-none hidden md:block"

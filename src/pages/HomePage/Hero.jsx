@@ -25,7 +25,7 @@ const Hero = ({ colorDeep, FirstText, mainText, subText, img }) => {
           {subText}
         </p>
 
-        <Button onClick={() => navigate("/option")}
+        <Button onClick={() => navigate("/login")}
           type="button"
           text="Get Started"
           className="lg:mt-8 my-4 sm:text-lg text-sm font-bold py-4 px-9 focus:outline-none "
