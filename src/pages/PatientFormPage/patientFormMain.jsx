@@ -169,6 +169,7 @@ export default function PatientFormMain() {
         <div className="w-full md:w-2/3 lg:w-3/4 mx-2 border2 border-gray-300 bg-white shadow-md p-4">
           {renderSection()}
         </div>
+        
       </div>
     </>
   );
