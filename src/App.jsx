@@ -10,7 +10,7 @@ import PatientRegisterPage2 from "./pages/PatientRegisterPage/PatientRegisterPag
 import DoctorDashBoardPage from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
-import Dashboard from "./pages/PatientMainUI/Dashboard";
+import Dashboard from "./pages/PatientMainUI/Sidebar";
 import PatientFormDoctorView from "./pages/PatientFormPage/patientFormDoctorView";
 import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 
