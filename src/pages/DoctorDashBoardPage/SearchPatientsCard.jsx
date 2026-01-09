@@ -48,7 +48,7 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {searchQuery.trim() === "" && (
           <p className="text-sm text-gray-500 text-center py-4">
-            Enter NIC number to search patients
+            Enter ID number to search patients
           </p>
         )}
 

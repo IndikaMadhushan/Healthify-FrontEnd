@@ -13,6 +13,8 @@ import {
 import { PatinetNavBar } from "../../components/PatientNavBar";
 import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 
+import RemindersPage from "../Reminders/RemindersPage";
+// import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
@@ -100,8 +102,12 @@ function renderContent(active) {
   switch (active) {
     case "Summary":
     case "My Profile":
-    case "Reminders":
+    case "Upload Report":
       return <UnderConstruction active={active} />;
+    
+    
+    case "Reminders":
+      return <RemindersPage />;
     case "Medical Info":
     case "Upload Report":
       return <PatientFormDoctorView />;

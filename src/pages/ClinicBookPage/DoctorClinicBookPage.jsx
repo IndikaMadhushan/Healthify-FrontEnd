@@ -17,6 +17,7 @@ export default function DoctorClinicBookPage() {
   const patientInfo = {
     patientId: "UR5678",
     fullName: "Parindya Hewage",
+    email: "parindya@gmail.com",
     age: 23,
     gender: "Female",
   };
