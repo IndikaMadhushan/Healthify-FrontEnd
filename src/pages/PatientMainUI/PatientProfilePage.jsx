@@ -132,7 +132,7 @@ const patient = {
   maritalStatus: "Single",
   nic: "200123456789",
   occupation: "Undergraduate",
-  address: "No 45, Galle Road",
+  address: "No 45, Galle Road weligama",
   district: "Galle",
   contact: "0771234567",
   email: "parindya@gmail.com",
@@ -157,17 +157,17 @@ export default function MyProfile() {
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-10">
 
         {/* HEADER */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
+        <div className="flex flex-row sm:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 className="text-3xl font-semibold text-[#18AAB0]">
+            <h1 className="md:text-3xl text-2xl font-semibold text-[#18AAB0]">
               Patient Profile
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-500 md:text-sm text-xs mt-1">
               View and manage personal health information
             </p>
           </div>
 
-          <button className="self-start sm:self-auto px-6 py-2.5 rounded-full bg-[#18AAB0] text-white text-sm font-medium hover:opacity-90 transition">
+          <button className="self-start sm:self-auto px-6 py-2.5 rounded-full bg-[#18AAB0] text-white xs:text-sm text-xs font-medium hover:opacity-90 transition">
             Edit Profile
           </button>
         </div>
@@ -176,7 +176,7 @@ export default function MyProfile() {
 
         {/* ===== PROFILE HEADER SECTION ===== */}
         <div className="bg-white border border-[#D3F0ED] rounded-2xl px-8 py-6 mb-10 shadow-sm">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-10">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
 
            
             <div className="relative flex items-center justify-center">
@@ -231,7 +231,7 @@ export default function MyProfile() {
 
 
         {/* PERSONAL INFORMATION */}
-        <ProfileSection title="Personal Information">
+        <ProfileSection1 title="Personal Information" margin="mb-10">
           <Info label="Full Name" value={patient.fullName} />
           <Info label="Date of Birth" value={patient.dob} />
           <Info label="Age" value={patient.age} />
@@ -240,18 +240,21 @@ export default function MyProfile() {
           <Info label="Marital Status" value={patient.maritalStatus} />
           <Info label="NIC" value={patient.nic} />
           <Info label="Occupation" value={patient.occupation} />
-        </ProfileSection>
+        </ProfileSection1>
 
         {/* CONTACT INFORMATION */}
-        <ProfileSection title="Contact Information">
-          <Info label="Address" value={patient.address} />
+        <ProfileSection1 title="Contact Information" >
           <Info label="District" value={patient.district} />
           <Info label="Contact Number" value={patient.contact} />
+        </ProfileSection1>
+        <ProfileSection2 margin="mb-10 mt-4" >
+          <Info label="Address" value={patient.address} />
           <Info label="Email Address" value={patient.email} />
-        </ProfileSection>
+        </ProfileSection2>
+        
 
         {/* EMERGENCY CONTACTS */}
-        <ProfileSection title="Emergency Contacts">
+        <ProfileSection1 title="Emergency Contacts" margin="mb-10">
 
           {/* PRIMARY */}
           <SectionLabel text="Primary Emergency Contact" />
@@ -270,7 +273,7 @@ export default function MyProfile() {
               <Info label="Contact Number" value={patient.emergency2.contact} />
             </>
           )}
-        </ProfileSection>
+        </ProfileSection1>
 
       </div>
     </div>
@@ -279,17 +282,29 @@ export default function MyProfile() {
 
 /* ================== UI COMPONENTS ================== */
 
-function ProfileSection({ title, children }) {
+function ProfileSection1({ title, children, margin }) {
   return (
-    <div className="mb-10">
+    <div className={margin}>
       <h2 className="text-lg font-semibold text-[#0F4F52] mb-4">
         {title}
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {children}
       </div>
     </div>
+  );
+}
+
+function ProfileSection2({  children, margin  }) {
+  return (
+    
+    <div className={margin}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {children}
+      </div>
+    </div>
+  
   );
 }
 
