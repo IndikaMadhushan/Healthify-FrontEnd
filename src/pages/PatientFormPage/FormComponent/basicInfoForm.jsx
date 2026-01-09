@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 
 const basic_form = {
   fullName: "",
@@ -15,7 +16,7 @@ const basic_form = {
   nationalId: ""
 };
 
-export default function BasicInfoForm({ showButton=false,onNext }) {
+const BasicInfoForm = forwardRef(({ showButton=false,onNext }, ref) => {
   const [form, setForm] = useState(basic_form);
   const [errors, setErrors] = useState({});
 
@@ -109,6 +110,11 @@ if (!form.contactNumber) {
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
+
+    useImperativeHandle(ref, () => ({
+      validate: validateAll,
+      getData: () => form
+    }));
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({
@@ -362,3 +368,6 @@ if (!form.contactNumber) {
     </div>
   );
 }
+);
+
+export default BasicInfoForm;

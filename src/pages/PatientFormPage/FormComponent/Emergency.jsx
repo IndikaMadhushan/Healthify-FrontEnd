@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { forwardRef, useImperativeHandle } from "react";
 
 const initialEmergency = {
   primary: {
@@ -13,7 +14,7 @@ const initialEmergency = {
   }
 };
 
-export default function EmergencyContactForm({ showButton=false }) {
+const EmergencyContactForm = forwardRef(({ showButton=false }, ref) => {
   const [form, setForm] = useState(initialEmergency);
   const [errors, setErrors] = useState({});
 
@@ -28,19 +29,56 @@ export default function EmergencyContactForm({ showButton=false }) {
     }));
   };
 
-  const validate = () => {
-    const newErrors = {};
+const validate = () => {
+  const newErrors = {};
 
-    if (!form.primary.name.trim()) {
-      newErrors.primaryName = "Emergency contact person is required";
-    }
-    if (!form.primary.phone.trim()) {
-      newErrors.primaryPhone = "Emergency contact number is required";
-    }
+  // Name required
+  if (!form.primary.name.trim()) {
+    newErrors.primaryName = "Emergency contact person is required";
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Phone – Sri Lanka validation
+  if (!form.primary.phone) {
+    newErrors.primaryPhone = "Emergency contact number is required";
+  } else {
+    const number = form.primary.phone;
+
+    // Must be exactly 10 digits
+    if (!/^\d{10}$/.test(number)) {
+      newErrors.primaryPhone =
+        "Contact number must have exactly 10 digits";
+    } else {
+      const validPrefixes = [
+        "011","031","033","034","038","036",
+        "054","081","051","052","066",
+        "091","041","047",
+        "032","037",
+        "021","023","024",
+        "063","067","065","026",
+        "025","027",
+        "055","057",
+        "045","035",
+        "070","071","072","074",
+        "075","076","077","078"
+      ];
+
+      const prefix = number.substring(0, 3);
+
+      if (!validPrefixes.includes(prefix)) {
+        newErrors.primaryPhone =
+          "Invalid Sri Lanka contact number";
+      }
+    }
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+  
+    useImperativeHandle(ref, () => ({
+      validate,
+      getData: () => form
+    }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -178,4 +216,6 @@ export default function EmergencyContactForm({ showButton=false }) {
     )}
     </form>
   );
-}
+});
+
+export default EmergencyContactForm;

@@ -15,6 +15,7 @@ import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 
 import RemindersPage from "../Reminders/RemindersPage";
 import MyProfile from "./PatientProfilePage";
+import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
 
 // import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
@@ -112,6 +113,7 @@ function renderContent(active) {
     case "Reminders":
       return <RemindersPage />;
     case "Medical Info":
+      return <PatientMediInfomation/>
     case "Upload Report":
       return <PatientFormDoctorView />;
     default:

@@ -122,6 +122,9 @@ import ProfileImageCropper from "../../components/profileImageCropper";
 //     </div>
 //   );
 // }
+import { useState } from "react";
+import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
+
 
 const patient = {
   fullName: "Parindya Hewage",
@@ -152,7 +155,9 @@ const patient = {
 };
 
 export default function MyProfile() {
+  const [openEdit, setOpenEdit] = useState(false);
   return (
+  
     <div className="min-h-screen  px-4">
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-sm p-6 sm:p-10">
 
@@ -167,9 +172,15 @@ export default function MyProfile() {
             </p>
           </div>
 
-          <button className="self-start sm:self-auto px-6 py-2.5 rounded-full bg-[#18AAB0] text-white xs:text-sm text-xs font-medium hover:opacity-90 transition">
-            Edit Profile
-          </button>
+          
+          <div className="flex justify-end">
+            <button
+              onClick={() => setOpenEdit(true)}
+              className="px-5 py-2 rounded-full bg-[#18AAB0] text-white text-sm"
+            >
+              Edit Profile
+            </button>
+           </div>
         </div>
         
        
@@ -276,6 +287,9 @@ export default function MyProfile() {
         </ProfileSection1>
 
       </div>
+      {openEdit && (
+        <PatientProfileEdit onClose={() => setOpenEdit(false)} />
+      )}
     </div>
   );
 }
