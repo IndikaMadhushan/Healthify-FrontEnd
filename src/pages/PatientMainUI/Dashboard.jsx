@@ -11,7 +11,8 @@ import {
 
 
 import { PatinetNavBar } from "../../components/PatientNavBar";
-import PatientFormDoctorView from "../PatientFormPage/PatientFormDoctorView";
+import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
+
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
@@ -24,7 +25,6 @@ export default function Dashboard() {
       
       {/* MAIN LAYOUT */}
       <div className="flex flex-1 overflow-hidden">
-
         {/* LEFT SIDEBAR (DESKTOP ONLY) */}
         <div className="hidden sm:block w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
           <SidebarButton text="Summary" icon={<FaHome />} active={active} setActive={setActive} />

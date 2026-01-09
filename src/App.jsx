@@ -11,7 +11,7 @@ import DoctorDashBoard from "./pages/DoctorDashBoardPage/DoctorDashBoardPage";
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Dashboard";
-import PatientFormDoctorView from "./pages/PatientFormPage/PatientFormDoctorView";
+import PatientFormDoctorView from "./pages/PatientFormPage/patientFormDoctorView";
 import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 
 function App() {
