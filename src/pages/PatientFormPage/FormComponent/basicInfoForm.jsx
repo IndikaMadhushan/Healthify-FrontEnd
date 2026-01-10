@@ -23,24 +23,44 @@ const BasicInfoForm = forwardRef(({ showButton=false,onNext }, ref) => {
   const validateAll = () => {
   const newErrors = {};
 
+
   if (!form.fullName.trim()) newErrors["basic.fullName"] = "Full name is required";
-  if (!form.dob) newErrors["basic.dob"] = "Date of birth is required";
+  if (!form.dob) {
+      newErrors["basic.dob"] = "Date of birth is required";
+    } else {
+      const dob = new Date(form.dob);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      if (age < 0 || age > 150) {
+        newErrors["basic.dob"] = "Please enter a valid date of birth";
+      }
+  }
   if (!form.age) newErrors["basic.age"] = "Age is required";
   if (!form.gender) newErrors["basic.gender"] = "Gender is required";
   if (!form.nationality) newErrors["basic.nationality"] = "Nationality is required";
   if (!form.occupation) newErrors["basic.occupation"] = "Occupation is required";
   if (!form.address) newErrors["basic.address"] = "Address is required";
   if (!form.mainCity) newErrors["basic.mainCity"] = "District is required";
-  // if (!form.contactNumber) newErrors["basic.contactNumber"] = "Contact number is required";
+  if (!form.status) newErrors["basic.status"] = "Status is required";
   if (!form.nationalId) newErrors["basic.nationalId"] = "NIC number is required";
 
-  // ✅ EMAIL REQUIRED + FORMAT
+  if (!form.nationalId.trim()) {
+      newErrors["basic.nationalId"] = "NIC number is required";
+    } else if (
+      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(form.nationalId.trim())
+    ) {
+      newErrors["basic.nationalId"] =
+        "Invalid NIC format (e.g., 123456789V or 123456789012)";
+  }
+
+  // EMAIL REQUIRED + FORMAT
   if (!form.email) {
     newErrors["basic.email"] = "Email is required";
   } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
     newErrors["basic.email"] = "Invalid email address";
   }
 
+  //contact validation
 if (!form.contactNumber) {
   newErrors["basic.contactNumber"] = "Contact number is required";
 } else {
@@ -129,12 +149,10 @@ if (!form.contactNumber) {
     if (!ok) return;
 
     console.log("Valid form:", form);
-    alert("Form valid (frontend only)");
+    alert("Form valid ");
   };
 
-  /** -------------------
-      MODERN UI STYLES
-  -------------------- */
+
   const inputBase =
     "mt-1 w-full h-10 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 " +
     "focus:ring-2 focus:ring-secondary focus:border-secondary transition outline-none";
@@ -202,15 +220,15 @@ if (!form.contactNumber) {
           <div className="mt-1 flex gap-6 ml-4 text-[15px] text-gray-700">
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="male"
-                checked={form.gender === "male"} onChange={handleChange("gender")} /> Male
+                checked={form.gender === "male"} onChange={handleChange("gender")} className={withError("basic.gender")}/> Male
             </label>
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="female"
-                checked={form.gender === "female"} onChange={handleChange("gender")} /> Female
+                checked={form.gender === "female"} onChange={handleChange("gender")} className={withError("basic.gender")} /> Female
             </label>
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="other"
-                checked={form.gender === "other"} onChange={handleChange("gender")} /> Other
+                checked={form.gender === "other"} onChange={handleChange("gender")} className={withError("basic.gender")} /> Other
             </label>
           </div>
           {errors["basic.gender"] && (
@@ -218,13 +236,14 @@ if (!form.contactNumber) {
           )}
         </div>
 
+
         {/* Nationality */}
         <div className="px-2">
           <label className={labelCss}>Nationality *</label>
           <select
             value={form.nationality}
             onChange={handleChange("nationality")}
-            className={inputBase + " border-gray-300"}
+            className={inputBase + " border-gray-300" + " " + withError("basic.nationality")}
           >
             <option value="">Select nationality</option>
             <option value="Sinhala">Sinhala</option>
@@ -232,6 +251,9 @@ if (!form.contactNumber) {
             <option value="Muslim">Muslim</option>
             <option value="Other">Other</option>
           </select>
+          {errors["basic.nationality"] && (
+            <p className="text-red-500 text-xs mt-1">{errors["basic.nationality"]}</p>
+          )}
         </div>
 
         {/* Marital Status */}

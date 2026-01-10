@@ -28,7 +28,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
     alert("Habits & allergies data saved (check console)");
   };
 
-  // ✅ UI helper classes (only design)
+  // UI helper classes 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
   const labelTitle = "text-[15px] font-semibold text-gray-700";
   const smallLabel = "text-[14px] text-gray-700 mb-1";
