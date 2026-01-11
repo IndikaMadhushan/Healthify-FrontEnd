@@ -9,6 +9,7 @@ const CATEGORIES = {
   PRESCRIPTIONS: "prescriptions",
   VACCINES: "vaccines",
   CLINIC_BOOK: "clinic-book",
+  SURGERIES: "surgeries",
   CUSTOM: "custom-folders",
 };
 
@@ -20,6 +21,7 @@ export default function MedicalReportsPage({ onNavigateToUpload }) {
   const [vaccines, setVaccines] = useState([]);
   const [clinicBook, setClinicBook] = useState([]);
   const [customFolders, setCustomFolders] = useState([]);
+  const [surgeries, setSurgeries] = useState([]);
 
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentFiles, setCurrentFiles] = useState([]);
@@ -54,19 +56,27 @@ export default function MedicalReportsPage({ onNavigateToUpload }) {
   const loadAllData = useCallback(async () => {
     setLoading(true);
     try {
-      const [labData, prescData, vaccineData, clinicData, folderData] =
-        await Promise.all([
-          loadFromStorage(userId, CATEGORIES.LAB_REPORTS),
-          loadFromStorage(userId, CATEGORIES.PRESCRIPTIONS),
-          loadFromStorage(userId, CATEGORIES.VACCINES),
-          loadFromStorage(userId, CATEGORIES.CLINIC_BOOK),
-          loadFromStorage(userId, CATEGORIES.CUSTOM),
-        ]);
+      const [
+        labData,
+        prescData,
+        vaccineData,
+        clinicData,
+        surgeryData,
+        folderData,
+      ] = await Promise.all([
+        loadFromStorage(userId, CATEGORIES.LAB_REPORTS),
+        loadFromStorage(userId, CATEGORIES.PRESCRIPTIONS),
+        loadFromStorage(userId, CATEGORIES.VACCINES),
+        loadFromStorage(userId, CATEGORIES.CLINIC_BOOK),
+        loadFromStorage(userId, CATEGORIES.SURGERIES),
+        loadFromStorage(userId, CATEGORIES.CUSTOM),
+      ]);
 
       setLabReports(labData);
       setPrescriptions(prescData);
       setVaccines(vaccineData);
       setClinicBook(clinicData);
+      setSurgeries(surgeryData);
       setCustomFolders(folderData);
     } catch (error) {
       console.error("Failed to load data:", error);
@@ -94,6 +104,12 @@ export default function MedicalReportsPage({ onNavigateToUpload }) {
         break;
       case CATEGORIES.CLINIC_BOOK:
         files = clinicBook;
+        break;
+      case CATEGORIES.SURGERIES:
+        files = surgeries;
+        break;
+      case CATEGORIES.CUSTOM:
+        files = customFolders;
         break;
       default:
         files = [];
@@ -185,6 +201,22 @@ export default function MedicalReportsPage({ onNavigateToUpload }) {
       id: CATEGORIES.CLINIC_BOOK,
       title: "Clinic Book",
       count: clinicBook.length,
+      color: "bg-orange-100",
+      textColor: "text-orange-700",
+      icon: "📋",
+    },
+    {
+      id: CATEGORIES.SURGERIES,
+      title: "Surgeries",
+      count: surgeries.length,
+      color: "bg-red-100",
+      textColor: "text-red-700",
+      icon: "🩺",
+    },
+    {
+      id: CATEGORIES.CUSTOM,
+      title: "Create folder",
+      count: customFolders.length,
       color: "bg-orange-100",
       textColor: "text-orange-700",
       icon: "📋",
