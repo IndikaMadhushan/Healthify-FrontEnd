@@ -21,7 +21,7 @@ export default function DoctorConsultPage() {
     email: "parindya@gmail.com", // For email notifications
     age: 23,
     gender: "Female",
-    medicationPurpose: "Treat Gastritis",
+    //medicationPurpose: "Treat Gastritis",
   };
 
   // ==================== STATE ====================
