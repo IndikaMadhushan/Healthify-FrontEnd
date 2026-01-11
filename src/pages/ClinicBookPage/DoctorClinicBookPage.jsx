@@ -6,6 +6,7 @@ import { DoctorNavBar } from "../../components/DoctorNavBar";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
+import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
@@ -20,6 +21,7 @@ export default function DoctorClinicBookPage() {
     email: "parindya@gmail.com",
     age: 23,
     gender: "Female",
+    medicationPurpose: "Treat Gastritis",
   };
 
   // ==================== MOCK PAST CLINIC PAGES ====================
@@ -60,6 +62,9 @@ export default function DoctorClinicBookPage() {
     temperature: "",
     weight: "",
     respiratoryRate: "",
+    suggestedTests: "",
+    doctorNote: "",
+    nextClinicDate: "",
     medication: "",
   });
 
@@ -346,6 +351,10 @@ export default function DoctorClinicBookPage() {
                 showMedicationPurpose={false}
               />
               <PastClinicPagesCard pastPages={pastPages} />
+              <AdditionalNotesCard
+                formData={formData}
+                onChange={handleChange}
+              />
             </div>
             {/* RIGHT COLUMN */}
             <div className="lg:col-span-2 space-y-6">
@@ -362,9 +371,12 @@ export default function DoctorClinicBookPage() {
 
               <VitalSignsCard formData={formData} onChange={handleChange} />
 
+              {/* ADD-------------------- */}
+
               <MedicationCard formData={formData} onChange={handleChange} />
 
               {/* ACTION BUTTONS */}
+
               <div className="flex justify-between items-center mt-6">
                 {isCompleted && (
                   <div className="flex gap-3">
