@@ -15,9 +15,16 @@ import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
 
+//test
+import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
+import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
+import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
 function App() {
   return (
     <Routes>
+      <Route path="/customize-folders" element={<CustomizeFolder />} />
+      <Route path="/report-upload" element={<Uploader />} />
+      <Route path="/vaccine-page" element={<VaccinePage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
