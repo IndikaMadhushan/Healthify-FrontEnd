@@ -28,6 +28,8 @@ import Tabs from "./pages/Reminders/Tabs";
 import TodaySection from "./pages/Reminders/TodaySection";
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
+import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
+import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
 function App() {
   return (
@@ -91,6 +93,9 @@ function App() {
       />
       <Route path="/prescription" element={<PrescriptionList />} />
       <Route path="/verify/:id" element={<PrescriptionVerify />} />
+
+      <Route path="/surgeries" element={<SurgeryHistory />} />
+        <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder/>} />
     </Routes>
     
     
