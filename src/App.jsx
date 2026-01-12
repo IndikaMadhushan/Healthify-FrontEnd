@@ -26,6 +26,8 @@ import OtherSection from "./pages/Reminders/OtherSection";
 import PeriodSection from "./pages/Reminders/PeriodSection";
 import Tabs from "./pages/Reminders/Tabs";
 import TodaySection from "./pages/Reminders/TodaySection";
+import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
+import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 
 function App() {
   return (
@@ -76,6 +78,7 @@ function App() {
         element={<DoctorConsultPage />}
       />
 
+      {/* http://localhost:5173/doctor-clinic-book/:UR5678/:CB001 */}
       {/* Doctor Clinic Book Page */}
       <Route
         path="/doctor-clinic-book/:patientId/:bookId"
@@ -86,7 +89,10 @@ function App() {
         path="/patient-dashboard"
         element={<Dashboard />}
       />
+      <Route path="/prescription" element={<PrescriptionList />} />
+      <Route path="/verify/:id" element={<PrescriptionVerify />} />
     </Routes>
+    
     
   );
 }
