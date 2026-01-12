@@ -1,40 +1,52 @@
+
 import Footer from "../../components/footer";
 import OptionCard from "./optionCard";
-import { Link } from "react-router-dom";
 import { FaUserDoctor } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import Header from "../HomePage/Header";
 
 export default function OptionPage() {
   return (
-    <div>
-      <Header />
-      <div className="w-full  md:h-screen flex flex-col justify-center items-center gap-4 md:py-0 py-10 px-4">
-        <div className="md:mb-11 mb-5">
-          <div className="md:text-3xl text-2xl font-bold text-center">
-            <span className="text-secondary">Signup </span>Healthify As...
-          </div>
-          <div className="md:text-[20px] text-[15px] text-center">
-            Select your account type to get started
-          </div>
+    <div className="min-h-screen w-full items-center justify-center bg-gradient-to-br flex from-[#F7FCFB] via-white to-[#EAF7F6]  ">
+   
+      <div className="flex flex-col items-center justify-center px-4 py-16">
+
+        {/* TITLE SECTION */}
+        <div className="text-center max-w-xl mb-14">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#0F4F52]">
+            Join <span className="text-secondary">Healthify</span>
+          </h1>
+          <p className="mt-3 text-gray-600 text-base md:text-lg">
+            Choose how you want to access and manage healthcare services
+          </p>
         </div>
 
-        <div className="flex md:flex-row flex-col gap-10 justify-center items-center">
+        {/* OPTION CARDS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl justify-items-center ">
+          
           <OptionCard
             icon={<FaUserDoctor />}
-            title="I’m a Doctor"
-            subtitle="Access patient records and provide better care"
+            title="Doctor Account"
+            subtitle="Access patient records and manage prescriptions securely"
             role="DOCTOR"
             path="/doctor-register-1"
           />
+
           <OptionCard
             icon={<FaUser />}
-            title="I’m a Patient"
-            subtitle="Manage health records and track your wellness journey"
+            title="Patient Account"
+            subtitle="Track medical history, prescriptions, and reports"
             role="PATIENT"
             path="/patient-register-1"
           />
+
         </div>
+
+        {/* TRUST NOTE */}
+        <div className="mt-14 text-sm text-gray-500 text-center max-w-md">
+          Your data is protected using healthcare-grade security standards.
+        </div>
+
       </div>
 
       {/* <Footer /> */}

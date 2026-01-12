@@ -14,6 +14,9 @@ import { PatinetNavBar } from "../../components/PatientNavBar";
 import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 
 import RemindersPage from "../Reminders/RemindersPage";
+import MyProfile from "./PatientProfilePage";
+import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
+
 // import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
 export default function Dashboard() {
@@ -28,7 +31,7 @@ export default function Dashboard() {
       {/* MAIN LAYOUT */}
       <div className="flex flex-1 overflow-hidden">
         {/* LEFT SIDEBAR (DESKTOP ONLY) */}
-        <div className="hidden sm:block w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
+        <div className="hidden sm:block lg:w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
           <SidebarButton text="Summary" icon={<FaHome />} active={active} setActive={setActive} />
           <SidebarButton text="My Profile" icon={<FaUser />} active={active} setActive={setActive} />
           <SidebarButton text="Medical Info" icon={<FaNotesMedical />} active={active} setActive={setActive} />
@@ -37,7 +40,7 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="flex-1 p-6 sm:p-10 bg-white overflow-y-auto">
+        <div className="flex-1 p-2 lg:p-10 bg-white overflow-y-auto">
           {renderContent(active)}
         </div>
       </div>
@@ -102,6 +105,7 @@ function renderContent(active) {
   switch (active) {
     case "Summary":
     case "My Profile":
+      return <MyProfile />;
     case "Upload Report":
       return <UnderConstruction active={active} />;
     
@@ -109,6 +113,7 @@ function renderContent(active) {
     case "Reminders":
       return <RemindersPage />;
     case "Medical Info":
+      return <PatientMediInfomation/>
     case "Upload Report":
       return <PatientFormDoctorView />;
     default:

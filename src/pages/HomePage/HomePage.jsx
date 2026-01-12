@@ -11,9 +11,10 @@ import TagBar from "./tabBar";
 export default function HomePage(){
     return(
         <>
-            <div className="sticky top-0 z-50 bg-white shadow-sm">
-                        <Header />
-            </div>
+            {/* <div className="sticky top-0 z-50 bg-white shadow-sm ">
+                        <Header   />
+            </div> */}
+            <Header></Header>
             <Home/>
             <Empower/>
             <TagBar/>
