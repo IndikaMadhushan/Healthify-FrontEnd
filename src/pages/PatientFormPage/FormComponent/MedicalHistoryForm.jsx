@@ -148,7 +148,7 @@ export default function PatientMedicalForm({showButton=false, onNext }) {
       <div className="mt-2 flex justify-end">
         <button
         type="button"
-        className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        className="px-8 py-3 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[17px] font-semibold"
         onClick={() => {
           // if you want validation later, put it here
           onNext(); // ✅ GO TO NEXT PAGE

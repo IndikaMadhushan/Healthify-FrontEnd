@@ -107,7 +107,7 @@ export default function PatientRegisterPage2() {
   const handleModalClose = () => {
     setShowSuccessModal(false);
     sessionStorage.removeItem("registrationComplete");
-    navigate("/patient-dashboard", { replace: true });
+    navigate("/firstFillForm", { replace: true });
   };
 
   return (

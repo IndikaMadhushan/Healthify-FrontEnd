@@ -54,7 +54,8 @@ export default function PatientFirstFillForm() {
   };
 
   return (
-    <div className="flex justify-center py-6">
+    <div className="flex flex-coljustify-center py-6 px-6">
+      <h1 className="text-2xl font-bold text-mainblack">Patient Data Form</h1>
       <div className="w-full max-w-5xl bg-white shadow-md rounded-md p-4">
         {renderSection()}
       </div>

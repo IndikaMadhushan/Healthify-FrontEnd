@@ -206,12 +206,13 @@ import { useState, useEffect } from "react";
 import { loginApi } from "../../api/authApi"
 import { q } from "framer-motion/client";
 import { jwtDecode } from "jwt-decode";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setError] = useState("");
   const location = useLocation();
 
   const role = location.state?.role;
@@ -234,7 +235,44 @@ export default function LoginPage() {
   //   }
   // };
 
+// react-hot-toast validation
+const validateForm = () => {
+  if (!email) {
+    toast.error("Email is required", { id: "email-error" });
+    return false;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    toast.error("Invalid email format", { id: "email-format-error" });
+    return false;
+  }
+
+  if (!password) {
+    toast.error("Password is required", { id: "password-error" });
+    return false;
+  }
+
+  if (password.length < 8) {
+    toast.error("Password must be at least 8 characters", {
+      id: "password-length-error",
+    });
+    return false;
+  }
+
+  // if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+  //   toast.error(
+  //     "Password must contain uppercase, lowercase and number",
+  //     { id: "password-pattern-error" }
+  //   );
+  //   return false;
+  // }
+
+  return true;
+};
+
+
   const handleLogin = async () => {
+    if (!validateForm()) return;
     try {
       setError("");
       // call for backend
@@ -245,6 +283,8 @@ export default function LoginPage() {
       //decode JWT
       const decode = jwtDecode(data.token);
       const role = decode.role;
+
+      toast.success("Login successful");
 
       // redirecting according to the role
       if(role === "PATIENT"){
@@ -258,7 +298,7 @@ export default function LoginPage() {
       }
 
     }catch (err){
-      setError(
+      toast.error(
         err.response?.data?.message || "Invalid email or password"
       );
     }
@@ -302,7 +342,11 @@ export default function LoginPage() {
                              focus:outline-none focus:ring-2
                              focus:ring-[#18AAB0]/40 transition"
                   onChange={(e) => setEmail(e.target.value)}
+                  
                 />
+                {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+                )}
 
                 <input
                   type="password"
@@ -313,6 +357,10 @@ export default function LoginPage() {
                              focus:ring-[#18AAB0]/40 transition"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+                )}
+
               </div>
 
               {/* FORGOT PASSWORD */}
