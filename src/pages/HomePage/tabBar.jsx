@@ -1,4 +1,4 @@
-// src/components/TagBar.jsx  (temporary test version)
+
 import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineSecurity, MdOutlineAnalytics,  MdVerifiedUser } from "react-icons/md";
 import { FaUserDoctor } from "react-icons/fa6";
@@ -91,3 +91,5 @@ export default function TagBar() {
     </div>
   );
 }
+
+
