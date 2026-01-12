@@ -8,7 +8,7 @@ import Services3DCarousel from "./Review";
 import ServicesExample from "./Services";
 import TagBar from "./tabBar";
 
-export default function HomePage({colorDeep}){
+export default function HomePage(){
     return(
         <>
             {/* <div className="sticky top-0 z-50 bg-white shadow-sm ">

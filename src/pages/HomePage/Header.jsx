@@ -27,7 +27,7 @@ const goToAbout = () => {
   
 };
 
-export default function Header({ color }){
+export default function Header(){
 
 
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ export default function Header({ color }){
                 type="button"
                 text="Login"
                  className="py-1 px-6  font-bold  focus:outline-none hidden md:block bg-secondary"
-                style={{ backgroundColor: `${color}`}}
+               
                 />
                 
             </div>
