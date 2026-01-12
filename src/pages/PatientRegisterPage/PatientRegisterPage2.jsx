@@ -125,6 +125,7 @@ export default function PatientRegisterPage2() {
       <div className="space-y-5">
         <PasswordInput
           label="Password"
+          name="password"
           value={formData.password}
           onChange={handleChange("password")}
           error={errors.password}
@@ -134,6 +135,7 @@ export default function PatientRegisterPage2() {
 
         <PasswordInput
           label="Confirm Password"
+          name="confirmPassword"
           value={formData.confirmPassword}
           onChange={handleChange("confirmPassword")}
           error={errors.confirmPassword}

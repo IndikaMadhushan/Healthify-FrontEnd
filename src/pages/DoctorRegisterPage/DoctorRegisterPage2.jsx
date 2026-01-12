@@ -2,83 +2,69 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
+import FileUpload from "../../components/FileUpload";
 import SuccessModal from "../../components/SuccessModal";
-import dRegImage2 from "../../assets/d-reg-image2.png";
+import axios from "axios";
+import pRegImage2 from "../../assets/p-reg-image2.png";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    password: "",
-    confirmPassword: "",
-    agreedToTerms: false,
-  });
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verificationDoc, setVerificationDoc] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [agreedToApproval, setAgreedToApproval] = useState(false);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
-    const registrationComplete = sessionStorage.getItem(
-      "doctorRegistrationComplete",
-    );
-
-    if (registrationComplete) {
-      sessionStorage.removeItem("doctorRegistrationComplete");
-      navigate("/login", { replace: true });
-      return;
-    }
-
     if (!step1Data) {
       navigate("/doctor-register-1", { replace: true });
     }
   }, [navigate]);
 
-  const handleChange = (field) => (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setVerificationDoc(file);
+    setFileName(file.name);
+
+    if (errors.verificationDoc) {
+      setErrors((prev) => ({ ...prev, verificationDoc: "" }));
     }
   };
 
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.password) {
+    if (!password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
+    } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain uppercase, lowercase, and number";
     }
 
-    if (!formData.confirmPassword) {
+    if (!confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
+    } else if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
-    if (!formData.agreedToTerms) {
-      newErrors.agreedToTerms = "You must agree to the terms and conditions";
+    if (!verificationDoc) {
+      newErrors.verificationDoc = "Verification document is required";
+    }
+
+    if (!agreedToApproval) {
+      newErrors.agreedToApproval =
+        "You must acknowledge the approval process";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleBack = () => {
-    navigate("/doctor-register-1");
   };
 
   const handleFinish = async () => {
@@ -87,142 +73,114 @@ export default function DoctorRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
-      sessionStorage.getItem("doctorRegStep1") || "{}",
+      sessionStorage.getItem("doctorRegStep1") || "{}"
     );
 
-    const completeData = {
-      ...step1Data,
-      password: formData.password,
-    };
+    const formData = new FormData();
+    Object.entries(step1Data).forEach(([key, value]) =>
+      formData.append(key, value)
+    );
+    formData.append("password", password);
+    formData.append("verificationDoc", verificationDoc);
 
-    setTimeout(() => {
-      console.log("Doctor Registration data:", completeData);
+    try {
+      await axios.post(
+        "http://localhost:8080/api/auth/doctor/register",
+        formData
+      );
 
-      sessionStorage.setItem("doctorRegistrationComplete", "true");
       sessionStorage.removeItem("doctorRegStep1");
-
+      setShowSuccess(true);
+    } catch (err) {
+      alert("Registration failed. Please try again.");
+    } finally {
       setLoading(false);
-      setShowSuccessModal(true);
-    }, 1500);
-  };
-
-  const handleModalClose = () => {
-    setShowSuccessModal(false);
-    sessionStorage.removeItem("doctorRegistrationComplete");
-    navigate("/login", { replace: true });
+    }
   };
 
   return (
-    <RegistrationLayout image={dRegImage2} imageAlt="Doctor Registration">
+    <RegistrationLayout image={pRegImage2} imageAlt="Doctor Registration">
       <h1 className="text-2xl lg:text-3xl font-bold text-mainblack mb-6">
-        Doctor Registration
+        Set Password & Verification
       </h1>
 
       <div className="space-y-5">
         <PasswordInput
           label="Password"
-          value={formData.password}
-          onChange={handleChange("password")}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
-          placeholder="Enter your password"
           required
         />
 
         <PasswordInput
           label="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange("confirmPassword")}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           error={errors.confirmPassword}
-          placeholder="Re-enter your password"
           required
         />
 
-        {/* Info Box */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <span className="text-green-600 text-lg">ℹ</span>
-            <div className="text-sm text-green-800">
-              <p className="font-semibold mb-1">
-                Account Verification Required
-              </p>
-              <p className="text-xs">
-                Your account will be activated after document verification
-                (24-48 hours). You will receive an email once approved.
-              </p>
-            </div>
-          </div>
-        </div>
+        <FileUpload
+          label="Upload Verification Document"
+          fileName={fileName}
+          onChange={handleFileChange}
+          error={errors.verificationDoc}
+          helperText="Upload your SLMC certificate or medical license"
+          required
+        />
 
-        {/* Terms Checkbox */}
+        {/*  APPROVAL CONFIRMATION */}
         <div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={formData.agreedToTerms}
-              onChange={handleChange("agreedToTerms")}
+              checked={agreedToApproval}
+              onChange={(e) => setAgreedToApproval(e.target.checked)}
               className="mt-1 w-4 h-4 text-secondary focus:ring-secondary rounded"
             />
             <span className="text-sm text-gray-700">
-              I agree to the{" "}
-              <button
-                type="button"
-                onClick={() => window.open("/terms", "_blank")}
-                className="text-secondary hover:underline"
-              >
-                Terms & Conditions
-              </button>{" "}
-              and{" "}
-              <button
-                type="button"
-                onClick={() => window.open("/privacy", "_blank")}
-                className="text-secondary hover:underline"
-              >
-                Private Policy
-              </button>
+              I understand that my account will remain{" "}
+              <strong>inactive</strong> until verified and approved by the
+              administrator.
             </span>
           </label>
-          {errors.agreedToTerms && (
-            <p className="text-xs text-red-500 mt-1">{errors.agreedToTerms}</p>
+
+          {errors.agreedToApproval && (
+            <p className="text-xs text-red-500 mt-1">
+              {errors.agreedToApproval}
+            </p>
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4 pt-4">
           <button
             type="button"
-            onClick={handleBack}
+            onClick={() => navigate("/doctor-register-1")}
             className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition"
           >
             Back
           </button>
+
           <button
             type="button"
             onClick={handleFinish}
-            disabled={loading || !formData.agreedToTerms}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            disabled={loading || !agreedToApproval}
+            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold
+                       hover:bg-secondary/90 transition transform hover:scale-105
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? "Processing..." : "Finish"}
           </button>
         </div>
       </div>
 
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="text-secondary hover:underline font-semibold"
-        >
-          Login here
-        </button>
-      </p>
-
-      {/* Reusable Success Modal */}
       <SuccessModal
-        show={showSuccessModal}
+        show={showSuccess}
         title="Registration Successful!"
-        message="Your account has been submitted for verification. You will receive an email once your account is approved (24-48 hours)."
+        message="Your account will be activated after admin verification."
         buttonText="Go to Login"
-        onClose={handleModalClose}
+        onClose={() => navigate("/login", { replace: true })}
       />
     </RegistrationLayout>
   );
