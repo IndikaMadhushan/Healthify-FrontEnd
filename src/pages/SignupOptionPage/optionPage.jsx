@@ -25,14 +25,14 @@ export default function OptionPage() {
             title="I’m a Doctor"
             subtitle="Access patient records and provide better care"
             role="DOCTOR"
-            path="/login"
+            path="/doctor-register-1"
           />
           <OptionCard
             icon={<FaUser />}
             title="I’m a Patient"
             subtitle="Manage health records and track your wellness journey"
             role="PATIENT"
-            path="/login"
+            path="/patient-register-1"
           />
         </div>
       </div>

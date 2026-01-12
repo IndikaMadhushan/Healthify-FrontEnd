@@ -215,7 +215,7 @@ export default function LoginPage() {
   const location = useLocation();
 
   const role = location.state?.role;
-  const registerLink = role === "DOCTOR" ? "/doctor-register-1" : "/patient-register-1";
+  const registerLink = "/option";
 
   useEffect(() => {
     window.scrollTo(0, 0);
