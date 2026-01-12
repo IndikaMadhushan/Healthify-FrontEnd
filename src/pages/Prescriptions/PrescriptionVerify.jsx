@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { prescriptions } from "./prescription";
+import { prescriptions } from "./Prescription.js";
 
 export default function PrescriptionVerify() {
   const { id } = useParams();
