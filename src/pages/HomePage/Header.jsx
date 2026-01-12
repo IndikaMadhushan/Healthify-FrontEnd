@@ -27,6 +27,13 @@ const goToAbout = () => {
   
 };
 
+const goToHome = () => {
+  const element = document.getElementById("home");
+  if(element) {
+    element.scrollIntoView({behavior : "smooth"})
+  }
+}
+
 export default function Header(){
 
 
@@ -67,7 +74,7 @@ export default function Header(){
                   <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToFooter}>Contact</p> 
             </div>
             <div>
-                <Button onClick={() => navigate("/option")}
+                <Button onClick={() => navigate("/login")}
                 type="button"
                 text="Login"
                  className="py-1 px-6  font-bold  focus:outline-none hidden md:block bg-secondary"

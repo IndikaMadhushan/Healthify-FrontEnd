@@ -29,7 +29,7 @@ export default function OptionPage() {
             title="Doctor Account"
             subtitle="Access patient records and manage prescriptions securely"
             role="DOCTOR"
-            path="/login"
+            path="/doctor-register-1"
           />
 
           <OptionCard
@@ -37,7 +37,7 @@ export default function OptionPage() {
             title="Patient Account"
             subtitle="Track medical history, prescriptions, and reports"
             role="PATIENT"
-            path="/login"
+            path="/patient-register-1"
           />
 
         </div>
