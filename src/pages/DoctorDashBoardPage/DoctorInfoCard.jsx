@@ -1,6 +1,3 @@
-// ============================================
-// FILE 3: src/pages/DoctorProfilePage/DoctorInfoCard.jsx
-// ============================================
 
 import { useRef } from "react";
 

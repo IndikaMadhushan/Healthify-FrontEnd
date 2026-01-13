@@ -1,6 +1,3 @@
-// ============================================
-// FILE 5: src/pages/DoctorProfilePage/LatestPatientsCard.jsx
-// ============================================
 
 import { useState } from "react";
 
@@ -20,9 +17,9 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
       <h2 className="text-2xl font-bold text-secondary mb-2">
         Latest Patients
       </h2>
-      <p className="text-sm text-gray-600 mb-4">
+      {/* <p className="text-sm text-gray-600 mb-4">
         View and manage patients who have granted you access to their records
-      </p>
+      </p> */}
 
       {/* Patient List */}
       <div className="space-y-3 max-h-96 overflow-y-auto">
