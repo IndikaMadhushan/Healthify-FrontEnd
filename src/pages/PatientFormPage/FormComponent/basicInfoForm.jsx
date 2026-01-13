@@ -16,6 +16,38 @@ const basic_form = {
   nationalId: ""
 };
 
+function calculateAge(dobString) {
+  const dob = new Date(dobString);
+  const today = new Date();
+
+  let years = today.getFullYear() - dob.getFullYear();
+  let months = today.getMonth() - dob.getMonth();
+  let days = today.getDate() - dob.getDate();
+
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  // Medical display rules
+  if (years === 0 && months === 0) {
+    return `${days} days`;
+  }
+
+  if (years === 0) {
+    return `${months} months ${days} days`;
+  }
+
+  return `${years} years ${months} months`;
+} 
+
+
 const BasicInfoForm = forwardRef(({ showButton=false,onNext }, ref) => {
   const [form, setForm] = useState(basic_form);
   const [errors, setErrors] = useState({});
@@ -35,13 +67,13 @@ const BasicInfoForm = forwardRef(({ showButton=false,onNext }, ref) => {
         newErrors["basic.dob"] = "Please enter a valid date of birth";
       }
   }
-  if (!form.age) newErrors["basic.age"] = "Age is required";
+
   if (!form.gender) newErrors["basic.gender"] = "Gender is required";
   if (!form.nationality) newErrors["basic.nationality"] = "Nationality is required";
   if (!form.occupation) newErrors["basic.occupation"] = "Occupation is required";
   if (!form.address) newErrors["basic.address"] = "Address is required";
   if (!form.mainCity) newErrors["basic.mainCity"] = "District is required";
-  if (!form.status) newErrors["basic.status"] = "Status is required";
+  if (!form.maritalStatus) newErrors["basic.maritalStatus"] = "Marital status is required";
   if (!form.nationalId) newErrors["basic.nationalId"] = "NIC number is required";
 
   if (!form.nationalId.trim()) {
@@ -136,12 +168,27 @@ if (!form.contactNumber) {
       getData: () => form
     }));
 
-  const handleChange = (field) => (e) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: e.target.value
-    }));
-  };
+  // const handleChange = (field) => (e) => {
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [field]: e.target.value
+  //   }));
+  // };
+
+const handleChange = (field) => (e) => {
+  const value = e.target.value;
+
+  setForm((prev) => {
+    if (field === "dob") {
+      return {
+        ...prev,
+        dob: value,
+        age: value ? calculateAge(value) : ""
+      };
+    }
+    return { ...prev, [field]: value };
+  });
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -149,7 +196,9 @@ if (!form.contactNumber) {
     if (!ok) return;
 
     console.log("Valid form:", form);
-    alert("Form valid ");
+    
+    
+    onNext();
   };
 
 
@@ -206,12 +255,10 @@ if (!form.contactNumber) {
           <input
             type="text"
             value={form.age}
-            onChange={handleChange("age")}
-            className={inputBase + " " + withError("basic.age")}
+            readOnly
+            className={inputBase + " bg-gray-100 cursor-not-allowed"}
           />
-          {errors["basic.age"] && (
-            <p className="text-red-500 text-xs mt-1">{errors["basic.age"]}</p>
-          )}
+          
         </div>
 
         {/* Gender */}
@@ -357,7 +404,7 @@ if (!form.contactNumber) {
         <div className="px-2">
           <label className={labelCss}>EMAIL *</label>
           <input
-            type="tel"
+            type="text"
             value={form.email}
             onChange={handleChange("email")}
             className={inputBase + " " + withError("basic.email")}
@@ -370,7 +417,7 @@ if (!form.contactNumber) {
         </div>
 
         {/* Submit */}
-        {showButton && (
+        {/* {showButton && (
           <div className="px-2 mt-2 flex justify-end">
             <button
               type="button"
@@ -385,7 +432,21 @@ if (!form.contactNumber) {
               Next
             </button>
           </div>
+        )} */}
+
+        {/* Submit */}
+        {showButton && (
+          <div className="px-2 mt-2 flex justify-end">
+            <button
+              type="button"
+              className="px-8 py-3 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[17px] font-semibold"
+              onClick={handleSubmit}
+            >
+              Next
+            </button>
+          </div>
         )}
+        
       </form>
     </div>
   );
