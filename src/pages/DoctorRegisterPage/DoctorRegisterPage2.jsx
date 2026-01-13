@@ -6,6 +6,7 @@ import FileUpload from "../../components/FileUpload";
 import SuccessModal from "../../components/SuccessModal";
 import axios from "axios";
 import pRegImage2 from "../../assets/p-reg-image2.png";
+import { registerDoctorApi } from "../../api/authApi";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
@@ -84,15 +85,12 @@ export default function DoctorRegisterPage2() {
     formData.append("verificationDoc", verificationDoc);
 
     try {
-      await axios.post(
-        "http://localhost:8080/api/auth/doctor/register",
-        formData
-      );
+      await registerDoctorApi(formData);
 
       sessionStorage.removeItem("doctorRegStep1");
       setShowSuccess(true);
     } catch (err) {
-      alert("Registration failed. Please try again.");
+      alert("Registration failed. Please try again." + err.message);
     } finally {
       setLoading(false);
     }

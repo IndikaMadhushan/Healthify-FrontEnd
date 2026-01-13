@@ -12,9 +12,9 @@ export default function PatientRegisterPage1() {
     fullName: "",
     dateOfBirth: "",
     gender: "",
-    nicNumber: "",
+    nic: "",
     email: "",
-    contactNumber: "",
+    phone: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -51,12 +51,12 @@ export default function PatientRegisterPage1() {
       newErrors.gender = "Please select your gender";
     }
 
-    if (!formData.nicNumber.trim()) {
-      newErrors.nicNumber = "NIC number is required";
+    if (!formData.nic.trim()) {
+      newErrors.nic = "NIC number is required";
     } else if (
-      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nicNumber.trim())
+      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())
     ) {
-      newErrors.nicNumber =
+      newErrors.nic =
         "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
@@ -66,10 +66,10 @@ export default function PatientRegisterPage1() {
       newErrors.email = "Invalid email format";
     }
 
-    // Contact number is optional, but validate if provided
-    if (formData.contactNumber.trim()) {
-      if (!/^[0-9()+-\s]+$/.test(formData.contactNumber)) {
-        newErrors.contactNumber = "Invalid contact number format";
+    // phone number is optional, but validate if provided
+    if (formData.phone.trim()) {
+      if (!/^[0-9()+-\s]+$/.test(formData.phone)) {
+        newErrors.phone = "Invalid contact number format";
       }
     }
 
@@ -128,9 +128,9 @@ export default function PatientRegisterPage1() {
 
         <FormField
           label="NIC Number"
-          value={formData.nicNumber}
-          onChange={handleChange("nicNumber")}
-          error={errors.nicNumber}
+          value={formData.nic}
+          onChange={handleChange("nic")}
+          error={errors.nic}
           placeholder="e.g., 123456789V or 123456789012"
           required
         />
@@ -147,9 +147,9 @@ export default function PatientRegisterPage1() {
 
         <FormField
           label="Contact Number"
-          value={formData.contactNumber}
-          onChange={handleChange("contactNumber")}
-          error={errors.contactNumber}
+          value={formData.phone}
+          onChange={handleChange("phone")}
+          error={errors.phone}
           placeholder="+94 XX XXX XXXX (optional)"
           required={false}
         />

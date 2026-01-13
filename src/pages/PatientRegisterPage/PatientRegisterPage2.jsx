@@ -4,6 +4,7 @@ import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import SuccessModal from "../../components/SuccessModal";
 import pRegImage2 from "../../assets/p-reg-image2.png";
+import { registerPatientApi } from "../../api/authApi";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
@@ -85,23 +86,25 @@ export default function PatientRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
-      sessionStorage.getItem("patientRegStep1") || "{}",
+      sessionStorage.getItem("patientRegStep1") || "{}"
     );
 
-    const completeData = {
+    const payload = {
       ...step1Data,
       password: formData.password,
     };
 
-    setTimeout(() => {
-      console.log("Patient Registration data:", completeData);
+    try{
+      await registerPatientApi(payload);
 
-      sessionStorage.setItem("registrationComplete", "true");
       sessionStorage.removeItem("patientRegStep1");
-
-      setLoading(false);
       setShowSuccessModal(true);
-    }, 1500);
+    } catch(error){
+      const message = error.response?.data?.message || "Patient registration failed!";
+      alert(message + error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleModalClose = () => {
