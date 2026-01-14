@@ -1,7 +1,3 @@
-// ============================================
-// FILE 6: src/pages/DoctorProfilePage/DoctorProfilePage.jsx (MAIN)
-// ============================================
-
 import { useState } from "react";
 import Footer from "../../components/footer";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +24,7 @@ export default function DoctorProfilePage() {
     });
 
     // Navigate to patient profile placeholder
-    navigate(`/patientMain`);
+    navigate(`/doctor-consult/${patient.id}`);
   };
 
   return (

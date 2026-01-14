@@ -89,7 +89,7 @@
 
 //   return (
 //     <div className="min-h-screen flex flex-col">
-     
+
 
 //       {/* BACKGROUND IMAGE SECTION */}
 //       <div
@@ -200,24 +200,73 @@
 // }
 
 import Button from "../HomePage/HomeButton";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
-import Footer from "../../components/footer";
-import Header from "../HomePage/Header";
 import { useState, useEffect } from "react";
+import { loginApi } from "../../api/authApi"
+import { q } from "framer-motion/client";
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const location = useLocation();
+
+  const role = location.state?.role;
+  const registerLink = "/option";
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+
+  // THE HARDCODE LOG IN PART
+
+  // const handleLogin = () => {
+  //   if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
+  //     navigate("/doctor-dashboard");
+  //   } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
+  //     navigate("/patient-dashboard");
+  //   } else {
+  //     alert("Invalid password");
+  //   }
+  // };
+
+  const handleLogin = async () => {
+    try {
+      setError("");
+      // call for backend
+      const data = await loginApi(email, password);
+      // store token in local storage
+      localStorage.setItem("token", data.token);
+
+      //decode JWT
+      const decode = jwtDecode(data.token);
+      const role = decode.role;
+
+      // redirecting according to the role
+      if(role === "PATIENT"){
+        navigate("/patient-dashboard");
+      } else if(role === "DOCTOR"){
+        navigate("/doctor-dashboard");
+      } else if (role === "ADMIN"){
+        //navigate("/admin-dashboard");
+      } else {
+        setError("Unknown User Role");
+      }
+
+    }catch (err){
+      setError(
+        err.response?.data?.message || "Invalid email or password"
+      );
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
-   
+
 
       {/* MAIN CONTENT */}
       <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
@@ -278,8 +327,10 @@ export default function LoginPage() {
 
               {/* LOGIN BUTTON */}
               <div className="mt-6">
+
                 <Button
-                  onClick={() => navigate("/option")}
+                  // onClick={() => navigate("/option")}
+                  onClick={handleLogin}
                   className="w-full py-3 text-[18px] rounded-xl"
                   type="button"
                   text="Login"
@@ -289,9 +340,9 @@ export default function LoginPage() {
 
               {/* SIGNUP */}
               <p className="text-center text-gray-600 mt-6">
-                Don’t have an account?{" "}
+                Don't have an account?{" "}
                 <Link
-                  to="/option"
+                  to={registerLink}
                   className="text-secondary font-medium hover:underline"
                 >
                   Signup here

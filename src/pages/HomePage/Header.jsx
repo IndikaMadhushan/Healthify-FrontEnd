@@ -1,7 +1,7 @@
 import { useNavigate} from "react-router-dom";
 import Button from "./HomeButton";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { RxCross1 } from "react-icons/rx";
 
 const goToFooter = () => {
@@ -27,40 +27,58 @@ const goToAbout = () => {
   
 };
 
+const goToHome = () => {
+  const element = document.getElementById("home");
+  if(element) {
+    element.scrollIntoView({behavior : "smooth"})
+  }
+}
+
 export default function Header(){
 
 
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
 
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return(
-    
-    
-    <div className="flex flex-row justify-between lg:px-14 px-4  md:px-6 ">
+
+<div
+  className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-md" : "bg-transparent"}
+    flex flex-row justify-between lg:px-14 px-4 md:px-6`}
+>
         <div>
-            <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+            <img src="logo.png" alt="logo" className="h-[70px] h-[60px] object-contain cursor-pointer " onClick={() => navigate("/")}/>
         </div>
         <div className="pt-5">
-        <div className="flex flex-row  text-sm text-mainblack font-semibold items-center lg:gap-10 md:gap-5">
+        <div className={`flex flex-row text-sm     font-semibold  items-center lg:gap-10 md:gap-5 `} >
             <div>
-                  <p className="hidden md:block" onClick={() => navigate("/")}>Home</p>
+                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={() => navigate("/")}>Home</p>
+            </div>
+            
+            <div>
+                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToAbout}>About Us</p> 
             </div>
             <div>
-                  <p className="hidden md:block" onClick={goToService}>Services</p> 
+                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToService}>Services</p> 
             </div>
             <div>
-                  <p className="hidden md:block" onClick={goToAbout}>About Us</p> 
-            </div>
-            <div>
-                  <p className="hidden md:block" onClick={goToFooter}>Contact</p> 
+                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToFooter}>Contact</p> 
             </div>
             <div>
                 <Button onClick={() => navigate("/login")}
                 type="button"
                 text="Login"
-                 className="py-1 px-6  font-bold  focus:outline-none hidden md:block"
-                style={{ backgroundColor: '#18AAB0'}}
+                 className="py-1 px-6  font-bold  focus:outline-none hidden md:block bg-secondary"
+               
                 />
                 
             </div>
@@ -71,8 +89,8 @@ export default function Header(){
 
         {/*mobile drop down*/}
         {openMenu && (
-        <div className="fixed inset-0 bg-black/60 z-60 md:hidden block ">
-          <div className="bg-black  w-1/2 h-full p-6">
+        <div className="fixed inset-0 bg-black/60 z-9999 md:hidden block ">
+          <div className="bg-[#161616]  w-1/2 h-full p-6">
             
             <button
               className="text-2xl mb-4 text-white"
@@ -84,12 +102,12 @@ export default function Header(){
 
             <div className="flex flex-col gap-4 font-semibold text-secondary  text-center">
               
-              <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain"/>
+              <img src="logo.png" alt="logo" className="h-[80px] h-[60px] object-contain hover:cursor-pointer"/>
 
-              <p className="hover:text-white"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
-              <p className="hover:text-white" onClick={goToService}>Services</p>
-              <p className="hover:text-white" onClick={goToAbout}>About Us</p>
-              <p className="hover:text-white" onClick={goToFooter}>Contact</p>
+              <p className="hover:text-white cursor-pointer"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToService}>Services</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToAbout}>About Us</p>
+              <p className="hover:text-white cursor-pointer" onClick={goToFooter}>Contact</p>
               
               <Button onClick={() => {navigate("/login"); setOpenMenu(false);}}
                 type="button"

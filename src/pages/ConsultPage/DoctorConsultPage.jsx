@@ -102,7 +102,7 @@ export default function DoctorConsultPage() {
   };
 
   const handleMoreAboutPatient = () => {
-    navigate("/form");
+    navigate("/doctorViewform");
   };
 
   const handleNavigate = (path) => {

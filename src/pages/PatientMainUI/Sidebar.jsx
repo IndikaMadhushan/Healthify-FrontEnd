@@ -7,10 +7,14 @@ import {
   FaBell,
 } from "react-icons/fa";
 
-import PatientFormMain from "../PatientFormPage/patientFormMain";
-import MedicalReportsPage from "../MedicalReportsPage/MedicalReportsPage";
-import FileUploadView from "../MedicalReportsPage/FileUploadView";
 import { PatinetNavBar } from "../../components/PatientNavBar";
+import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
+
+import RemindersPage from "../Reminders/RemindersPage";
+import MyProfile from "./PatientProfilePage";
+import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
+
+// import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
@@ -37,7 +41,7 @@ export default function Dashboard() {
       {/* MAIN LAYOUT */}
       <div className="flex flex-1 overflow-hidden">
         {/* LEFT SIDEBAR (DESKTOP ONLY) */}
-        <div className="hidden sm:block w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
+        <div className="hidden sm:block lg:w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
           <SidebarButton
             text="Summary"
             icon={<FaHome />}
@@ -57,7 +61,7 @@ export default function Dashboard() {
             setActive={setActive}
           />
           <SidebarButton
-            text="Medical Reports"
+            text="Upload Report"
             icon={<FaFileUpload />}
             active={active}
             setActive={setActive}
@@ -71,14 +75,8 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="flex-1 p-6 sm:p-10 bg-white overflow-y-auto">
-          {renderContent(
-            active,
-            handleNavigateToUpload,
-            uploadCategory,
-            handleBackToReports,
-            userId,
-          )}
+        <div className="flex-1 p-2 lg:p-10 bg-white overflow-y-auto">
+          {renderContent(active)}
         </div>
       </div>
 
@@ -175,25 +173,16 @@ function renderContent(
   switch (active) {
     case "Summary":
     case "My Profile":
-    case "Reminders":
+      return <MyProfile />;
+    case "Upload Report":
       return <UnderConstruction active={active} />;
 
+    case "Reminders":
+      return <RemindersPage />;
     case "Medical Info":
-      return <PatientFormMain />;
-
-    case "Medical Reports":
-      return <MedicalReportsPage onNavigateToUpload={handleNavigateToUpload} />;
-
+      return <PatientMediInfomation />;
     case "Upload Report":
-      return (
-        <FileUploadView
-          userId={userId}
-          category={uploadCategory?.id || "general"}
-          title={uploadCategory?.title || "Upload Report"}
-          onBack={handleBackToReports}
-        />
-      );
-
+      return <PatientFormDoctorView />;
     default:
       return null;
   }

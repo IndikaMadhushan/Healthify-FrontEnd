@@ -3,6 +3,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  
 }
 
 @keyframes fadeUpLetter {
@@ -64,4 +65,10 @@ body {
 .hero-image-animated:hover {
   transform: translateY(-6px) scale(1.02);
   filter: drop-shadow(0 20px 35px rgba(15, 23, 42, 0.25));
+}
+
+
+.mySwiper {
+  margin: 0 !important;
+  padding: 0 !important;
 }

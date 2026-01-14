@@ -19,7 +19,7 @@ export default function Uploader(props) {
   const [pendingFile, setPendingFile] = useState(null); // File object waiting for title
   const [titleText, setTitleText] = useState("");
   const [reports, setReports] = useState([]); // { id, title, name, url, type, uploadedAt }
-
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [viewing, setViewing] = useState(null); // report object to view in modal
 
   // handle file selection
@@ -172,16 +172,54 @@ export default function Uploader(props) {
                 >
                   Download
                 </button>
+               
+               {/* //delete */}
                 <button
-                  onClick={() => {
-                    // revoke URL and remove report
-                    URL.revokeObjectURL(r.url);
-                    setReports((s) => s.filter((x) => x.id !== r.id));
-                  }}
+                  onClick={() => setDeleteTarget(r)}
                   className="px-2 py-1 text-xs text-red-600 border border-red-100 rounded hover:bg-red-50"
                 >
-                  Delete
+                    Delete
                 </button>
+
+              {deleteTarget && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                  <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-5">
+
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Delete report?
+                    </h3>
+
+                    <p className="text-sm text-gray-600 mb-4">
+                      Are you sure you want to delete
+                      <span className="font-medium"> "{deleteTarget.title}"</span>?
+                      This action cannot be undone.
+                    </p>
+
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => setDeleteTarget(null)}
+                        className="px-4 py-2 rounded-lg border text-sm hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          URL.revokeObjectURL(deleteTarget.url);
+                          setReports((s) =>
+                            s.filter((x) => x.id !== deleteTarget.id)
+                          );
+                          setDeleteTarget(null);
+                        }}
+                        className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               </div>
             </div>
           </div>

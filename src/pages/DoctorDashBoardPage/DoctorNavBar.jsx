@@ -23,7 +23,7 @@ export default function DoctorNavBar({ doctor }) {
     if (confirm("Are you sure you want to logout?")) {
       sessionStorage.clear();
       localStorage.clear();
-      navigate("/login");
+      navigate("/");
     }
   };
 
@@ -73,7 +73,7 @@ export default function DoctorNavBar({ doctor }) {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-200 animate-[fadeIn_0.2s_ease-out]">
                 <button
                   onClick={() => {
-                    navigate("/");
+                    navigate("/doctor-dashboard");
                     setDropdownOpen(false);
                   }}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
@@ -88,10 +88,10 @@ export default function DoctorNavBar({ doctor }) {
                   Home
                 </button>
                 <button
-                  onClick={() => {
-                    alert("Settings page coming soon!");
-                    setDropdownOpen(false);
-                  }}
+                  // onClick={() => {
+                  //   alert("Settings page coming soon!");
+                  //   setDropdownOpen(false);
+                  // }}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   <svg
