@@ -25,32 +25,10 @@ export default function DoctorClinicBookPage() {
   };
 
   // ==================== MOCK PAST CLINIC PAGES ====================
-  const [pastPages] = useState([
-    {
-      id: 1,
-      date: "2025-09-23",
-      time: "10:08AM",
-      reason: "Follow-up gastritis treatment",
-    },
-    {
-      id: 2,
-      date: "2025-08-21",
-      time: "10:08AM",
-      reason: "Initial consultation for stomach pain",
-    },
-    {
-      id: 3,
-      date: "2025-08-23",
-      time: "10:08AM",
-      reason: "Medication adjustment",
-    },
-    {
-      id: 4,
-      date: "2025-09-23",
-      time: "10:00AM",
-      reason: "Medication adjustment",
-    },
-  ]);
+  const [pastPages, setPastPages] = useState(() => {
+    const saved = localStorage.getItem("pastClinicPages");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
@@ -93,10 +71,10 @@ export default function DoctorClinicBookPage() {
 
     const timer = setInterval(() => {
       const now = Date.now();
-      const elapsed = Math.floor((now - completionTime) / 1000); // seconds elapsed
+      const elapsed = Math.floor((now - completionTime) / 1000);
       const remaining = EDIT_WINDOW_SECONDS - elapsed;
+
       if (remaining <= 0) {
-        // Time's up!
         setRemainingTime(0);
         setCanEdit(false);
         clearInterval(timer);
@@ -107,7 +85,7 @@ export default function DoctorClinicBookPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isCompleted, completionTime]);
+  }, [isCompleted, completionTime, EDIT_WINDOW_SECONDS]);
 
   // ==================== HELPER FUNCTIONS ====================
 
@@ -188,6 +166,23 @@ export default function DoctorClinicBookPage() {
     };
 
     setTimeout(() => {
+      const newPastPage = {
+        id: clinicBookPage.id,
+        date: formData.date,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        reason: formData.reasonForVisit,
+        fullData: clinicBookPage, // store full page data
+      };
+
+      setPastPages((prev) => {
+        const updated = [newPastPage, ...prev];
+        localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+        return updated;
+      });
+
       console.log("✅ Clinic Book Page saved:", clinicBookPage);
 
       // Mark as completed and start timer
@@ -351,6 +346,33 @@ export default function DoctorClinicBookPage() {
                 showMedicationPurpose={false}
               />
               <PastClinicPagesCard pastPages={pastPages} />
+
+              <button
+                onClick={() => {
+                  setFormData({
+                    date: new Date().toISOString().split("T")[0],
+                    reasonForVisit: "",
+                    examinationNotes: "",
+                    bloodPressure: "",
+                    pulse: "",
+                    temperature: "",
+                    weight: "",
+                    respiratoryRate: "",
+                    medication: "",
+                    suggestedTests: "",
+                    doctorNote: "",
+                    nextClinicDate: "",
+                  });
+                  setIsCompleted(false);
+                  setCompletionTime(null);
+                  setRemainingTime(null);
+                  setCanEdit(false);
+                }}
+                className="w-full mt-3 px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+              >
+                ➕ Create New Page
+              </button>
+
               <AdditionalNotesCard
                 formData={formData}
                 onChange={handleChange}

@@ -26,7 +26,7 @@ export function PastClinicPagesCard({ pastPages = [], onViewPage }) {
         {pastPages.length === 0 ? (
           <p className="text-sm text-gray-500">No previous pages</p>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-64 overflow-y-auto">
             {pastPages.map((page) => (
               <div
                 key={page.id}
@@ -65,20 +65,65 @@ export function PastClinicPagesCard({ pastPages = [], onViewPage }) {
             </div>
             <div className="space-y-4 text-sm">
               <div>
-                <strong>Reason:</strong> {viewingPage.reason}
+                <strong>Date:</strong> {viewingPage.date}
               </div>
               <div>
                 <strong>Time:</strong> {viewingPage.time}
               </div>
+              <div>
+                <strong>Reason:</strong> {viewingPage.reason}
+              </div>
 
-              <p className="text-gray-600 mt-4">
-                This is a locked, read-only view of a completed clinic page.
-              </p>
-              <p className="text-xs text-gray-500">
-                In the real application, this would show all examination notes,
-                vital signs, and medication details from that visit.
-              </p>
+              {viewingPage.fullData && (
+                <>
+                  <div>
+                    <strong>Examination Notes:</strong>{" "}
+                    {viewingPage.fullData.pageData.examinationNotes || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Blood Pressure:</strong>{" "}
+                    {viewingPage.fullData.pageData.bloodPressure || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Pulse:</strong>{" "}
+                    {viewingPage.fullData.pageData.pulse || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Temperature:</strong>{" "}
+                    {viewingPage.fullData.pageData.temperature || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Medication:</strong>{" "}
+                    {viewingPage.fullData.pageData.medication || "—"}
+                  </div>
+                  <div>
+                    <strong>Suggested Tests:</strong>{" "}
+                    {viewingPage.fullData.pageData.suggestedTests || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Doctor Note:</strong>{" "}
+                    {viewingPage.fullData.pageData.doctorNote || "—"}
+                  </div>
+
+                  <div>
+                    <strong>Next Consultation Date:</strong>{" "}
+                    {viewingPage.fullData.pageData.nextClinicDate || "—"}
+                  </div>
+                </>
+              )}
+
+              {!viewingPage.fullData && (
+                <p className="text-gray-500 text-sm">
+                  Detailed clinic data not available.
+                </p>
+              )}
             </div>
+
             <button
               onClick={closeModal}
               className="mt-6 w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
