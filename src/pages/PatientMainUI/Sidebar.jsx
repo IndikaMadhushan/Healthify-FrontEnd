@@ -109,7 +109,6 @@ function renderContent(active) {
     // case "Upload Report":
     //   return <UnderConstruction active={active} />;
     
-    
     case "Reminders":
       return <RemindersPage />;
     case "Medical Info":
