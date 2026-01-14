@@ -165,10 +165,10 @@ function MobileNavButton({ icon, text, active, setActive }) {
 
 function renderContent(
   active,
-  handleNavigateToUpload,
-  uploadCategory,
-  handleBackToReports,
-  userId,
+  // handleNavigateToUpload,
+  // uploadCategory,
+  // handleBackToReports,
+  // userId,
 ) {
   switch (active) {
     case "Summary":
