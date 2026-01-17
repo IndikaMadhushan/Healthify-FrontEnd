@@ -50,8 +50,17 @@ export default function DoctorClinicBookPage() {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  //  WORKFLOW STATE (NEW)
+  const [pageStatus, setPageStatus] = useState("DRAFT");
+  // DRAFT | COMPLETED | LOCKED | PENDING_APPROVAL
 
-  // ==================== TIME-BASED EDITING STATE ====================
+  const [pendingAction, setPendingAction] = useState(null);
+  // UPDATE | DELETE
+
+  const [changeSummary, setChangeSummary] = useState("");
+  const [_patientApproved, _setPatientApproved] = useState(false);
+
+  // TIME-BASED EDITING STATE
   const [isCompleted, setIsCompleted] = useState(false); // Has doctor completed the page?
   const [completionTime, setCompletionTime] = useState(null); // When was it completed?
   const [remainingTime, setRemainingTime] = useState(null); // Time left to edit (in seconds)
@@ -77,6 +86,7 @@ export default function DoctorClinicBookPage() {
       if (remaining <= 0) {
         setRemainingTime(0);
         setCanEdit(false);
+        setPageStatus("LOCKED");
         clearInterval(timer);
       } else {
         setRemainingTime(remaining);
@@ -86,8 +96,59 @@ export default function DoctorClinicBookPage() {
 
     return () => clearInterval(timer);
   }, [isCompleted, completionTime, EDIT_WINDOW_SECONDS]);
+  useEffect(() => {
+    if (pendingAction) {
+      console.log("Pending action:", pendingAction);
+    }
+  }, [pendingAction]);
 
-  // ==================== HELPER FUNCTIONS ====================
+  const handleCreateNewPage = () => {
+    setFormData({
+      date: new Date().toISOString().split("T")[0],
+      reasonForVisit: "",
+      examinationNotes: "",
+      bloodPressure: "",
+      pulse: "",
+      temperature: "",
+      weight: "",
+      respiratoryRate: "",
+      medication: "",
+      suggestedTests: "",
+      doctorNote: "",
+      nextClinicDate: "",
+    });
+
+    setIsCompleted(false);
+    setCompletionTime(null);
+    setRemainingTime(null);
+    setCanEdit(false);
+
+    setPageStatus("DRAFT");
+    setPendingAction(null);
+    setChangeSummary("");
+  };
+
+  // PATIENT APPROVAL EFFECT
+
+  /* useEffect(() => {
+    if (pageStatus !== "PENDING_APPROVAL" || !patientApproved) return;
+
+    if (pendingAction === "UPDATE") {
+      alert("✅ Patient approved update. Changes saved.");
+      setPageStatus("COMPLETED");
+    }
+
+    if (pendingAction === "DELETE") {
+      alert("🗑️ Patient approved deletion.");
+      setPastPages((prev) => prev.slice(1));
+      handleCreateNewPage();
+    }
+
+    setPendingAction(null);
+    setPatientApproved(false);
+  }, [pageStatus, patientApproved, pendingAction]);*/
+
+  //  HELPER FUNCTIONS
 
   // Format remaining time as MM:SS
   const formatTime = (seconds) => {
@@ -96,8 +157,18 @@ export default function DoctorClinicBookPage() {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
+  //  CHANGE SUMMARY HELPER
+  const getChangedFieldsSummary = (oldData, newData) => {
+    return Object.keys(newData)
+      .filter((key) => oldData[key] !== newData[key])
+      .map(
+        (key) =>
+          `• ${key}: "${oldData[key] || "—"}" → "${newData[key] || "—"}"`,
+      )
+      .join("\n");
+  };
 
-  // ==================== HANDLERS ====================
+  //  HANDLERS
   const handleNavigate = (path) => {
     navigate(path);
   };
@@ -190,6 +261,7 @@ export default function DoctorClinicBookPage() {
       setCompletionTime(completionTimestamp);
       setCanEdit(true);
       setRemainingTime(EDIT_WINDOW_SECONDS);
+      setPageStatus("COMPLETED");
 
       alert(
         `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\n You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.\n\n This clinic book is now saved in patient's Clinic Book folder.`,
@@ -209,13 +281,45 @@ export default function DoctorClinicBookPage() {
    * - After patient accepts → Updated page replaces original in folder
    */
   const handleUpdate = async () => {
-    if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer update this consultation.",
+    //  AFTER 10 MINUTES → REQUEST APPROVAL
+    const elapsedSeconds = Math.floor((Date.now() - completionTime) / 1000);
+    const isWithinEditWindow = elapsedSeconds < EDIT_WINDOW_SECONDS;
+
+    if (!isWithinEditWindow) {
+      setPendingAction("UPDATE");
+      setChangeSummary(
+        getChangedFieldsSummary(
+          pastPages[0]?.fullData?.pageData || {},
+          formData,
+        ),
       );
+
+      setPageStatus("PENDING_APPROVAL");
+
+      alert(
+        "📧 Edit window expired.\n\nUpdate request sent to patient for approval.",
+      );
+
+      const updateRequest = {
+        clinicId: `CONSULT_${completionTime}`,
+        patientId: patientInfo.patientId,
+        patientEmail: patientInfo.email,
+        updatedAt: new Date().toISOString(),
+        updatedData: formData,
+        doctorId: "DR123",
+        status: "pending_patient_approval",
+        emailNotification: {
+          to: patientInfo.email,
+          subject: `Update Request: Consultation on ${formData.date}`,
+          message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
+        },
+      };
+
+      console.log("📧 Sending update request:", updateRequest);
       return;
     }
 
+    // WITHIN 10 MINUTES → UPDATE IMMEDIATELY
     if (!validate()) {
       alert("Please fill in required fields before updating");
       return;
@@ -223,38 +327,29 @@ export default function DoctorClinicBookPage() {
 
     setIsUpdating(true);
 
-    const updateRequest = {
-      clinicId: `CONSULT_${completionTime}`,
-      patientId: patientInfo.patientId,
-      patientEmail: patientInfo.email,
-      updatedAt: new Date().toISOString(),
-      updatedData: formData,
-      doctorId: "DR123",
-      status: "pending_patient_approval", // Waiting for patient to accept
-      emailNotification: {
-        to: patientInfo.email,
-        subject: `Update Request: Consultation on ${formData.date}`,
-        message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
-      },
-    };
-    // ==================== SIMULATE API SAVE & EMAIL SEND ====================
     setTimeout(() => {
-      console.log(
-        "📧 Update request sent to patient for approval:",
-        updateRequest,
-      );
-      console.log(`📧 Email sent to: ${patientInfo.email}`);
+      setPastPages((prev) => {
+        const updated = [...prev];
+        updated[0] = {
+          ...updated[0],
+          date: formData.date,
+          reason: formData.reasonForVisit,
+          fullData: {
+            ...updated[0].fullData,
+            pageData: formData,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+        localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+        return updated;
+      });
 
-      alert(
-        `📧 Update request sent!\n\nPatient: ${patientInfo.fullName}\nEmail: ${patientInfo.email}\n\n⏳ Waiting for patient approval...\n\nThe patient will receive an email to accept these changes.\nOnce approved, the updated consultation will be saved to their Consult folder.`,
-      );
+      alert("✅ Consultation updated successfully (within edit window).");
 
       setIsUpdating(false);
-
-      // In real app: You might disable Update button until patient responds
-      // or show a "Pending approval" status
-    }, 1500);
+    }, 800);
   };
+
   // ==================== DELETE HANDLER ====================
   /**
    * DELETE: Remove consultation from patient's folder
@@ -264,12 +359,29 @@ export default function DoctorClinicBookPage() {
    */
   const handleDelete = () => {
     if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer delete this consultation.",
-      );
+      requestDelete();
       return;
     }
+
     setShowDeleteConfirm(true);
+  };
+
+  const requestUpdate = () => {
+    setPendingAction("UPDATE");
+    setChangeSummary("Doctor requested update after edit window expired.");
+
+    alert(`📧 Update request sent to patient.\n\nSummary:\n${changeSummary}`);
+
+    setPageStatus("PENDING_APPROVAL");
+  };
+
+  const requestDelete = () => {
+    setPendingAction("DELETE");
+    setChangeSummary("Doctor requested deletion after edit window expired.");
+
+    alert(`📧 Delete request sent to patient.\n\nSummary:\n${changeSummary}`);
+
+    setPageStatus("PENDING_APPROVAL");
   };
 
   const confirmDelete = () => {
@@ -288,7 +400,15 @@ export default function DoctorClinicBookPage() {
     );
 
     setShowDeleteConfirm(false);
-    navigate("/patient-dashboard");
+    setPastPages((prev) => {
+      const updated = prev.filter(
+        (p) => p.fullData.id !== `CONSULT_${completionTime}`,
+      );
+      localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+      return updated;
+    });
+
+    handleCreateNewPage();
   };
 
   const cancelDelete = () => {
@@ -400,38 +520,52 @@ export default function DoctorClinicBookPage() {
               {/* ACTION BUTTONS */}
 
               <div className="flex justify-between items-center mt-6">
-                {isCompleted && (
+                {pageStatus === "COMPLETED" && (
                   <div className="flex gap-3">
                     <button
                       onClick={handleUpdate}
-                      disabled={!canEdit || isUpdating}
-                      className={`px-6 py-3 rounded-lg font-semibold ${
-                        canEdit
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      disabled={isUpdating}
+                      className={`px-6 py-3 rounded-lg text-white ${
+                        isUpdating
+                          ? "bg-blue-300 cursor-not-allowed"
+                          : "bg-blue-600"
                       }`}
                     >
-                      {isUpdating ? "Updating..." : "✏️ Update"}
+                      {isUpdating ? "Sending..." : "✏️ Update"}
                     </button>
-                    {/* Delete Button */}
+
                     <button
                       onClick={handleDelete}
-                      disabled={!canEdit}
-                      className={`px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105 ${
-                        canEdit
-                          ? "bg-red-600 text-white  hover:bg-red-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                      title={
-                        !canEdit
-                          ? "Edit window expired"
-                          : "Delete clinic book page"
-                      }
+                      className="px-6 py-3 bg-red-600 text-white rounded-lg"
                     >
                       🗑️ Delete
                     </button>
                   </div>
                 )}
+
+                {pageStatus === "LOCKED" && (
+                  <div className="flex gap-3">
+                    <button
+                      onClick={requestUpdate}
+                      className="px-6 py-3 bg-yellow-500 text-white rounded-lg"
+                    >
+                      📝 Request Update
+                    </button>
+                    <button
+                      onClick={requestDelete}
+                      className="px-6 py-3 bg-orange-600 text-white rounded-lg"
+                    >
+                      🗑️ Request Delete
+                    </button>
+                  </div>
+                )}
+
+                {pageStatus === "PENDING_APPROVAL" && (
+                  <div className="px-4 py-3 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
+                    ⏳ Waiting for patient approval…
+                  </div>
+                )}
+
                 {/* RIGHT: Complete Button (only if not completed yet) */}
                 {!isCompleted && (
                   <button

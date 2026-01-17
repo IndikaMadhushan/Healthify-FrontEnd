@@ -16,6 +16,8 @@ import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 
 import RemindersPage from "./pages/Reminders/RemindersPage";
 
+import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
+
 import UserProfile from "./pages/Reminders/UserProfile";
 import AppointmentSection from "./pages/Reminders/AppointmentSection";
 import Footer from "./components/footer";
@@ -78,6 +80,8 @@ function App() {
         path="/doctor-consult/:patientId"
         element={<DoctorConsultPage />}
       />
+
+      <Route path="/medical-reports" element={<MedicalReportsPage />} />
 
       {/* http://localhost:5173/doctor-clinic-book/:UR5678/:CB001 */}
       {/* Doctor Clinic Book Page */}

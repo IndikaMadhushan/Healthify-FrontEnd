@@ -13,6 +13,7 @@ import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 import RemindersPage from "../Reminders/RemindersPage";
 import MyProfile from "./PatientProfilePage";
 import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
+import MedicalReportsPage from "../MedicalReportsPage/MedicalReportsPage";
 
 // import BasicInfoForm from "../PatientFormPage/basicInfoForm";
 
@@ -175,7 +176,7 @@ function renderContent(
     case "My Profile":
       return <MyProfile />;
     case "Upload Report":
-      return <UnderConstruction active={active} />;
+      return <MedicalReportsPage />;
 
     case "Reminders":
       return <RemindersPage />;
