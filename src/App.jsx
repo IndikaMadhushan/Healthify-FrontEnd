@@ -16,35 +16,33 @@ import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 
 import RemindersPage from "./pages/Reminders/RemindersPage";
 
+import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
 
-import UserProfile from "./pages/Reminders/UserProfile";
-import AppointmentSection from "./pages/Reminders/AppointmentSection";
-import Footer from "./components/footer";
-import Header from "./pages/HomePage/Header";
-import MedicineSection from "./pages/Reminders/MedicineSection";
-import OtherSection from "./pages/Reminders/OtherSection";
-import PeriodSection from "./pages/Reminders/PeriodSection";
-import Tabs from "./pages/Reminders/Tabs";
-import TodaySection from "./pages/Reminders/TodaySection";
+//
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
 import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
+//test
+import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
+import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
+import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
 function App() {
   return (
     <Routes>
+      <Route path="/customize-folders" element={<CustomizeFolder />} />
+      <Route path="/report-upload" element={<Uploader />} />
+      <Route path="/vaccine-page" element={<VaccinePage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
-      <Route path="/firstFillForm" element={<PatientFirstFillForm/> } />
-    
-    
+      <Route path="/firstFillForm" element={<PatientFirstFillForm />} />
+
       <Route path="/patientMain" element={<Dashboard />} />
 
       <Route path="/reminders" element={<RemindersPage />} />
-
 
       {/* Reminder page
       <Route path="/Reminders" element={<UserProfile />} />
@@ -60,16 +58,11 @@ function App() {
       {/* Doctor Registration Routes */}
       <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
       <Route path="/doctor-register-2" element={<DoctorRegisterPage2 />} />
-
       {/* Patient Registration Routes */}
       <Route path="/patient-register-1" element={<PatientRegisterPage1 />} />
       <Route path="/patient-register-2" element={<PatientRegisterPage2 />} />
 
-
       <Route path="/patient-dashboard" element={<Dashboard />} />
-
-
-      
 
       {/* Doctor dashboard Page */}
       <Route path="/doctor-dashboard" element={<DoctorDashBoardPage />} />
@@ -80,25 +73,22 @@ function App() {
         element={<DoctorConsultPage />}
       />
 
+      <Route path="/medical-reports" element={<MedicalReportsPage />} />
+
       {/* http://localhost:5173/doctor-clinic-book/:UR5678/:CB001 */}
       {/* Doctor Clinic Book Page */}
       <Route
         path="/doctor-clinic-book/:patientId/:bookId"
         element={<DoctorClinicBookPage />}
       />
-      
-      <Route
-        path="/patient-dashboard"
-        element={<Dashboard />}
-      />
+
+      <Route path="/patient-dashboard" element={<Dashboard />} />
       <Route path="/prescription" element={<PrescriptionList />} />
       <Route path="/verify/:id" element={<PrescriptionVerify />} />
 
       <Route path="/surgeries" element={<SurgeryHistory />} />
-        <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder/>} />
+      <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
     </Routes>
-    
-    
   );
 }
 

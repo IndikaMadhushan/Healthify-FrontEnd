@@ -10,7 +10,7 @@ export function PatientDetailsCard({
     fullName: "Parindya Hewage",
     age: 23,
     gender: "Female",
-    medicationPurpose: "Treat Gastritis",
+    //medicationPurpose: "Treat Gastritis",
   };
 
   const cardBox = "border border-gray-300 rounded-xl bg-white shadow-sm p-4";
