@@ -106,8 +106,8 @@ function renderContent(active) {
     case "Summary":
     case "My Profile":
       return <MyProfile />;
-    case "Upload Report":
-      return <UnderConstruction active={active} />;
+    // case "Upload Report":
+    //   return <UnderConstruction active={active} />;
     
     
     case "Reminders":
