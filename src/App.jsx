@@ -18,15 +18,7 @@ import RemindersPage from "./pages/Reminders/RemindersPage";
 
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
 
-import UserProfile from "./pages/Reminders/UserProfile";
-import AppointmentSection from "./pages/Reminders/AppointmentSection";
-import Footer from "./components/footer";
-import Header from "./pages/HomePage/Header";
-import MedicineSection from "./pages/Reminders/MedicineSection";
-import OtherSection from "./pages/Reminders/OtherSection";
-import PeriodSection from "./pages/Reminders/PeriodSection";
-import Tabs from "./pages/Reminders/Tabs";
-import TodaySection from "./pages/Reminders/TodaySection";
+//
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";

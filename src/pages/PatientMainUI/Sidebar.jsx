@@ -182,8 +182,6 @@ function renderContent(
       return <RemindersPage />;
     case "Medical Info":
       return <PatientMediInfomation />;
-    case "Upload Report":
-      return <PatientFormDoctorView />;
     default:
       return null;
   }
