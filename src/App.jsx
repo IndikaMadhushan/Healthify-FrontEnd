@@ -28,6 +28,7 @@ import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
 import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
 import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
+import AllDoctorNotes from "./pages/AllDoctorNotes/AllDoctorNotes";
 function App() {
   return (
     <Routes>
@@ -88,6 +89,8 @@ function App() {
 
       <Route path="/surgeries" element={<SurgeryHistory />} />
       <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
+      {/* Doctor Notes Page */}
+      <Route path="/doctor-notes" element={<AllDoctorNotes />} />
     </Routes>
   );
 }
