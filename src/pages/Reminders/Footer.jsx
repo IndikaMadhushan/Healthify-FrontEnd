@@ -1,10 +1,6 @@
-import React from 'react';
-import { Link } from "react-router-dom";
-
 import logo from "../../assets/logo.png";
 import phone from "../../assets/Phone.png";
 import email from "../../assets/Email.png";
-
 
 
 export default function Footer() {

@@ -41,3 +41,16 @@ export const registerDoctorApi = async (formData) => {
 
     return response.data;
 };
+
+//otp verification
+export const verifyOtpApi = (email, otp) =>
+  axios.post(`${API_BASE_URL}/verify-email`, null, {
+    params: { email, otp }
+  });
+
+  //otp resend
+export const resendOtpApi = (email) =>
+  axios.post(`${API_BASE_URL}/resend-otp`, null, {
+    params: { email }
+  });
+
