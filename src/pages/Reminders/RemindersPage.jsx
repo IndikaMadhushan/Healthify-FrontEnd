@@ -1,12 +1,12 @@
-import Header from "./Header";
-import UserProfile from "./UserProfile";
+// import Header from "./Header";
+// import UserProfile from "./UserProfile";
 import Tabs from "./Tabs";
 import TodaySection from "./TodaySection";
 import AppointmentSection from "./AppointmentSection";
 import MedicineSection from "./MedicineSection";
 import OtherSection from "./OtherSection";
 import PeriodSection from "./PeriodSection";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 import { useState } from "react";
 // import logo from "../../assets/logo.png";
 
