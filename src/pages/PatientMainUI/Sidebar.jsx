@@ -96,6 +96,7 @@ function renderContent(active) {
       return <SummaryPage />;
     case "My Profile":
       return <MyProfile />;
+
     case "Reminders":
       return <RemindersPage />;
     case "Medical Info":
