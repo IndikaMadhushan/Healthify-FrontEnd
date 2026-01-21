@@ -1,15 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { verifyOtpApi, resendOtpApi } from '../../api/authApi';
 
 export default function OTPVerification() {
   const navigate = useNavigate();
   const location = useLocation();
-  const userEmail = location.state?.email || 'your email'; // Get email from navigation state
+  const userEmail = location.state?.email || 'your email';
+  const userType = location.state?.userType || 'patient'; // Get userType (patient/doctor)
   
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState('');
   const inputRefs = useRef([]);
 
   // Timer countdown
@@ -27,6 +30,9 @@ export default function OTPVerification() {
   const handleChange = (index, value) => {
     // Only allow numbers
     if (!/^\d*$/.test(value)) return;
+
+    // Clear error when user starts typing
+    if (error) setError('');
 
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -66,25 +72,32 @@ export default function OTPVerification() {
     const otpValue = otp.join('');
     if (otpValue.length === 6) {
       setIsVerifying(true);
+      setError('');
       
       try {
-        // TODO: Replace with your actual API call
-        // const response = await axios.post('/api/verify-otp', {
-        //   email: userEmail,
-        //   otp: otpValue
-        // });
+        const response = await verifyOtpApi(userEmail, otpValue);
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('OTP Verification Success:', response.data);
         
-        console.log('OTP Verified:', otpValue);
-        
-        // Navigate to patient dashboard on success
-        navigate('/patient-dashboard');
+        // Different success messages and redirects based on userType
+        if (userType === 'doctor') {
+          alert('✅ Verification successful! Your account will be activated after admin approval.');
+          navigate('/login', { replace: true });
+        } else {
+          alert('✅ Verification successful! Redirecting to dashboard...');
+          navigate('/patient-dashboard', { replace: true });
+        }
         
       } catch (error) {
         console.error('OTP Verification failed:', error);
-        alert('Invalid OTP. Please try again.');
+        
+        // Handle different error scenarios
+        const errorMessage = error.response?.data?.message 
+          || error.response?.data 
+          || error.message 
+          || 'Invalid OTP. Please try again.';
+        
+        setError(errorMessage);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0].focus();
       } finally {
@@ -95,21 +108,30 @@ export default function OTPVerification() {
 
   const handleResend = async () => {
     if (canResend) {
+      setError('');
+      
       try {
-        // TODO: Replace with your actual API call
-        // await axios.post('/api/resend-otp', { email: userEmail });
+        const response = await resendOtpApi(userEmail);
+        
+        console.log('OTP Resent:', response.data);
         
         setTimer(60);
         setCanResend(false);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0].focus();
-        console.log('Resending OTP to:', userEmail);
         
         // Show success message
-        alert('New OTP sent to your email!');
+        alert('📧 New OTP sent to your email!');
+        
       } catch (error) {
         console.error('Failed to resend OTP:', error);
-        alert('Failed to resend OTP. Please try again.');
+        
+        const errorMessage = error.response?.data?.message 
+          || error.response?.data
+          || error.message 
+          || 'Failed to resend OTP. Please try again.';
+        
+        setError(errorMessage);
       }
     }
   };
@@ -141,7 +163,21 @@ export default function OTPVerification() {
             <p className="text-[#18AAB0] font-semibold text-sm mt-1">
               {userEmail}
             </p>
+            {userType === 'doctor' && (
+              <p className="text-xs text-amber-600 mt-2 bg-amber-50 p-2 rounded-lg border border-amber-200">
+                ⚠️ Note: Your account will be activated after admin verification
+              </p>
+            )}
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200">
+              <p className="text-red-600 text-sm text-center font-medium">
+                ⚠️ {error}
+              </p>
+            </div>
+          )}
 
           {/* OTP Input Boxes */}
           <div className="flex justify-center gap-2 sm:gap-3 mb-6">
@@ -157,9 +193,11 @@ export default function OTPVerification() {
                 onPaste={index === 0 ? handlePaste : undefined}
                 className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-bold rounded-xl border-2 
                   transition-all duration-200 outline-none
-                  ${digit 
-                    ? 'border-[#18AAB0] bg-[#F7FCFB] text-[#0F4F52]' 
-                    : 'border-[#D3F0ED] bg-white text-gray-400'
+                  ${error 
+                    ? 'border-red-300 bg-red-50 text-red-600 animate-shake' 
+                    : digit 
+                      ? 'border-[#18AAB0] bg-[#F7FCFB] text-[#0F4F52]' 
+                      : 'border-[#D3F0ED] bg-white text-gray-400'
                   }
                   focus:border-[#18AAB0] focus:ring-4 focus:ring-[#18AAB0]/20
                   hover:border-[#86C443]
@@ -201,7 +239,16 @@ export default function OTPVerification() {
               }
             `}
           >
-            {isVerifying ? 'Verifying...' : isComplete ? 'Verify & Continue' : 'Enter OTP Code'}
+            {isVerifying ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="inline-block w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></span>
+                Verifying...
+              </span>
+            ) : isComplete ? (
+              'Verify & Continue'
+            ) : (
+              'Enter OTP Code'
+            )}
           </button>
 
           {/* Help Text */}
@@ -223,6 +270,18 @@ export default function OTPVerification() {
         </div>
 
       </div>
+
+      {/* Custom shake animation for error state */}
+      <style>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+          animation: shake 0.3s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

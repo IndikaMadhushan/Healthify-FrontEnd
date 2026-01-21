@@ -1,200 +1,184 @@
-import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useState, useEffect } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
 
-// Mock data - replace with actual API calls later
-const mockPatient = {
-  fullName: "Parindya Hewage",
-  age: 23,
-  patientId: "PAT-2026-0001",
-  email: "parindya@gmail.com",
-  gender: "Female"
-};
-
-const mockHealthData = {
-  weight: [
-    { date: "2025-11", value: 58 },
-    { date: "2025-12", value: 59 },
-    { date: "2026-01", value: 60 }
-  ],
-  height: [
-    { date: "2025-11", value: 165 },
-    { date: "2025-12", value: 165 },
-    { date: "2026-01", value: 165 }
-  ],
-  bloodSugar: [
-    { date: "2025-11", value: 95 },
-    { date: "2025-12", value: 98 },
-    { date: "2026-01", value: 92 }
-  ],
-  cholesterol: [
-    { date: "2025-11", value: 180 },
-    { date: "2025-12", value: 175 },
-    { date: "2026-01", value: 170 }
-  ]
-};
-
-const mockReminders = {
-  appointments: [
-    { id: 1, title: "Dr. Silva - General Checkup", time: "10:00 AM", location: "Main Clinic" },
-    { id: 2, title: "Blood Test", time: "2:30 PM", location: "Lab Center" }
-  ],
-  medicines: [
-    { id: 1, name: "Vitamin D", dosage: "1 tablet", time: "8:00 AM" },
-    { id: 2, name: "Calcium", dosage: "1 tablet", time: "8:00 PM" }
-  ],
-  period: [
-    { id: 1, note: "Expected in 5 days", date: "Jan 23, 2026" }
-  ],
-  other: [
-    { id: 1, title: "Drink 8 glasses of water", time: "Throughout the day" }
-  ]
-};
+import {
+  getPatientProfileApi,
+  getPatientBmiApi,
+  getMedicineRemindersApi,
+  getAppointmentRemindersApi,
+  getPeriodRemindersApi,
+  getOtherRemindersApi
+} from "../../api/PatientApi";
 
 export default function SummaryPage() {
-  const [greeting, setGreeting] = useState('');
-  const [currentBMI, setCurrentBMI] = useState(null);
-  const [healthStatus, setHealthStatus] = useState({ message: '', color: '' });
+  const [greeting, setGreeting] = useState("");
+  const [patient, setPatient] = useState(null);
+  const [bmiInfo, setBmiInfo] = useState(null);
+  const [healthStatus, setHealthStatus] = useState(null);
+  const [reminders, setReminders] = useState({
+    medicines: [],
+    appointments: [],
+    period: [],
+    other: []
+  });
 
   useEffect(() => {
-    // Set greeting based on time
+    // Greeting in the top
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good Morning');
-    else if (hour < 18) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
+    if (hour < 12) setGreeting("Good Morning");
+    else if (hour < 18) setGreeting("Good Afternoon");
+    else setGreeting("Good Evening");
 
-    // Calculate BMI from latest weight and height
-    const latestWeight = mockHealthData.weight[mockHealthData.weight.length - 1].value;
-    const latestHeight = mockHealthData.height[mockHealthData.height.length - 1].value / 100; // convert to meters
-    const bmi = (latestWeight / (latestHeight * latestHeight)).toFixed(1);
-    setCurrentBMI(bmi);
+    const loadSummary = async () => {
+      try {
+        // Logged-in patient
+        const profileRes = await getPatientProfileApi();
+        const patientData = profileRes.data;
+        setPatient(patientData);
 
-    // Determine health status
-    const latestSugar = mockHealthData.bloodSugar[mockHealthData.bloodSugar.length - 1].value;
-    
-    if (bmi >= 18.5 && bmi <= 24.9 && latestSugar >= 70 && latestSugar <= 100) {
-      setHealthStatus({ 
-        message: '🎉 Excellent! Your health metrics are in the healthy range. Keep up the great work!', 
-        color: 'bg-green-50 border-green-200 text-green-800' 
-      });
-    } else if (bmi < 18.5 || bmi > 29.9 || latestSugar < 70 || latestSugar > 140) {
-      setHealthStatus({ 
-        message: '⚠️ Alert: Some of your health metrics need attention. Please consult your doctor.', 
-        color: 'bg-red-50 border-red-200 text-red-800' 
-      });
-    } else {
-      setHealthStatus({ 
-        message: '💡 Notice: Your health metrics are slightly off target. Consider lifestyle adjustments.', 
-        color: 'bg-yellow-50 border-yellow-200 text-yellow-800' 
-      });
-    }
+        const patientId = patientData.id;
+
+        // Parallel API calls
+        const [
+          bmiRes,
+          medicineRes,
+          appointmentRes,
+          periodRes,
+          otherRes
+        ] = await Promise.all([
+          getPatientBmiApi(patientId),
+          getMedicineRemindersApi(patientId),
+          getAppointmentRemindersApi(patientId),
+          getPeriodRemindersApi(patientId),
+          getOtherRemindersApi(patientId)
+        ]);
+
+        setBmiInfo(bmiRes.data);
+
+        setReminders({
+          medicines: medicineRes.data || [],
+          appointments: appointmentRes.data || [],
+          period: periodRes.data || [],
+          other: otherRes.data || []
+        });
+
+
+        // HEALTH STATUS LOGIC (RESTORED)
+        if (bmiRes.data?.bmi) {
+          const bmi = bmiRes.data.bmi;
+
+          if (bmi >= 18.5 && bmi <= 24.9) {
+            setHealthStatus({
+              message: "🎉 Excellent! Your BMI is in the healthy range.",
+              color: "bg-green-50 border-green-200 text-green-800"
+            });
+          } else if (bmi < 18.5) {
+            setHealthStatus({
+              message: "⚠️ You are underweight. Consider consulting a doctor.",
+              color: "bg-yellow-50 border-yellow-200 text-yellow-800"
+            });
+          } else {
+            setHealthStatus({
+              message: "⚠️ Your BMI indicates overweight. Lifestyle changes are recommended.",
+              color: "bg-red-50 border-red-200 text-red-800"
+            });
+          }
+        }
+
+      } catch (err) {
+        console.error("Failed to load summary data", err);
+      }
+    };
+
+    loadSummary();
   }, []);
+
+  if (!patient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading summary...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F2FBFA] p-4 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Welcome Card */}
         <div className="bg-gradient-to-br from-[#18AAB0] to-[#86C443] rounded-3xl shadow-lg p-8 text-white">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {greeting}, {mockPatient.fullName.split(' ')[0]}! 👋
+              <h1 className="text-3xl font-bold mb-2">
+                {greeting}, {patient.fullName.split(" ")[0]} 👋
               </h1>
-              <p className="text-white/90 text-sm md:text-base">
-                {mockPatient.age} years • {mockPatient.gender} • ID: {mockPatient.patientId}
+              <p className="text-sm">
+                {patient.age ?? "—"} years • {patient.gender} • ID: {patient.patientId}
               </p>
-              <p className="text-white/80 text-xs md:text-sm mt-1">
-                📧 {mockPatient.email}
-              </p>
+              <p className="text-xs mt-1">📧 {patient.email}</p>
             </div>
-            
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/30">
-              <p className="text-xs uppercase tracking-wide text-white/80 mb-1">Current BMI</p>
-              <p className="text-4xl font-bold">{currentBMI}</p>
-              <p className="text-xs text-white/90 mt-1">
-                {currentBMI < 18.5 ? 'Underweight' : currentBMI <= 24.9 ? 'Normal' : currentBMI <= 29.9 ? 'Overweight' : 'Obese'}
+
+            {/* BMI Card */}
+            <div className="bg-white/20 rounded-2xl px-6 py-4 border border-white/30">
+              <p className="text-xs uppercase mb-1">Current BMI</p>
+              <p className="text-4xl font-bold">
+                {bmiInfo?.bmi?.toFixed(1) ?? "—"}
+              </p>
+              <p className="text-xs mt-1">
+                {bmiInfo?.category ?? "Not available"}
               </p>
             </div>
           </div>
 
-          {/* Health Status Note */}
-          <div className={`mt-6 rounded-xl p-4 border ${healthStatus.color}`}>
+          {/* Health Recommendation */}
+        {healthStatus && (
+          <div className={`mt-4 rounded-xl p-4 border ${healthStatus.color}`}>
             <p className="text-sm font-medium">{healthStatus.message}</p>
           </div>
+        )}
+
+           {/* BMI Health Tip */}
+        {bmiInfo?.tip && (
+            <div className="mt-6 rounded-xl p-4 bg-white/20 border border-white/30">
+              <p className="text-sm">{bmiInfo.tip}</p>
+            </div>
+          )}
         </div>
 
-        {/* Health Metrics Graphs */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Weight Chart */}
-          <MetricCard 
-            title="Weight Trend" 
-            icon="⚖️" 
-            data={mockHealthData.weight}
-            dataKey="value"
-            color="#18AAB0"
-            unit="kg"
-            latestValue={mockHealthData.weight[mockHealthData.weight.length - 1].value}
-          />
-
-          {/* Height Chart */}
-          <MetricCard 
-            title="Height Tracking" 
-            icon="📏" 
-            data={mockHealthData.height}
-            dataKey="value"
-            color="#86C443"
-            unit="cm"
-            latestValue={mockHealthData.height[mockHealthData.height.length - 1].value}
-          />
-
-          {/* Blood Sugar Chart */}
-          <MetricCard 
-            title="Blood Sugar Levels" 
-            icon="💉" 
-            data={mockHealthData.bloodSugar}
-            dataKey="value"
-            color="#F59E0B"
-            unit="mg/dL"
-            latestValue={mockHealthData.bloodSugar[mockHealthData.bloodSugar.length - 1].value}
-          />
-
-          {/* Cholesterol Chart */}
-          <MetricCard 
-            title="Cholesterol Levels" 
-            icon="❤️" 
-            data={mockHealthData.cholesterol}
-            dataKey="value"
-            color="#EF4444"
-            unit="mg/dL"
-            latestValue={mockHealthData.cholesterol[mockHealthData.cholesterol.length - 1].value}
-          />
-        </div>
-
-        {/* Today's Reminders Section */}
+        {/* Reminders */}
         <div className="bg-white rounded-3xl shadow-sm p-6 lg:p-8">
-          <h2 className="text-2xl font-semibold text-[#0F4F52] mb-6 flex items-center gap-2">
-            <span className="text-[#18AAB0] text-xl">🔔</span>
-            Today's Reminders
+          <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+            🔔 Today’s Reminders
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
+
             {/* Appointments */}
             <ReminderSection
               title="Appointments"
               icon="📅"
-              items={mockReminders.appointments}
-              emptyMessage="No appointments scheduled for today"
-              renderItem={(item) => (
-                <div key={item.id} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[#18AAB0] mt-2 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-medium text-[#0F4F52] text-sm">{item.title}</p>
-                    <p className="text-xs text-gray-500 mt-1">🕐 {item.time}</p>
-                    <p className="text-xs text-gray-500">📍 {item.location}</p>
-                  </div>
-                </div>
+              items={reminders.appointments}
+              empty="No appointments today"
+              render={(a) => (
+                <>
+                  <p className="font-medium text-sm">
+                    {a.doctorName}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🏥 {a.hospital}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🕐 {a.appointmentTime}
+                  </p>
+                </>
               )}
             />
 
@@ -202,131 +186,81 @@ export default function SummaryPage() {
             <ReminderSection
               title="Medicines"
               icon="💊"
-              items={mockReminders.medicines}
-              emptyMessage="No medicine reminders for today"
-              renderItem={(item) => (
-                <div key={item.id} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[#86C443] mt-2 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-medium text-[#0F4F52] text-sm">{item.name}</p>
-                    <p className="text-xs text-gray-500 mt-1">💊 {item.dosage}</p>
-                    <p className="text-xs text-gray-500">🕐 {item.time}</p>
-                  </div>
-                </div>
+              items={reminders.medicines}
+              empty="No medicine reminders"
+              render={(m) => (
+                <>
+                  <p className="font-medium text-sm">
+                    {m.medicineName}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🕐 {m.time}
+                  </p>
+                </>
               )}
             />
 
-            {/* Period Tracker */}
-            {mockPatient.gender === "Female" && (
+            {/* Period */}
+            {patient.gender === "Female" && (
               <ReminderSection
                 title="Period Tracker"
                 icon="🌸"
-                items={mockReminders.period}
-                emptyMessage="No period reminders"
-                renderItem={(item) => (
-                  <div key={item.id} className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-pink-500 mt-2 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="font-medium text-[#0F4F52] text-sm">{item.note}</p>
-                      <p className="text-xs text-gray-500 mt-1">📅 {item.date}</p>
-                    </div>
-                  </div>
+                items={reminders.period}
+                empty="No period reminders"
+                render={(p) => (
+                  <p className="text-sm">
+                    Next cycle expected around {p.nextPeriodDate}
+                  </p>
                 )}
               />
             )}
 
-            {/* Other Reminders */}
+            {/* Other */}
             <ReminderSection
               title="Other Reminders"
               icon="📌"
-              items={mockReminders.other}
-              emptyMessage="No other reminders"
-              renderItem={(item) => (
-                <div key={item.id} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="font-medium text-[#0F4F52] text-sm">{item.title}</p>
-                    <p className="text-xs text-gray-500 mt-1">🕐 {item.time}</p>
-                  </div>
-                </div>
+              items={reminders.other}
+              empty="No other reminders"
+              render={(o) => (
+                <>
+                  <p className="font-medium text-sm">
+                    {o.note}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🕐 {o.time}
+                  </p>
+                </>
               )}
             />
+
           </div>
         </div>
-
       </div>
     </div>
   );
 }
 
-// Reusable Metric Card Component
-function MetricCard({ title, icon, data, dataKey, color, unit, latestValue }) {
-  return (
-    <div className="bg-white rounded-3xl shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#F7FCFB] border border-[#D3F0ED] flex items-center justify-center text-[#18AAB0]">
-            {icon}
-          </div>
-          <h3 className="text-lg font-semibold text-[#0F4F52]">{title}</h3>
-        </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-[#0F4F52]">{latestValue}</p>
-          <p className="text-xs text-gray-500">{unit}</p>
-        </div>
-      </div>
-
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-          <XAxis 
-            dataKey="date" 
-            tick={{ fill: '#6B7280', fontSize: 12 }}
-            stroke="#D1D5DB"
-          />
-          <YAxis 
-            tick={{ fill: '#6B7280', fontSize: 12 }}
-            stroke="#D1D5DB"
-          />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: 'white', 
-              border: '1px solid #D3F0ED',
-              borderRadius: '12px',
-              fontSize: '12px'
-            }}
-          />
-          <Line 
-            type="monotone" 
-            dataKey={dataKey} 
-            stroke={color} 
-            strokeWidth={3}
-            dot={{ fill: color, r: 5 }}
-            activeDot={{ r: 7 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-// Reusable Reminder Section Component
-function ReminderSection({ title, icon, items, emptyMessage, renderItem }) {
+/* ---------- Reusable Reminder Section ---------- */
+function ReminderSection({ title, icon, items, empty, render }) {
   return (
     <div className="bg-[#F7FCFB] border border-[#D3F0ED] rounded-2xl p-5">
       <div className="flex items-center gap-2 mb-4">
-        <div className="text-[#18AAB0]">{icon}</div>
-        <h3 className="font-semibold text-[#0F4F52]">{title}</h3>
+        <span>{icon}</span>
+        <h3 className="font-semibold">{title}</h3>
         <span className="ml-auto bg-[#18AAB0] text-white text-xs px-2 py-1 rounded-full">
           {items.length}
         </span>
       </div>
 
       <div className="space-y-3">
-        {items.length > 0 ? (
-          items.map(renderItem)
+        {items.length === 0 ? (
+          <p className="text-sm text-gray-400 italic text-center">{empty}</p>
         ) : (
-          <p className="text-sm text-gray-400 italic text-center py-4">{emptyMessage}</p>
+          items.map((item, i) => (
+            <div key={i} className="bg-white rounded-lg p-3 border">
+              {render(item)}
+            </div>
+          ))
         )}
       </div>
     </div>

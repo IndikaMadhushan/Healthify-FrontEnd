@@ -74,43 +74,43 @@ export default function PatientRegisterPage2() {
   };
 
   const handleFinish = async () => {
-    if (!validate()) return;
+  if (!validate()) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    const step1Data = JSON.parse(
-      sessionStorage.getItem("patientRegStep1") || "{}"
-    );
+  const step1Data = JSON.parse(
+    sessionStorage.getItem("patientRegStep1") || "{}"
+  );
 
-    const payload = {
-      ...step1Data,
-      password: formData.password,
-    };
-
-    try {
-      await registerPatientApi(payload);
-
-      console.log("Patient registered successfully. Redirecting to OTP page...");
-
-      // Save email for OTP verification page
-      sessionStorage.setItem("pendingVerificationEmail", payload.email);
-
-      // Clean step1 data
-      sessionStorage.removeItem("patientRegStep1");
-
-      // Redirect to OTP page
-      navigate("/verify-otp", { replace: true });
-
-    } catch (error) {
-      const message =
-        error.response?.data?.message || "Patient registration failed!";
-      alert(message);
-      console.error(error);
-
-    } finally {
-      setLoading(false);
-    }
+  const payload = {
+    ...step1Data,
+    password: formData.password,
   };
+
+  try {
+    await registerPatientApi(payload);
+
+    console.log("Patient registered successfully. Redirecting to OTP page...");
+
+    // Clean step1 data
+    sessionStorage.removeItem("patientRegStep1");
+
+    // Redirect to OTP page with email in navigation state
+    navigate("/verify-otp", { 
+      replace: true,
+      state: { email: payload.email }  // ← ADD THIS LINE
+    });
+
+  } catch (error) {
+    const message =
+      error.response?.data?.message || "Patient registration failed!";
+    alert(message);
+    console.error(error);
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <RegistrationLayout image={pRegImage2} imageAlt="Patient Registration">
