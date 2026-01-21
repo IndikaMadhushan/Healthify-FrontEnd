@@ -17,15 +17,15 @@ import Dashboard from "./pages/PatientMainUI/Sidebar";
 import RemindersPage from "./pages/Reminders/RemindersPage";
 
 
-import UserProfile from "./pages/Reminders/UserProfile";
-import AppointmentSection from "./pages/Reminders/AppointmentSection";
-import Footer from "./components/footer";
-import Header from "./pages/HomePage/Header";
-import MedicineSection from "./pages/Reminders/MedicineSection";
-import OtherSection from "./pages/Reminders/OtherSection";
-import PeriodSection from "./pages/Reminders/PeriodSection";
-import Tabs from "./pages/Reminders/Tabs";
-import TodaySection from "./pages/Reminders/TodaySection";
+// import UserProfile from "./pages/Reminders/UserProfile";
+// import AppointmentSection from "./pages/Reminders/AppointmentSection";
+// import Footer from "./components/footer";
+// import Header from "./pages/HomePage/Header";
+// import MedicineSection from "./pages/Reminders/MedicineSection";
+// import OtherSection from "./pages/Reminders/OtherSection";
+// import PeriodSection from "./pages/Reminders/PeriodSection";
+// import Tabs from "./pages/Reminders/Tabs";
+// import TodaySection from "./pages/Reminders/TodaySection";
 
 function App() {
   return (
