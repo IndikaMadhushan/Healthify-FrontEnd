@@ -45,13 +45,13 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 
 /* ================= COMPONENT ================= */
 
-export default function profileImageCropper({ onCropped }) {
-  const inputRef = useRef(null);
+export default function ProfileImageCropper({ onCropped }) {
+  // const inputRef = useRef(null);
   const modalInputRef = useRef(null);
 
   const [src, setSrc] = useState(null);
   const [profileSrc, setProfileSrc] = useState(null);
-  const [file, setFile] = useState(null);
+  const [ setFile] = useState(null);
 
   const [showCrop, setShowCrop] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
