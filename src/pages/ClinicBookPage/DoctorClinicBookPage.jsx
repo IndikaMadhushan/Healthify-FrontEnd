@@ -6,6 +6,7 @@ import { DoctorNavBar } from "../../components/DoctorNavBar";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
+import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
@@ -20,35 +21,14 @@ export default function DoctorClinicBookPage() {
     email: "parindya@gmail.com",
     age: 23,
     gender: "Female",
+    medicationPurpose: "Treat Gastritis",
   };
 
   // ==================== MOCK PAST CLINIC PAGES ====================
-  const [pastPages] = useState([
-    {
-      id: 1,
-      date: "2025-09-23",
-      time: "10:08AM",
-      reason: "Follow-up gastritis treatment",
-    },
-    {
-      id: 2,
-      date: "2025-08-21",
-      time: "10:08AM",
-      reason: "Initial consultation for stomach pain",
-    },
-    {
-      id: 3,
-      date: "2025-08-23",
-      time: "10:08AM",
-      reason: "Medication adjustment",
-    },
-    {
-      id: 4,
-      date: "2025-09-23",
-      time: "10:00AM",
-      reason: "Medication adjustment",
-    },
-  ]);
+  const [pastPages, setPastPages] = useState(() => {
+    const saved = localStorage.getItem("pastClinicPages");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
@@ -60,6 +40,9 @@ export default function DoctorClinicBookPage() {
     temperature: "",
     weight: "",
     respiratoryRate: "",
+    suggestedTests: "",
+    doctorNote: "",
+    nextClinicDate: "",
     medication: "",
   });
 
@@ -68,32 +51,41 @@ export default function DoctorClinicBookPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // ==================== TIME-BASED EDITING STATE ====================
-  const [isCompleted, setIsCompleted] = useState(false); // Has doctor completed the page?
-  const [completionTime, setCompletionTime] = useState(null); // When was it completed?
-  const [remainingTime, setRemainingTime] = useState(null); // Time left to edit (in seconds)
-  const [canEdit, setCanEdit] = useState(false); // Can doctor edit right now?
+  // ==================== NEW: VIEWING STATE ====================
+  const [viewingPage, setViewingPage] = useState(null); // Currently viewing page
+  const [isViewMode, setIsViewMode] = useState(false); // Are we in view mode?
 
-  const EDIT_WINDOW_MINUTES = 10; // Edit window duration
-  const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60; // 600 seconds
+  //  WORKFLOW STATE
+  const [pageStatus, setPageStatus] = useState("DRAFT");
+  // DRAFT | COMPLETED | LOCKED | PENDING_APPROVAL
+
+  const [pendingAction, setPendingAction] = useState(null);
+  // UPDATE | DELETE
+
+  const [changeSummary, setChangeSummary] = useState("");
+
+  // TIME-BASED EDITING STATE
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [completionTime, setCompletionTime] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [canEdit, setCanEdit] = useState(false);
+
+  const EDIT_WINDOW_MINUTES = 10;
+  const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60;
 
   // ==================== TIMER EFFECT ====================
-  /**
-   * Countdown timer after completion
-   * Updates every second to show remaining time
-   * Disables Update/Delete buttons after 10 minutes
-   */
   useEffect(() => {
     if (!isCompleted || !completionTime) return;
 
     const timer = setInterval(() => {
       const now = Date.now();
-      const elapsed = Math.floor((now - completionTime) / 1000); // seconds elapsed
+      const elapsed = Math.floor((now - completionTime) / 1000);
       const remaining = EDIT_WINDOW_SECONDS - elapsed;
+
       if (remaining <= 0) {
-        // Time's up!
         setRemainingTime(0);
         setCanEdit(false);
+        setPageStatus("LOCKED");
         clearInterval(timer);
       } else {
         setRemainingTime(remaining);
@@ -102,11 +94,98 @@ export default function DoctorClinicBookPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isCompleted, completionTime]);
+  }, [isCompleted, completionTime, EDIT_WINDOW_SECONDS]);
 
-  // ==================== HELPER FUNCTIONS ====================
+  useEffect(() => {
+    if (pendingAction) {
+      console.log("Pending action:", pendingAction);
+    }
+  }, [pendingAction]);
 
-  // Format remaining time as MM:SS
+  // ==================== NEW: HANDLE VIEW PAGE ====================
+  /**
+   * When doctor clicks "View" on a past page:
+   * 1. Load page data into form fields
+   * 2. Set viewing mode
+   * 3. Check if page is within 10-minute edit window
+   * 4. Show appropriate buttons (Update/Delete or Request Update/Request Delete)
+   */
+  const handleViewPage = (page) => {
+    if (!page || !page.fullData) return;
+
+    const pageData = page.fullData.pageData;
+
+    // Populate form with page data
+    setFormData({
+      date: pageData.date || "",
+      reasonForVisit: pageData.reasonForVisit || "",
+      examinationNotes: pageData.examinationNotes || "",
+      bloodPressure: pageData.bloodPressure || "",
+      pulse: pageData.pulse || "",
+      temperature: pageData.temperature || "",
+      weight: pageData.weight || "",
+      respiratoryRate: pageData.respiratoryRate || "",
+      suggestedTests: pageData.suggestedTests || "",
+      doctorNote: pageData.doctorNote || "",
+      nextClinicDate: pageData.nextClinicDate || "",
+      medication: pageData.medication || "",
+    });
+
+    // Set viewing state
+    setViewingPage(page);
+    setIsViewMode(true);
+    setIsCompleted(true);
+
+    // Calculate if within edit window
+    const pageCompletionTime = new Date(page.fullData.timestamp).getTime();
+    setCompletionTime(pageCompletionTime);
+
+    const now = Date.now();
+    const elapsed = Math.floor((now - pageCompletionTime) / 1000);
+    const remaining = EDIT_WINDOW_SECONDS - elapsed;
+
+    if (remaining > 0) {
+      setCanEdit(true);
+      setRemainingTime(remaining);
+      setPageStatus("COMPLETED");
+    } else {
+      setCanEdit(false);
+      setRemainingTime(0);
+      setPageStatus("LOCKED");
+    }
+  };
+
+  // ==================== CREATE NEW PAGE ====================
+  const handleCreateNewPage = () => {
+    setFormData({
+      date: new Date().toISOString().split("T")[0],
+      reasonForVisit: "",
+      examinationNotes: "",
+      bloodPressure: "",
+      pulse: "",
+      temperature: "",
+      weight: "",
+      respiratoryRate: "",
+      medication: "",
+      suggestedTests: "",
+      doctorNote: "",
+      nextClinicDate: "",
+    });
+
+    setIsCompleted(false);
+    setCompletionTime(null);
+    setRemainingTime(null);
+    setCanEdit(false);
+    setPageStatus("DRAFT");
+    setPendingAction(null);
+    setChangeSummary("");
+
+    // Reset viewing state
+    setViewingPage(null);
+    setIsViewMode(false);
+  };
+
+  //  HELPER FUNCTIONS
   const formatTime = (seconds) => {
     if (!seconds || seconds <= 0) return "00:00";
     const mins = Math.floor(seconds / 60);
@@ -114,7 +193,17 @@ export default function DoctorClinicBookPage() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // ==================== HANDLERS ====================
+  const getChangedFieldsSummary = (oldData, newData) => {
+    return Object.keys(newData)
+      .filter((key) => oldData[key] !== newData[key])
+      .map(
+        (key) =>
+          `• ${key}: "${oldData[key] || "—"}" → "${newData[key] || "—"}"`,
+      )
+      .join("\n");
+  };
+
+  //  HANDLERS
   const handleNavigate = (path) => {
     navigate(path);
   };
@@ -124,7 +213,6 @@ export default function DoctorClinicBookPage() {
     navigate("/login");
   };
 
-  // Unified change handler
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -140,7 +228,6 @@ export default function DoctorClinicBookPage() {
     navigate("/doctorViewform");
   };
 
-  // Validate form
   const validate = () => {
     const newErrors = {};
 
@@ -152,7 +239,7 @@ export default function DoctorClinicBookPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Complete and save clinic book page
+  // ==================== COMPLETE HANDLER ====================
   const handleComplete = async () => {
     if (!validate()) {
       alert("Please fill in all required fields");
@@ -162,18 +249,17 @@ export default function DoctorClinicBookPage() {
     setIsCompleting(true);
     const completionTimestamp = Date.now();
 
-    // ==================== SIMULATE API SAVE ====================
     const clinicBookPage = {
       id: `CONSULT_${Date.now()}`,
       patientId: patientInfo.patientId,
-      clinicBookId: "CB001", // ID of the clinic book this page belongs to
+      clinicBookId: "CB001",
       pageDate: formData.date,
       timestamp: new Date(completionTimestamp).toISOString(),
       patientDetails: patientInfo,
       pageData: formData,
       doctorId: "DR123",
       status: "completed",
-      folder: "clinic-book", // Saved in patient's clinic book folder
+      folder: "clinic-book",
       editWindow: {
         expiresAt: new Date(
           completionTimestamp + EDIT_WINDOW_SECONDS * 1000,
@@ -183,36 +269,79 @@ export default function DoctorClinicBookPage() {
     };
 
     setTimeout(() => {
+      const newPastPage = {
+        id: clinicBookPage.id,
+        date: formData.date,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        reason: formData.reasonForVisit,
+        fullData: clinicBookPage,
+      };
+
+      setPastPages((prev) => {
+        const updated = [newPastPage, ...prev];
+        localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+        return updated;
+      });
+
       console.log("✅ Clinic Book Page saved:", clinicBookPage);
 
-      // Mark as completed and start timer
       setIsCompleted(true);
       setCompletionTime(completionTimestamp);
       setCanEdit(true);
       setRemainingTime(EDIT_WINDOW_SECONDS);
+      setPageStatus("COMPLETED");
+
+      // Set as viewing the newly created page
+      setViewingPage(newPastPage);
+      setIsViewMode(true);
 
       alert(
-        `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\n You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.\n\n This clinic book is now saved in patient's Clinic Book folder.`,
+        `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nYou have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
       );
 
       setIsCompleting(false);
-      //navigate("/patient-dashboard");
     }, 1500);
   };
 
   // ==================== UPDATE HANDLER ====================
-  /**
-   * UPDATE: Edit completed consultation within 10-minute window
-   * - Only works if canEdit is true
-   * - Sends email to patient for approval
-   * - Patient must accept before changes are saved
-   * - After patient accepts → Updated page replaces original in folder
-   */
   const handleUpdate = async () => {
-    if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer update this consultation.",
+    const elapsedSeconds = Math.floor((Date.now() - completionTime) / 1000);
+    const isWithinEditWindow = elapsedSeconds < EDIT_WINDOW_SECONDS;
+
+    if (!isWithinEditWindow) {
+      setPendingAction("UPDATE");
+      setChangeSummary(
+        getChangedFieldsSummary(
+          viewingPage?.fullData?.pageData || {},
+          formData,
+        ),
       );
+
+      setPageStatus("PENDING_APPROVAL");
+
+      alert(
+        `📧 Edit window expired.\n\nUpdate request sent to patient for approval.\n\nChanged fields:\n${changeSummary}`,
+      );
+
+      const updateRequest = {
+        clinicId: viewingPage?.id,
+        patientId: patientInfo.patientId,
+        patientEmail: patientInfo.email,
+        updatedAt: new Date().toISOString(),
+        updatedData: formData,
+        doctorId: "DR123",
+        status: "pending_patient_approval",
+        emailNotification: {
+          to: patientInfo.email,
+          subject: `Update Request: Consultation on ${formData.date}`,
+          message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
+        },
+      };
+
+      console.log("📧 Sending update request:", updateRequest);
       return;
     }
 
@@ -223,58 +352,81 @@ export default function DoctorClinicBookPage() {
 
     setIsUpdating(true);
 
-    const updateRequest = {
-      clinicId: `CONSULT_${completionTime}`,
-      patientId: patientInfo.patientId,
-      patientEmail: patientInfo.email,
-      updatedAt: new Date().toISOString(),
-      updatedData: formData,
-      doctorId: "DR123",
-      status: "pending_patient_approval", // Waiting for patient to accept
-      emailNotification: {
-        to: patientInfo.email,
-        subject: `Update Request: Consultation on ${formData.date}`,
-        message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
-      },
-    };
-    // ==================== SIMULATE API SAVE & EMAIL SEND ====================
     setTimeout(() => {
-      console.log(
-        "📧 Update request sent to patient for approval:",
-        updateRequest,
-      );
-      console.log(`📧 Email sent to: ${patientInfo.email}`);
+      setPastPages((prev) => {
+        const updated = prev.map((page) =>
+          page.id === viewingPage.id
+            ? {
+                ...page,
+                date: formData.date,
+                reason: formData.reasonForVisit,
+                fullData: {
+                  ...page.fullData,
+                  pageData: formData,
+                  updatedAt: new Date().toISOString(),
+                },
+              }
+            : page,
+        );
+        localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+        return updated;
+      });
 
-      alert(
-        `📧 Update request sent!\n\nPatient: ${patientInfo.fullName}\nEmail: ${patientInfo.email}\n\n⏳ Waiting for patient approval...\n\nThe patient will receive an email to accept these changes.\nOnce approved, the updated consultation will be saved to their Consult folder.`,
-      );
+      // Update viewing page state
+      setViewingPage((prev) => ({
+        ...prev,
+        date: formData.date,
+        reason: formData.reasonForVisit,
+        fullData: {
+          ...prev.fullData,
+          pageData: formData,
+          updatedAt: new Date().toISOString(),
+        },
+      }));
 
+      alert("✅ Consultation updated successfully (within edit window).");
       setIsUpdating(false);
-
-      // In real app: You might disable Update button until patient responds
-      // or show a "Pending approval" status
-    }, 1500);
+    }, 800);
   };
+
   // ==================== DELETE HANDLER ====================
-  /**
-   * DELETE: Remove consultation from patient's folder
-   * - Only works if canEdit is true (within 10-minute window)
-   * - Shows confirmation modal
-   * - Permanently removes consultation from patient folder
-   */
   const handleDelete = () => {
     if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer delete this consultation.",
-      );
+      requestDelete();
       return;
     }
+
     setShowDeleteConfirm(true);
+  };
+
+  const requestUpdate = () => {
+    const changes = getChangedFieldsSummary(
+      viewingPage?.fullData?.pageData || {},
+      formData,
+    );
+
+    setPendingAction("UPDATE");
+    setChangeSummary(changes);
+
+    alert(`📧 Update request sent to patient.\n\nChanged fields:\n${changes}`);
+
+    setPageStatus("PENDING_APPROVAL");
+  };
+
+  const requestDelete = () => {
+    setPendingAction("DELETE");
+    setChangeSummary("Doctor requested deletion after edit window expired.");
+
+    alert(
+      `📧 Delete request sent to patient.\n\nThe patient will receive an email with a "Give Access" button to approve deletion.`,
+    );
+
+    setPageStatus("PENDING_APPROVAL");
   };
 
   const confirmDelete = () => {
     const deleteRecord = {
-      clinicId: `CONSULT_${completionTime}`,
+      clinicId: viewingPage?.id,
       patientId: patientInfo.patientId,
       deletedAt: new Date().toISOString(),
       deletedBy: "DR123",
@@ -288,7 +440,13 @@ export default function DoctorClinicBookPage() {
     );
 
     setShowDeleteConfirm(false);
-    navigate("/patient-dashboard");
+    setPastPages((prev) => {
+      const updated = prev.filter((p) => p.id !== viewingPage?.id);
+      localStorage.setItem("pastClinicPages", JSON.stringify(updated));
+      return updated;
+    });
+
+    handleCreateNewPage();
   };
 
   const cancelDelete = () => {
@@ -312,8 +470,37 @@ export default function DoctorClinicBookPage() {
           <h1 className="text-2xl font-bold text-mainblack mb-6">
             Clinic Book Page
           </h1>
+
+          {/* ==================== NEW: VIEWING MODE INDICATOR ==================== */}
+          {isViewMode && viewingPage && (
+            <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-blue-800">
+                    📄 Viewing clinic page from: {viewingPage.date} at{" "}
+                    {viewingPage.time}
+                  </p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    {canEdit
+                      ? `You can edit this page. Time remaining: ${formatTime(remainingTime)}`
+                      : "Edit window expired. Request patient permission to make changes."}
+                  </p>
+                </div>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    canEdit
+                      ? "bg-green-100 text-green-700"
+                      : "bg-orange-100 text-orange-700"
+                  }`}
+                >
+                  {canEdit ? "Editable" : "Requires Permission"}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Status Badge */}
-          {isCompleted && (
+          {isCompleted && !isViewMode && (
             <div className="flex items-center gap-3 mb-6">
               {canEdit ? (
                 <div className="px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg">
@@ -336,6 +523,7 @@ export default function DoctorClinicBookPage() {
               )}
             </div>
           )}
+
           {/* ========== GRID LAYOUT: 3 COLUMNS ========== */}
           <div className="grid lg:grid-cols-3 gap-6">
             {/* LEFT COLUMN */}
@@ -345,8 +533,26 @@ export default function DoctorClinicBookPage() {
                 onMoreAboutPatient={handleMoreAboutPatient}
                 showMedicationPurpose={false}
               />
-              <PastClinicPagesCard pastPages={pastPages} />
+
+              {/* ==================== UPDATED: Pass handleViewPage ==================== */}
+              <PastClinicPagesCard
+                pastPages={pastPages}
+                onViewPage={handleViewPage}
+              />
+
+              <button
+                onClick={handleCreateNewPage}
+                className="w-full mt-3 px-4 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+              >
+                ➕ Create New Page
+              </button>
+
+              <AdditionalNotesCard
+                formData={formData}
+                onChange={handleChange}
+              />
             </div>
+
             {/* RIGHT COLUMN */}
             <div className="lg:col-span-2 space-y-6">
               <TodayPageFormCard
@@ -364,42 +570,57 @@ export default function DoctorClinicBookPage() {
 
               <MedicationCard formData={formData} onChange={handleChange} />
 
-              {/* ACTION BUTTONS */}
+              {/* ==================== ACTION BUTTONS ==================== */}
               <div className="flex justify-between items-center mt-6">
-                {isCompleted && (
+                {/* LEFT: Update/Delete or Request buttons (only in view mode) */}
+                {isViewMode && pageStatus === "COMPLETED" && canEdit && (
                   <div className="flex gap-3">
                     <button
                       onClick={handleUpdate}
-                      disabled={!canEdit || isUpdating}
-                      className={`px-6 py-3 rounded-lg font-semibold ${
-                        canEdit
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      disabled={isUpdating}
+                      className={`px-6 py-3 rounded-lg text-white font-semibold ${
+                        isUpdating
+                          ? "bg-blue-300 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700"
                       }`}
                     >
                       {isUpdating ? "Updating..." : "✏️ Update"}
                     </button>
-                    {/* Delete Button */}
+
                     <button
                       onClick={handleDelete}
-                      disabled={!canEdit}
-                      className={`px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105 ${
-                        canEdit
-                          ? "bg-red-600 text-white  hover:bg-red-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                      title={
-                        !canEdit
-                          ? "Edit window expired"
-                          : "Delete clinic book page"
-                      }
+                      className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700"
                     >
                       🗑️ Delete
                     </button>
                   </div>
                 )}
-                {/* RIGHT: Complete Button (only if not completed yet) */}
-                {!isCompleted && (
+
+                {isViewMode && pageStatus === "LOCKED" && (
+                  <div className="flex gap-3">
+                    <button
+                      onClick={requestUpdate}
+                      className="px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600"
+                    >
+                      📝 Request Update
+                    </button>
+                    <button
+                      onClick={requestDelete}
+                      className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700"
+                    >
+                      🗑️ Request Delete
+                    </button>
+                  </div>
+                )}
+
+                {pageStatus === "PENDING_APPROVAL" && (
+                  <div className="px-4 py-3 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
+                    ⏳ Waiting for patient approval…
+                  </div>
+                )}
+
+                {/* RIGHT: Complete Button (only if NOT in view mode and not completed) */}
+                {!isViewMode && !isCompleted && (
                   <button
                     onClick={handleComplete}
                     disabled={isCompleting}
@@ -409,8 +630,8 @@ export default function DoctorClinicBookPage() {
                   </button>
                 )}
               </div>
-              {/* check from here */}
-              {!isCompleted && (
+
+              {!isViewMode && !isCompleted && (
                 <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-800">
                     ℹ️ <strong>Note:</strong> After clicking "Complete", you'll
@@ -418,14 +639,11 @@ export default function DoctorClinicBookPage() {
                   </p>
                 </div>
               )}
-            </div>{" "}
-            {/* ✅ CLOSE lg:col-span-2 */}
-          </div>{" "}
-          {/* ✅ CLOSE grid */}
-        </div>{" "}
-        {/* ✅ CLOSE max-w-7xl */}
-      </div>{" "}
-      {/* ✅ CLOSE min-h-screen */}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

@@ -1,4 +1,8 @@
 
+// src/components/MedicineSection.jsx
+
+
+
 import { Bell } from 'lucide-react';
 
 
