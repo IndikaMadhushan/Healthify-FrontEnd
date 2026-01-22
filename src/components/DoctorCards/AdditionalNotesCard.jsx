@@ -34,7 +34,7 @@ export function AdditionalNotesCard({ formData, onChange }) {
         </div>
 
         <div>
-          <label className={labelCss}>Next Clinic Date</label>
+          <label className={labelCss}>Next Consultation Date</label>
           <input
             type="date"
             value={formData.nextClinicDate}
