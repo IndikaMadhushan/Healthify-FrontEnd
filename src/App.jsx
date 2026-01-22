@@ -19,6 +19,7 @@ import RemindersPage from "./pages/Reminders/RemindersPage";
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
 
 //
+import VerifyOtpPage from "./pages/Auth/VerifyOtpPage";
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
@@ -39,22 +40,20 @@ function App() {
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
-      <Route path="/firstFillForm" element={<PatientFirstFillForm />} />
+
+      <Route path="/firstFillForm" element={<PatientFirstFillForm/> } />
+
+    
 
       <Route path="/patientMain" element={<Dashboard />} />
 
       <Route path="/reminders" element={<RemindersPage />} />
 
-      {/* Reminder page
-      <Route path="/Reminders" element={<UserProfile />} />
-      <Route path="/Reminders" element={<AppointmentSection />} />
-      <Route path="/Reminders" element={<Footer />} />
-      <Route path="/Reminders" element={<Header />} />
-      <Route path="/Reminders" element={<MedicineSection />} />
-      <Route path="/Reminders" element={<OtherSection />} />
-      <Route path="/Reminders" element={<PeriodSection />} />
-      <Route path="/Reminders" element={<Tabs />} />
-      <Route path="/Reminders" element={<TodaySection />} /> */}
+
+      
+      <Route path="/verify-otp" element={<VerifyOtpPage />} />
+
+
 
       {/* Doctor Registration Routes */}
       <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />

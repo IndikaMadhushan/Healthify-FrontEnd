@@ -7,15 +7,16 @@ import {
   FaBell,
 } from "react-icons/fa";
 
+import {FaHome,FaUser,FaNotesMedical,FaFileUpload,FaBell} from "react-icons/fa";
 import { PatinetNavBar } from "../../components/PatientNavBar";
 import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
-
 import RemindersPage from "../Reminders/RemindersPage";
 import MyProfile from "./PatientProfilePage";
 import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
 import MedicalReportsPage from "../MedicalReportsPage/MedicalReportsPage";
+import SummaryPage from "./SummaryPage";
 
-// import BasicInfoForm from "../PatientFormPage/basicInfoForm";
+
 
 export default function Dashboard() {
   const [active, setActive] = useState("Summary");
@@ -36,6 +37,7 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen bg-[#F2FBFA] flex flex-col">
+
       {/* TOP NAVBAR */}
       <PatinetNavBar />
 
@@ -129,10 +131,9 @@ function SidebarButton({ text, icon, active, setActive }) {
     <button
       onClick={() => setActive(text)}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 text-[15px] transition
-        ${
-          isActive
-            ? "bg-[#18AAB0] text-white shadow"
-            : "text-[#0F4F52] hover:bg-[#86C443]/20"
+        ${isActive
+          ? "bg-[#18AAB0] text-white shadow"
+          : "text-[#0F4F52] hover:bg-[#86C443]/20"
         }
       `}
     >
@@ -173,15 +174,19 @@ function renderContent(
 ) {
   switch (active) {
     case "Summary":
+      return <SummaryPage />;
     case "My Profile":
       return <MyProfile />;
-    case "Upload Report":
-      return <MedicalReportsPage />;
+     case "Upload Report":
+       return <MedicalReportsPage />;
 
     case "Reminders":
       return <RemindersPage />;
     case "Medical Info":
-      return <PatientMediInfomation />;
+       return <PatientMediInfomation />;
+      
+//     case "Upload Report":
+//       return <PatientFormDoctorView />;
     default:
       return null;
   }

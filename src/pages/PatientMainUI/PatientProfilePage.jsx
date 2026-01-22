@@ -185,7 +185,7 @@ export default function MyProfile() {
         
        
 
-        {/* ===== PROFILE HEADER SECTION ===== */}
+        {/*PROFILE HEADER SECTION*/}
         <div className="bg-white border border-[#D3F0ED] rounded-2xl px-8 py-6 mb-10 shadow-sm">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
 

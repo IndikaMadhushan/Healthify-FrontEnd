@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import FileUpload from "../../components/FileUpload";
-import SuccessModal from "../../components/SuccessModal";
-import axios from "axios";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerDoctorApi } from "../../api/authApi";
 
@@ -19,7 +17,6 @@ export default function DoctorRegisterPage2() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
@@ -47,6 +44,8 @@ export default function DoctorRegisterPage2() {
       newErrors.password = "Password is required";
     } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+      newErrors.password = "Password must contain uppercase, lowercase, and number";
     }
 
     if (!confirmPassword) {
@@ -87,10 +86,27 @@ export default function DoctorRegisterPage2() {
     try {
       await registerDoctorApi(formData);
 
+      console.log("Doctor registered successfully. Redirecting to OTP page...");
+
+      // Get email from step1 data
+      const userEmail = step1Data.email;
+
+      // Clean step1 data
       sessionStorage.removeItem("doctorRegStep1");
-      setShowSuccess(true);
-    } catch (err) {
-      alert("Registration failed. Please try again." + err.message);
+
+      // Redirect to OTP page with email and userType
+      navigate("/verify-otp", {
+        replace: true,
+        state: { 
+          email: userEmail,
+          userType: "doctor"  // Add userType to differentiate
+        }
+      });
+
+    } catch (error) {
+      const message = error.response?.data?.message || "Doctor registration failed!";
+      alert(message);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -98,9 +114,15 @@ export default function DoctorRegisterPage2() {
 
   return (
     <RegistrationLayout image={pRegImage2} imageAlt="Doctor Registration">
-      <h1 className="text-2xl lg:text-3xl font-bold text-mainblack mb-6">
-        Set Password & Verification
-      </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
+          Doctor Registration
+        </h1>
+        <div className="flex gap-2">
+          <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+          <span className="w-3 h-3 rounded-full bg-secondary"></span>
+        </div>
+      </div>
 
       <div className="space-y-5">
         <PasswordInput
@@ -108,6 +130,7 @@ export default function DoctorRegisterPage2() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
+          placeholder="Enter your password"
           required
         />
 
@@ -116,6 +139,7 @@ export default function DoctorRegisterPage2() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           error={errors.confirmPassword}
+          placeholder="Re-enter your password"
           required
         />
 
@@ -128,7 +152,7 @@ export default function DoctorRegisterPage2() {
           required
         />
 
-        {/*  APPROVAL CONFIRMATION */}
+        {/* APPROVAL CONFIRMATION */}
         <div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -173,13 +197,15 @@ export default function DoctorRegisterPage2() {
         </div>
       </div>
 
-      <SuccessModal
-        show={showSuccess}
-        title="Registration Successful!"
-        message="Your account will be activated after admin verification."
-        buttonText="Go to Login"
-        onClose={() => navigate("/login", { replace: true })}
-      />
+      <p className="text-center text-sm text-gray-600 mt-6">
+        Already have an account?{" "}
+        <button
+          onClick={() => navigate("/login")}
+          className="text-secondary hover:underline font-semibold"
+        >
+          Login here
+        </button>
+      </p>
     </RegistrationLayout>
   );
 }

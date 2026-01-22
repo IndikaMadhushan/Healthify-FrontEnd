@@ -1,28 +1,26 @@
-// import React from 'react';
-// import { Link } from "react-router-dom";
 
-// import logo from "../../assets/logo.png";
-// import phone from "../../assets/Phone.png";
-// import email from "../../assets/Email.png";
+import logo from "../../assets/logo.png";
+import phone from "../../assets/Phone.png";
+import email from "../../assets/Email.png";
 
 
+export default function Footer() {
+  return (
+    <div id="footer" className="w-full bg-white text-black pt-8 border-t-2 border-teal-500 ">
+      {/* <div className="
+        max-w-[1440px] 
+        mx-auto 
+        px-6 
+        md:px-12 
+        xl:px-[160px]
+        grid 
+        grid-cols-1 
+        md:grid-cols-3 
+        gap-8 
+        md:gap-12 
+        pb-10
+      "> */}
 
-// export default function Footer() {
-//   return (
-//     <div id="footer" className="w-full bg-white text-black pt-8 border-t-2 border-teal-500 ">
-//       {/* <div className="
-//         max-w-[1440px] 
-//         mx-auto 
-//         px-6 
-//         md:px-12 
-//         xl:px-[160px]
-//         grid 
-//         grid-cols-1 
-//         md:grid-cols-3 
-//         gap-8 
-//         md:gap-12 
-//         pb-10
-//       "> */}
 
 //       <div className="max-w-7xl mx-auto px-6 py-12">
 //         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
