@@ -33,6 +33,7 @@ export default function SummaryPage() {
   useEffect(() => {
     // Greeting in the top
     const hour = new Date().getHours();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (hour < 12) setGreeting("Good Morning");
     else if (hour < 18) setGreeting("Good Afternoon");
     else setGreeting("Good Evening");
@@ -42,6 +43,7 @@ export default function SummaryPage() {
         // Logged-in patient
         const profileRes = await getPatientProfileApi();
         const patientData = profileRes.data;
+        
         setPatient(patientData);
 
         const patientId = patientData.id;

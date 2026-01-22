@@ -25,6 +25,16 @@ import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
 import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
+import AboutUs from "./pages/QuickLinks/AboutUs";
+import FrequentlyAskedQuestions from "./pages/QuickLinks/FrequentlyAskedQuestions";
+import PrivacyPolicy from "./pages/QuickLinks/PrivacyPolicy";
+import TermsAndConditions from "./pages/QuickLinks/TermsAndConditions";
+
+
+
+
+
+
 //test
 import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
 import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
@@ -63,6 +73,15 @@ function App() {
       <Route path="/patient-register-2" element={<PatientRegisterPage2 />} />
 
       <Route path="/patient-dashboard" element={<Dashboard />} />
+
+      {/* Quick Links */}
+      <Route path="/aboutUs" element={<AboutUs/>}/>
+      <Route path="/faq" element={<FrequentlyAskedQuestions/>}/>
+      <Route path="/privacyPolicy" element={<PrivacyPolicy/>}/>
+      <Route path="/termsandConditions" element={<TermsAndConditions/>}/>
+
+
+      
 
       {/* Doctor dashboard Page */}
       <Route path="/doctor-dashboard" element={<DoctorDashBoardPage />} />
