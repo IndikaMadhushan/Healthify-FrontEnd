@@ -1,15 +1,14 @@
 import { useState } from "react";
 import {
   FaHome,
-  FaUser,
   FaNotesMedical,
   FaFileUpload,
   FaBell,
+  FaUser
 } from "react-icons/fa";
 
-import {FaHome,FaUser,FaNotesMedical,FaFileUpload,FaBell} from "react-icons/fa";
+
 import { PatinetNavBar } from "../../components/PatientNavBar";
-import PatientFormDoctorView from "../PatientFormPage/patientFormDoctorView";
 import RemindersPage from "../Reminders/RemindersPage";
 import MyProfile from "./PatientProfilePage";
 import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";

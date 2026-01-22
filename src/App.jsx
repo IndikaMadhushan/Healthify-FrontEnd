@@ -17,6 +17,7 @@ import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 import RemindersPage from "./pages/Reminders/RemindersPage";
 
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
+import AdminDashboard from "./AdminDashboard/AdminDashboard";
 
 //
 import VerifyOtpPage from "./pages/Auth/VerifyOtpPage";
@@ -90,6 +91,8 @@ function App() {
       <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
       {/* Doctor Notes Page */}
       <Route path="/doctor-notes" element={<AllDoctorNotes />} />
+
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
     </Routes>
   );
 }
