@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
-import FileUpload from "../../components/FileUpload";
 import dRegImage1 from "../../assets/d-reg-image1.png";
 
 export default function DoctorRegisterPage1() {
@@ -13,14 +12,24 @@ export default function DoctorRegisterPage1() {
     fullName: "",
     gender: "",
     email: "",
+    nic: "",
+    dateOfBirth: "",
     specialization: "",
     hospital: "",
-    slmcNumber: "",
-    verificationDoc: null,
+    licenseNumber: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [fileName, setFileName] = useState("");
+
+  const SPECIALIZATIONS = [
+    "Cardiology",
+    "Dermatology",
+    "General Practice",
+    "Neurology",
+    "Pediatrics",
+    "Psychiatry",
+    "Surgery",
+  ];
 
   const handleChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -32,55 +41,17 @@ export default function DoctorRegisterPage1() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const validTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-      ];
-      if (!validTypes.includes(file.type)) {
-        setErrors((prev) => ({
-          ...prev,
-          verificationDoc: "Only PDF, JPG, or PNG files are allowed",
-        }));
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({
-          ...prev,
-          verificationDoc: "File size must be less than 5MB",
-        }));
-        return;
-      }
-
-      setFormData((prev) => ({ ...prev, verificationDoc: file }));
-      setFileName(file.name);
-      setErrors((prev) => ({ ...prev, verificationDoc: "" }));
-    }
-  };
-
   const validate = () => {
     const newErrors = {};
 
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!formData.gender) newErrors.gender = "Please select your gender";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-    if (!formData.specialization.trim())
-      newErrors.specialization = "Specialization is required";
-    if (!formData.hospital.trim())
-      newErrors.hospital = "Hospital/Clinic is required";
-    if (!formData.slmcNumber.trim())
-      newErrors.slmcNumber = "SLMC Number is required";
-    if (!formData.verificationDoc)
-      newErrors.verificationDoc = "Verification document is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.nic.trim()) newErrors.nic = "NIC is required";
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth required";
+    if (!formData.specialization) newErrors.specialization = "Specialization required";
+    if (!formData.hospital.trim()) newErrors.hospital = "Hospital required";
+    if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "SLMC number required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -88,16 +59,14 @@ export default function DoctorRegisterPage1() {
 
   const handleNext = (e) => {
     e.preventDefault();
-    if (validate()) {
-      sessionStorage.setItem(
-        "doctorRegStep1",
-        JSON.stringify({
-          ...formData,
-          verificationDoc: fileName,
-        }),
-      );
-      navigate("/doctor-register-2");
-    }
+    if (!validate()) return;
+
+    sessionStorage.setItem(
+      "doctorRegStep1",
+      JSON.stringify(formData)
+    );
+
+    navigate("/doctor-register-2");
   };
 
   return (
@@ -136,61 +105,70 @@ export default function DoctorRegisterPage1() {
         />
 
         <FormField
-          label="Specialization"
-          value={formData.specialization}
-          onChange={handleChange("specialization")}
-          error={errors.specialization}
-          placeholder="e.g., Cardiology, Pediatrics"
+          label="NIC"
+          value={formData.nic}
+          onChange={handleChange("nic")}
+          error={errors.nic}
+          placeholder="Enter your NIC"
           required
         />
 
         <FormField
-          label="Hospital/Clinic"
+          label="Date of Birth"
+          type="date"
+          value={formData.dateOfBirth}
+          onChange={handleChange("dateOfBirth")}
+          error={errors.dateOfBirth}
+          required
+        />
+
+        {/* SPECIALIZATION DROPDOWN – UNTOUCHED UI */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-gray-700">
+            Area of Specialization
+          </label>
+          <select
+            value={formData.specialization}
+            onChange={handleChange("specialization")}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300"
+          >
+            <option value="" disabled>Select specialization</option>
+            {SPECIALIZATIONS.map((spec) => (
+              <option key={spec} value={spec}>{spec}</option>
+            ))}
+          </select>
+          {errors.specialization && (
+            <p className="text-xs text-red-500">{errors.specialization}</p>
+          )}
+        </div>
+
+        <FormField
+          label="Hospital / Clinic"
           value={formData.hospital}
           onChange={handleChange("hospital")}
           error={errors.hospital}
-          placeholder="Your hospital or clinic name"
+          placeholder="Your hospital or clinic"
           required
         />
 
         <FormField
           label="SLMC Number"
-          value={formData.slmcNumber}
-          onChange={handleChange("slmcNumber")}
-          error={errors.slmcNumber}
-          placeholder="Your SLMC registration number"
-          required
-        />
-
-        <FileUpload
-          label="Upload Verification Document"
-          fileName={fileName}
-          onChange={handleFileChange}
-          error={errors.verificationDoc}
-          helperText="Upload your SLMC certificate or medical license"
+          value={formData.licenseNumber}
+          onChange={handleChange("licenseNumber")}
+          error={errors.licenseNumber}
+          placeholder="SLMC registration number"
           required
         />
 
         <div className="flex justify-center pt-4">
           <button
-            type="button"
             onClick={handleNext}
-            className="px-12 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105"
+            className="px-12 py-3 bg-secondary text-white rounded-full font-semibold"
           >
             Next
           </button>
         </div>
       </div>
-
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="text-secondary hover:underline font-semibold"
-        >
-          Login here
-        </button>
-      </p>
     </RegistrationLayout>
   );
 }

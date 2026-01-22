@@ -1,6 +1,3 @@
-// ============================================
-// FILE 4: src/pages/DoctorProfilePage/SearchPatientsCard.jsx
-// ============================================
 
 import { useState, useMemo } from "react";
 

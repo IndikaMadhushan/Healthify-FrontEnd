@@ -137,7 +137,7 @@ export default function DoctorClinicBookPage() {
   };
 
   const handleMoreAboutPatient = () => {
-    navigate("/form");
+    navigate("/doctorViewform");
   };
 
   // Validate form
