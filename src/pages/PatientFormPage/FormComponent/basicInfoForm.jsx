@@ -204,7 +204,7 @@ const handleChange = (field) => (e) => {
 
   const inputBase =
     "mt-1 w-full h-10 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 " +
-    "focus:ring-2 focus:ring-secondary focus:border-secondary transition outline-none";
+    "focus:ring-2 focus:ring-secondary focus:border-secondary transition outline-none border-gray-300";
 
   const withError = (key) =>
     errors[key]
