@@ -40,6 +40,9 @@ import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
 import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
 import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
 import AllDoctorNotes from "./pages/AllDoctorNotes/AllDoctorNotes";
+import PrescriptionPage from "./pages/Prescriptions/PrescriptionPage";
+import DoctorNotePage from "./pages/MedicalReportsPage/DoctorNotePage";
+import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
 
 function App() {
   return (
@@ -112,6 +115,11 @@ function App() {
       <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
       {/* Doctor Notes Page */}
       <Route path="/doctor-notes" element={<AllDoctorNotes />} />
+
+
+      <Route path="/medical-reports/surgeries" element={ <SurgeryPage/>  } />
+      <Route path="/medical-reports/prescriptions" element={ <PrescriptionPage/>  } />
+      <Route path="/medical-reports/custom-folders" element={ <DoctorNotePage/>  } />
     </Routes>
   </>
   );
