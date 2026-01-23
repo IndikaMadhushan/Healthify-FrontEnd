@@ -285,7 +285,7 @@ export default function MyClinicBooks() {
         ))}
 
         {/* ➕ CREATE CARD (ALWAYS VISIBLE, NOT FILTERED) */}
-        <CreateClinicBookCard onCreate={openCreate} />
+        {/* <CreateClinicBookCard onCreate={openCreate} /> */}
       </div>
 
       {/* MODAL */}
