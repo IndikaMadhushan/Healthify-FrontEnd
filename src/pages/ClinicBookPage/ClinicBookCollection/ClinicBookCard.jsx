@@ -132,7 +132,7 @@ import { useState } from "react";
 import { BookOpen, Clock, User, Edit2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function ClinicBookCard({ book }) {
+export default function ClinicBookCard({ book, onEdit }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
@@ -157,7 +157,7 @@ export default function ClinicBookCard({ book }) {
       onMouseLeave={() => setHovered(false)}
       className="
         relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900
-        rounded-2xl p-6 cursor-pointer overflow-hidden
+        rounded-2xl p-6  overflow-hidden
         border border-slate-700/60
         transition-all duration-500 hover:-translate-y-2
       "
@@ -178,7 +178,7 @@ export default function ClinicBookCard({ book }) {
       />
 
       {/* Edit */}
-      <button
+      {/* <button
         onClick={handleEdit}
         className="
           absolute top-4 right-4 z-10
@@ -188,7 +188,17 @@ export default function ClinicBookCard({ book }) {
         "
       >
         <Edit2 size={14} />
-      </button>
+      </button> */}
+
+      <button
+  onClick={(e) => {
+    e.stopPropagation();
+    onEdit(book);
+  }}
+  className="absolute top-4 right-4 z-10 p-2 rounded-xl cursor-pointer bg-slate-800/80 border border-slate-700 text-slate-400 hover:text-[#86c443]"
+>
+  <Edit2 size={14} />
+</button>
 
       {/* Header */}
       <div className="flex items-start gap-4 mb-6 relative z-10">
@@ -246,7 +256,7 @@ export default function ClinicBookCard({ book }) {
             flex-1 px-4 py-2 rounded-xl
             bg-slate-800 border border-slate-700
             text-slate-300 text-sm font-medium
-            hover:border-[#86c443]/50 hover:text-white
+            hover:border-[#86c443]/50 hover:text-white cursor-pointer
           "
         >
           View Book
@@ -258,7 +268,8 @@ export default function ClinicBookCard({ book }) {
             flex-1 px-4 py-2 rounded-xl
             bg-gradient-to-r from-[#86c443] to-[#18AAB0]
             text-white text-sm font-semibold
-            flex items-center justify-center gap-2
+            flex items-center justify-center gap-2 cursor-pointer
+          
           "
         >
           Go Inside

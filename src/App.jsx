@@ -43,6 +43,7 @@ import PrescriptionPage from "./pages/Prescriptions/PrescriptionPage";
 import DoctorNotePage from "./pages/AllDoctorNotes/DoctorNotePage";
 import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
 import InsideSurgeryFolder from "./pages/SurgeryFolder/InsideSurgeryFolder";
+import ClinicBookPage from "./pages/ClinicBookPage/ClinicBookCollection/ClinicBookPage";
 
 function App() {
   return (
@@ -120,6 +121,7 @@ function App() {
       <Route path="/medical-reports/surgeries" element={ <SurgeryPage/>  } />
       <Route path="/medical-reports/prescriptions" element={ <PrescriptionPage/>  } />
       <Route path="/medical-reports/custom-folders" element={ <DoctorNotePage/>  } />
+      <Route path="/medical-reports/clinic-book" element={ <ClinicBookPage/>  } />
     </Routes>
   </>
   );
