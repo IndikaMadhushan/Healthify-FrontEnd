@@ -54,7 +54,7 @@ export default function AllDoctorNotes() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
+        {/* <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
               📝
@@ -67,7 +67,7 @@ export default function AllDoctorNotes() {
           <p className="text-teal-800 ml-13">
             View all medical notes from your healthcare providers
           </p>
-        </div>
+        </div> */}
 
         {/* Filters Bar */}
         <div className="bg-white rounded-xl shadow-md p-4 mb-6">
