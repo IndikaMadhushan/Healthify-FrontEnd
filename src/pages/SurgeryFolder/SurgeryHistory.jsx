@@ -100,7 +100,6 @@
 //   );
 // }
 
-
 import { useState } from "react";
 import { surgeries as initialData } from "../../data/surgeries";
 import SurgeryCard from "./SurgeryCard";
@@ -127,19 +126,29 @@ export default function SurgeryHistory() {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-[#0F4F52] mb-6">
-        Surgical History
-      </h1>
 
-      <div className="grid sm:grid-cols-2 gap-6">
-        {surgeries.map((surgery) => (
-          <SurgeryCard
-            key={surgery.id}
-            data={surgery}
-            onCreateFolder={openCreateFolder}
-          />
-        ))}
-      </div>
+      {/* EMPTY STATE */}
+      {surgeries.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="text-5xl mb-4">📄</div>
+          <h2 className="text-xl font-semibold text-gray-700">
+            No surgery records found
+          </h2>
+          <p className="text-gray-500 mt-2">
+            You don’t have any surgery history yet
+          </p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-6">
+          {surgeries.map((surgery) => (
+            <SurgeryCard
+              key={surgery.id}
+              data={surgery}
+              onCreateFolder={openCreateFolder}
+            />
+          ))}
+        </div>
+      )}
 
       {selectedSurgery && (
         <CreateFolderModal

@@ -78,7 +78,7 @@ return (
         {data.isFolder ? "📁 Surgical Record" : "Surgery"}
       </h3>
 
-      <div className="text-sm space-y-1">
+      <div className="text-sm space-y-1 h-[140px]">
         <p><b>Reason:</b> {data.reason}</p>
         <p><b>Date:</b> {data.date}</p>
         <p><b>Hospital:</b> {data.hospital}</p>
