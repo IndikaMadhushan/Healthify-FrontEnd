@@ -23,7 +23,6 @@ import VerifyOtpPage from "./pages/Auth/VerifyOtpPage";
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
-import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
 import AboutUs from "./pages/QuickLinks/AboutUs";
 import FrequentlyAskedQuestions from "./pages/QuickLinks/FrequentlyAskedQuestions";
@@ -41,8 +40,9 @@ import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
 import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
 import AllDoctorNotes from "./pages/AllDoctorNotes/AllDoctorNotes";
 import PrescriptionPage from "./pages/Prescriptions/PrescriptionPage";
-import DoctorNotePage from "./pages/MedicalReportsPage/DoctorNotePage";
+import DoctorNotePage from "./pages/AllDoctorNotes/DoctorNotePage";
 import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
+import InsideSurgeryFolder from "./pages/SurgeryFolder/InsideSurgeryFolder";
 
 function App() {
   return (
@@ -112,7 +112,7 @@ function App() {
       <Route path="/verify/:id" element={<PrescriptionVerify />} />
 
       <Route path="/surgeries" element={<SurgeryHistory />} />
-      <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
+      <Route path="/surgery/:id" element={ <InsideSurgeryFolder/>} />
       {/* Doctor Notes Page */}
       <Route path="/doctor-notes" element={<AllDoctorNotes />} />
 

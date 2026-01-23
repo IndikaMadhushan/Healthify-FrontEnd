@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { PatinetNavBar } from "../../components/PatientNavBar";
-import DoctorNotesSection from "./DoctorNotesSection";
+import DoctorNotesSection from "../MedicalReportsPage/DoctorNotesSection";
 
 export default function DoctorNotePage() {
   const navigate = useNavigate();
