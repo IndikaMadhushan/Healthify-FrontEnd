@@ -2,7 +2,7 @@
 export const prescriptions = [
   {
     id: "RX001",
-    createdAt: "2026-01-08",
+    createdAt: "2026-01-06",
     reason: "Chest pain",
 
     doctor: {

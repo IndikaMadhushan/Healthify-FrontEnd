@@ -45,7 +45,7 @@ function PrescriptionPage() {
           Back to Dashboard
         </button>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="lg:text-3xl text-2xl font-bold text-secondary">
               💊Patient Prescriptions
@@ -54,7 +54,22 @@ function PrescriptionPage() {
               View and manage all your doctor-issued prescriptions
             </p>
           </div>
+        </div> */}
+        <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
+              💊
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-primary drop-shadow-sm">
+              Patient Prescriptions
+            </h1>
+          </div>
+
+          <p className="text-teal-800 ml-13">
+            View and manage all your doctor-issued prescriptions
+          </p>
         </div>
+        
       </div>
 
       {/* Content Card */}
