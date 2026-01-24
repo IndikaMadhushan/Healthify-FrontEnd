@@ -45,6 +45,7 @@ import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
 import InsideSurgeryFolder from "./pages/SurgeryFolder/InsideSurgeryFolder";
 import ClinicBookPage from "./pages/ClinicBookPage/ClinicBookCollection/ClinicBookPage";
 import ClinicPrescriptionList from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicPrescriptionList";
+import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicBookPrescriptionPage";
 
 function App() {
   return (
@@ -125,7 +126,8 @@ function App() {
       <Route path="/medical-reports/clinic-book" element={ <ClinicBookPage/>  } />
 
 
-      <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } />
+      {/* <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } /> */}
+      <Route path="/clinic-book/:id/pages" element={<ClinicBookPrescriptionPage />}/> 
     </Routes>
   </>
   );

@@ -42,7 +42,7 @@ export default function ClinicPrescriptionList() {
 
   return (
 <>
-    <PatinetNavBar/>
+  
     <div className="p-6 max-w-6xl mx-auto">
 
       {/* FILTER BAR */}
