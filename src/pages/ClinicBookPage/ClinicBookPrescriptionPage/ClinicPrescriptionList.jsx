@@ -5,6 +5,7 @@ import { prescriptions } from "./clinicBookPages.js";
 import { useParams } from "react-router-dom";
 import PrescriptionCard from "../../Prescriptions/PrescriptionCard.jsx";
 import PrescriptionModal from "../../Prescriptions/PrescriptionModal.jsx";
+import { PatinetNavBar } from "../../../components/PatientNavBar.jsx";
 
 export default function ClinicPrescriptionList() {
   const { id: clinicBookId } = useParams(); // ✅ GET CLINIC BOOK ID
@@ -40,6 +41,8 @@ export default function ClinicPrescriptionList() {
   /* ---------------- UI (UNCHANGED) ---------------- */
 
   return (
+<>
+    <PatinetNavBar/>
     <div className="p-6 max-w-6xl mx-auto">
 
       {/* FILTER BAR */}
@@ -133,5 +136,6 @@ export default function ClinicPrescriptionList() {
         />
       )}
     </div>
+    </>
   );
 }
