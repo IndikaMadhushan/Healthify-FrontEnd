@@ -129,10 +129,11 @@
 
 import { useState } from "react";
 import { BookOpen, Clock, User, Edit2, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function ClinicBookCard({ book, onEdit, onView }) {
   const [hovered, setHovered] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -217,7 +218,7 @@ export default function ClinicBookCard({ book, onEdit, onView }) {
         <button
           className="flex-1 px-4 py-2 rounded-xl
                      bg-gradient-to-r from-[#86c443] to-[#18AAB0]
-                     text-white flex items-center justify-center gap-2"
+                     text-white flex items-center justify-center gap-2"  onClick={() => navigate(`/clinic-book/${book.id}/pages`)}
         >
           Go Inside
           <ArrowRight size={16} />
