@@ -1,108 +1,76 @@
 import { useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { BiSolidBookAdd } from "react-icons/bi";
 
-export default function ClinicBookFlip() {
+export default function ClinicBookFlip({ book, onClose }) {
   const bookRef = useRef(null);
-  const navigate = useNavigate();
 
-  // Flip helpers
-  const flipPrev = () => {
-    bookRef.current?.pageFlip()?.flipPrev();
-  };
+  if (!book) return null;
 
-  const flipNext = () => {
-    bookRef.current?.pageFlip()?.flipNext();
-  };
+  const flipPrev = () => bookRef.current?.pageFlip()?.flipPrev();
+  const flipNext = () => bookRef.current?.pageFlip()?.flipNext();
 
-  // Close logic
   const handleClose = () => {
     const flip = bookRef.current?.pageFlip();
-    if (!flip) return;
-
     if (flip.getCurrentPageIndex() !== 0) {
-      // Go back to cover first
       flip.flip(0);
     } else {
-      // Already on cover → exit
-      navigate(-1);
+      onClose();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0F4F52] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center
+                bg-black/40 backdrop-blur-md">
 
-      {/* CLOSE BUTTON (TOP RIGHT) */}
-      <button
-        onClick={handleClose}
-        className="absolute top-6 right-6 bg-white p-3 rounded-full shadow-lg hover:scale-110 transition"
-      >
+      <button onClick={handleClose}
+        className="absolute top-6 right-6 bg-white p-3 rounded-full">
         <FaTimes />
       </button>
 
-      {/* LEFT ARROW */}
-      <button
-        onClick={flipPrev}
+      <button onClick={flipPrev}
         className="absolute left-6 top-1/2 -translate-y-1/2
-                   bg-white p-4 rounded-full shadow-xl
-                   hover:scale-110 transition"
-      >
+                   bg-white p-4 rounded-full">
         <FaArrowLeft />
       </button>
 
-      {/* RIGHT ARROW */}
-      <button
-        onClick={flipNext}
+      <button onClick={flipNext}
         className="absolute right-6 top-1/2 -translate-y-1/2
-                   bg-white p-4 rounded-full shadow-xl
-                   hover:scale-110 transition"
-      >
+                   bg-white p-4 rounded-full">
         <FaArrowRight />
       </button>
 
-      {/* FLIP BOOK */}
       <HTMLFlipBook
         ref={bookRef}
         width={420}
         height={600}
-        size="fixed"
-        showCover={true}
-        maxShadowOpacity={0.5}
+        showCover
         className="shadow-2xl"
       >
-
         {/* COVER */}
         <div className="bg-gradient-to-br from-[#18AAB0] to-[#86C443]
                         text-white p-10 flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold">Clinic Book</h1>
-          <p className="mt-2 opacity-90">Patient Medical Record</p>
+          <h1 className="text-3xl font-bold bg-secondary rounded-2xl p-2 text-center">Clinic Book</h1>
+          <div className="flex flex-col j items-center mt-10">
+            <BiSolidBookAdd className="text-9xl text-center"/>
+            <p className="mt-1 text-center">Dr. {book.doctorName}</p>
+            <p className="text-center">{book.doctorNo}</p>
+            <p className="mt-1 text-center">{book.specialization}</p>
+            <p className="mt-1 font-semibold text-xl text-center"> {book.medicationPurpose}</p>
+          </div>
         </div>
 
-        {/* PAGE 1 */}
         <div className="bg-[#FFFDF8] p-6">
-          <h2 className="font-bold text-lg text-[#0F4F52]">
-            Doctor
-          </h2>
-          <p className="mt-2">Dr. Suraj Perera</p>
+          <h2 className="font-bold text-lg">Doctor Details</h2>
+          <p className="mt-2">Dr. {book.doctorName}</p>
+          <p>{book.doctorNo}</p>
         </div>
 
-        {/* PAGE 2 */}
         <div className="bg-[#FFFDF8] p-6">
-          <h2 className="font-bold text-lg text-[#0F4F52]">
-            Last Visit
-          </h2>
-          <p className="mt-2">23 Jan 2026</p>
+          <h2 className="font-bold text-lg">Medication Purpose</h2>
+          <p className="mt-2">{book.medicationPurpose}</p>
         </div>
-
-        {/* PAGE 3 */}
-        <div className="bg-[#FFFDF8] p-6">
-          <h2 className="font-bold text-lg text-red-600">
-            ⚠ Allergies
-          </h2>
-          <p className="mt-2">Penicillin</p>
-        </div>
-
       </HTMLFlipBook>
     </div>
   );

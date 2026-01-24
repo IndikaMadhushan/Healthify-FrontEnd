@@ -33,6 +33,8 @@ export default  function ClinicBookPage() {
             </p>
           </div>
         </div> */}
+
+        
         <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
