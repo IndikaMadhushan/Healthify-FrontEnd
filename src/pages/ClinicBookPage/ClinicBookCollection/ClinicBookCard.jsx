@@ -181,6 +181,7 @@ export default function ClinicBookCard({ book, onEdit, onView }) {
             Dr. {book.doctorName}
           </h3>
           <p className="text-sm text-slate-400">{book.doctorNo}</p>
+          <p className="text-xs text-slate-400">{book.access}</p>
           <p className="text-sm text-[#18AAB0]">{book.specialization}</p>
         </div>
       </div>
