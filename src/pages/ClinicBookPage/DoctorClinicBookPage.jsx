@@ -10,9 +10,11 @@ import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNote
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
+import { pastClinicPagesDummy } from "./pastClinicPages";
 
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
+
 
   // ==================== MOCK PATIENT DATA ====================
   const patientInfo = {
@@ -24,11 +26,52 @@ export default function DoctorClinicBookPage() {
     medicationPurpose: "Treat Gastritis",
   };
 
-  // ==================== MOCK PAST CLINIC PAGES ====================
-  const [pastPages, setPastPages] = useState(() => {
-    const saved = localStorage.getItem("pastClinicPages");
-    return saved ? JSON.parse(saved) : [];
-  });
+  //👇when remove dummy file uncomment this//////////////////////////////////////////////
+  // const [pastPages, setPastPages] = useState(() => {
+  //   const saved = localStorage.getItem("pastClinicPages");
+  //   return saved ? JSON.parse(saved) : [];
+  // });
+
+
+
+
+
+
+
+
+//comment when remove dummy data()//////////////////////////////////
+const [pastPages, setPastPages] = useState(() => {
+  const saved = localStorage.getItem("pastClinicPages");
+
+  if (saved) {
+    const parsed = JSON.parse(saved);
+
+    // 👇 THIS IS THE KEY FIX
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+  }
+
+  // If empty or not found → load dummy
+  localStorage.setItem(
+    "pastClinicPages",
+    JSON.stringify(pastClinicPagesDummy)
+  );
+
+  return pastClinicPagesDummy;
+});
+
+  useEffect(() => {
+  console.log("PAST PAGES STATE:", pastPages);
+}, [pastPages]);
+//this ////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 
   // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
