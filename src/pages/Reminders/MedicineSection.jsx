@@ -6,7 +6,7 @@
 import { Bell } from 'lucide-react';
 
 
-export default function MedicineSection({ medicines, onMarkAsDone, onRemove }) {
+export default function MedicineSection({ medicines, onMarkAsDone, onRemove, onAddMedicine }) {
   return (
     <div className="space-y-6">
       {/* Add Medicine Form */}
@@ -131,7 +131,9 @@ export default function MedicineSection({ medicines, onMarkAsDone, onRemove }) {
           </div>
 
           <div className="flex justify-end">
-            <button className="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 transition w-full sm:w-auto">
+            <button
+              onClick={onAddMedicine}
+              className="bg-teal-500 text-white px-8 py-3 rounded-lg hover:bg-teal-600 transition w-full sm:w-auto">
               Add Medicine
             </button>
           </div>
