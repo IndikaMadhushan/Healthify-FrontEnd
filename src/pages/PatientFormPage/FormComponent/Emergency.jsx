@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
 
 const initialEmergency = {
@@ -14,7 +14,7 @@ const initialEmergency = {
   }
 };
 
-const EmergencyContactForm = forwardRef(({ showButton=false }, ref) => {
+const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, ref) => {
   const [form, setForm] = useState(initialEmergency);
   const [errors, setErrors] = useState({});
 
@@ -29,56 +29,82 @@ const EmergencyContactForm = forwardRef(({ showButton=false }, ref) => {
     }));
   };
 
-const validate = () => {
-  const newErrors = {};
 
-  // Name required
-  if (!form.primary.name.trim()) {
-    newErrors.primaryName = "Emergency contact person is required";
-  }
+  useEffect(() => {
+    if (!initialData) return;
 
-  // Phone – Sri Lanka validation
-  if (!form.primary.phone) {
-    newErrors.primaryPhone = "Emergency contact number is required";
-  } else {
-    const number = form.primary.phone;
-
-    // Must be exactly 10 digits
-    if (!/^\d{10}$/.test(number)) {
-      newErrors.primaryPhone =
-        "Contact number must have exactly 10 digits";
-    } else {
-      const validPrefixes = [
-        "011","031","033","034","038","036",
-        "054","081","051","052","066",
-        "091","041","047",
-        "032","037",
-        "021","023","024",
-        "063","067","065","026",
-        "025","027",
-        "055","057",
-        "045","035",
-        "070","071","072","074",
-        "075","076","077","078"
-      ];
-
-      const prefix = number.substring(0, 3);
-
-      if (!validPrefixes.includes(prefix)) {
-        newErrors.primaryPhone =
-          "Invalid Sri Lanka contact number";
+    setForm({
+      primary: {
+        name: initialData.primaryContact?.name || "",
+        phone: initialData.primaryContact?.phoneNumber || "",
+        relationship: initialData.primaryContact?.relationship || ""
+      },
+      secondary: {
+        name: initialData.secondaryContact?.name || "",
+        phone: initialData.secondaryContact?.phoneNumber || "",
+        relationship: initialData.secondaryContact?.relationship || ""
       }
-    }
-  }
+    });
+  }, [initialData]);
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-  
-    useImperativeHandle(ref, () => ({
-      validate,
-      getData: () => form
-    }));
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (
+      form.primary.name ||
+      form.primary.phone ||
+      form.primary.relationship
+    ) {
+      // Name required
+      if (!form.primary.name.trim()) {
+        newErrors.primaryName = "Emergency contact person is required";
+      }
+
+      // Phone – Sri Lanka validation
+      if (!form.primary.phone) {
+        newErrors.primaryPhone = "Emergency contact number is required";
+      } else {
+        const number = form.primary.phone;
+
+        // Must be exactly 10 digits
+        if (!/^\d{10}$/.test(number)) {
+          newErrors.primaryPhone =
+            "Contact number must have exactly 10 digits";
+        } else {
+          const validPrefixes = [
+            "011", "031", "033", "034", "038", "036",
+            "054", "081", "051", "052", "066",
+            "091", "041", "047",
+            "032", "037",
+            "021", "023", "024",
+            "063", "067", "065", "026",
+            "025", "027",
+            "055", "057",
+            "045", "035",
+            "070", "071", "072", "074",
+            "075", "076", "077", "078"
+          ];
+
+          const prefix = number.substring(0, 3);
+
+          if (!validPrefixes.includes(prefix)) {
+            newErrors.primaryPhone =
+              "Invalid Sri Lanka contact number";
+          }
+        }
+      }
+
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  useImperativeHandle(ref, () => ({
+    validate,
+    getData: () => form
+  }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -115,7 +141,7 @@ const validate = () => {
       {/* Main Heading */}
       <h2 className={headingCss}>Emergency Contacts</h2>
 
-      {/* -------------------- PRIMARY CONTACT -------------------- */}
+      {/* PRIMARY CONTACT */}
       <div className={sectionBox}>
         <h3 className={subHeadingCss}>
           Primary Emergency Contact <span className="text-red-500">*</span>
@@ -204,16 +230,16 @@ const validate = () => {
           />
         </div>
       </div>
-    {showButton && (
-      <div className="mt-2 flex justify-end">
-        <button
-          type="submit"
-          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
-        >
-          Save
-        </button>
-      </div>
-    )}
+      {showButton && (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="submit"
+            className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+          >
+            Save
+          </button>
+        </div>
+      )}
     </form>
   );
 });

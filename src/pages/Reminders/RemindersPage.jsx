@@ -1,98 +1,78 @@
-
-//import Header from "./Header";
-//import UserProfile from "./UserProfile";
-
-// import Header from "./Header";
-// import UserProfile from "./UserProfile";
-
 import Tabs from "./Tabs";
 import TodaySection from "./TodaySection";
 import AppointmentSection from "./AppointmentSection";
 import MedicineSection from "./MedicineSection";
 import OtherSection from "./OtherSection";
 import PeriodSection from "./PeriodSection";
-//import Footer from "./Footer";
-// import Footer from "./Footer";
-import { useState } from "react";
-// import logo from "../../assets/logo.png";
+import { useState, useEffect } from "react";
+import axiosInstance from "../../api/axiosInstance";
+import {
+  getMedicinesApi,
+  getAppointmentsApi,
+  getOtherRemindersApi,
+  getPeriodHistoryApi,
+  deactivateOtherReminderApi,
+} from "../../api/ReminderApi";
 
 export default function RemindersPage() {
   const [activeTab, setActiveTab] = useState("today");
+  const [medicines, setMedicines] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [otherReminders, setOtherReminders] = useState([]);
 
-  const [medicines, setMedicines] = useState([
-    {
-      id: 1,
-      type: "Specific Day",
-      time: "9:00AM",
-      date: "2025-10-03",
-      category: "Medicine",
-      done: false,
-    },
-    {
-      id: 2,
-      type: "Specific Day",
-      time: "9:00AM",
-      date: "2025-10-03",
-      category: "Medicine",
-      done: false,
-    },
-  ]);
 
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      date: "2025-11-20",
-      time: "9:00 AM",
-      hospital: "Nawaloka Hospital",
-      doctor: "Dr. Suren",
-      note: "Note",
-      done: false,
-    },
-  ]);
+  const markAsDone = async (type, id) => {
+    try {
+      if (type === "appointment") {
+        await markAppointmentDoneApi(id);
+        setAppointments((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, done: true } : a))
+        );
+      }
 
-  const [otherReminders, setOtherReminders] = useState([
-    {
-      id: 1,
-      date: "2025-11-20",
-      time: "9:00 AM",
-      note: "Check blood pressure",
-      done: false,
-    },
-  ]);
+      if (type === "medicine") {
+        await deactivateMedicineApi(id);
+        setMedicines((prev) => prev.filter((m) => m.id !== id));
+      }
 
-  const markAsDone = (type, id) => {
-    if (type === "medicine") {
-      setMedicines(
-        medicines.map((m) => (m.id === id ? { ...m, done: true } : m)),
-      );
-    }
-    if (type === "appointment") {
-      setAppointments(
-        appointments.map((a) => (a.id === id ? { ...a, done: true } : a)),
-      );
-    }
-    if (type === "other") {
-      setOtherReminders(
-        otherReminders.map((o) => (o.id === id ? { ...o, done: true } : o)),
-      );
+      if (type === "other") {
+        await deactivateOtherReminderApi(id);
+        setOtherReminders((prev) => prev.filter((o) => o.id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to update reminder", err);
     }
   };
 
+
+  useEffect(() => {
+    const loadReminders = async () => {
+      try {
+        const profileRes = await axiosInstance.get("/api/patients/me");
+        const patientId = profileRes.data.id;
+
+        const [medRes, aptRes, otherRes] = await Promise.all([
+          getMedicinesApi(patientId),
+          getAppointmentsApi(patientId),
+          getOtherRemindersApi(patientId),
+        ]);
+
+        setMedicines(medRes.data);
+        setAppointments(aptRes.data);
+        setOtherReminders(otherRes.data);
+      } catch (err) {
+        console.error("Failed to load reminders", err);
+      }
+    };
+
+    loadReminders();
+  }, []);
+
+
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      {/* <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <img src={logo} className="w-28" />
-          <div className="text-right"> */}
-      {/* <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg">
-                
-              </div> */}
-      {/* <UserProfile />
-          </div>
-        
-        </div>
-      </header> */}
+
 
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow">
         {/* Page Title */}
@@ -105,7 +85,7 @@ export default function RemindersPage() {
           </p>
         </div>
 
-        {/* ✅ Tabs Component */}
+        {/*Tabs Component */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* <h1>Today Reminders</h1> */}

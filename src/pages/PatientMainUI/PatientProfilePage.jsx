@@ -97,7 +97,7 @@ export default function MyProfile() {
               <div className="relative z-10">
                 <ProfileImageCropper
 
-                  
+
 
                   imageUrl={patient.photoUrl}
                   onCropped={async (file) => {
@@ -199,13 +199,22 @@ export default function MyProfile() {
       </div>
 
       {openEdit && (
-        <PatientProfileEdit onClose={() => setOpenEdit(false)} />
+        <PatientProfileEdit
+          patient={patient}
+          onClose={() => setOpenEdit(false)}
+          onUpdated={async () => {
+            localStorage.removeItem("patient_me_cache");
+            const res = await getPatientProfileApi();
+            setPatient(res.data);
+          }}
+        />
       )}
+
     </div>
   );
 }
 
-/* ================== UI COMPONENTS (UNCHANGED) ================== */
+// UI COMPONENTS (UNCHANGED)  
 
 function ProfileSection1({ title, children, margin }) {
   return (

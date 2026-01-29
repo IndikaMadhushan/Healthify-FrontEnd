@@ -1,25 +1,61 @@
 import React, { useRef } from "react";
 import BasicInfoForm from "./FormComponent/basicInfoForm";
 import EmergencyContactForm from "./FormComponent/Emergency";
+import { updatePatientProfileApi } from "../../api/PatientApi";
 
-export default function PatientProfileEdit({ onClose }) {
+export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
   const basicRef = useRef();
   const emergencyRef = useRef();
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const basicValid = basicRef.current.validate();
     const emergencyValid = emergencyRef.current.validate();
 
     if (!basicValid || !emergencyValid) return;
 
+    const basic = basicRef.current.getData();
+    const emergency = emergencyRef.current.getData();
+
     const payload = {
-      basic: basicRef.current.getData(),
-      emergency: emergencyRef.current.getData()
+      fullName: basic.fullName || undefined,
+      email: basic.email || undefined,
+      nic: basic.nationalId || undefined,
+      gender: basic.gender || undefined,
+      dateOfBirth: basic.dob || undefined,
+      occupation: basic.occupation || undefined,
+      district: basic.mainCity || undefined,
+      phone: basic.contactNumber || undefined,
+      address: basic.address || undefined,
+      nationality: basic.nationality || undefined,
+
+      primaryContact: emergency.primary.name
+        ? {
+          name: emergency.primary.name,
+          phoneNumber: emergency.primary.phone,
+          relationship: emergency.primary.relationship
+        }
+        : undefined,
+
+      secondaryContact: emergency.secondary.name
+        ? {
+          name: emergency.secondary.name,
+          phoneNumber: emergency.secondary.phone,
+          relationship: emergency.secondary.relationship
+        }
+        : undefined
     };
 
-    console.log("ALL VALID ✔", payload);
-    alert("Profile ready to update");
+    try {
+      await updatePatientProfileApi(patient.id, payload);
+      localStorage.removeItem("patient_me_cache");
+      onUpdated();
+      onClose();
+    } catch (err) {
+      console.error("Profile update failed", err);
+      alert("Failed to update profile");
+    }
   };
+
 
   return (
     <div
@@ -38,13 +74,13 @@ export default function PatientProfileEdit({ onClose }) {
 
         {/* FORMS */}
         <div className="max-h-[65vh] overflow-y-auto pr-2 space-y-6">
-          <BasicInfoForm ref={basicRef} />
-          <EmergencyContactForm ref={emergencyRef} />
+          <BasicInfoForm ref={basicRef} initialData={patient} />
+          <EmergencyContactForm ref={emergencyRef} initialData={patient} />
         </div>
 
         {/* FOOTER */}
         <div className="flex justify-end gap-4 border-t pt-4">
-          
+
 
           <button
             onClick={handleUpdate}
