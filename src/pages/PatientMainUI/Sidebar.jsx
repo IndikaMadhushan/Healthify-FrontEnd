@@ -191,22 +191,4 @@ function renderContent(
   }
 }
 
-/* ---------------- PLACEHOLDER ---------------- */
 
-function UnderConstruction({ active }) {
-  return (
-    <div className="bg-white p-6 sm:p-10">
-      <h1 className="text-[28px] font-semibold text-[#18AAB0]">{active}</h1>
-
-      <p className="text-gray-500 mt-2 mb-8">
-        This section is under development
-      </p>
-
-      <div className="border-2 border-dashed border-[#86C443] rounded-xl h-[260px] flex items-center justify-center">
-        <span className="text-[#86C443] text-[18px]">
-          🚧 Waiting for implementation
-        </span>
-      </div>
-    </div>
-  );
-}

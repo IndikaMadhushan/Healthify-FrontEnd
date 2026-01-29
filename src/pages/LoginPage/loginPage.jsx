@@ -199,20 +199,30 @@
 //   );
 // }
 
+
+
 import Button from "../HomePage/HomeButton";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { loginApi } from "../../api/authApi"
 // import { q } from "framer-motion/client";
+=======
+import { loginApi } from "../../api/authApi";
+>>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
 import { jwtDecode } from "jwt-decode";
+import toast from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const location = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setError] = useState("");
 
   const role = location.state?.role;
   const registerLink = "/option";
@@ -221,21 +231,51 @@ export default function LoginPage() {
     window.scrollTo(0, 0);
   }, []);
 
+  // ---------------- VALIDATION ----------------
+  const validateForm = () => {
+    if (!email) {
+      toast.error("Email is required", { id: "email-error" });
+      return false;
+    }
 
+<<<<<<< HEAD
   
+=======
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Invalid email format", { id: "email-format-error" });
+      return false;
+    }
 
+    if (!password) {
+      toast.error("Password is required", { id: "password-error" });
+      return false;
+    }
+>>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
+
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters", {
+        id: "password-length-error",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  // ---------------- LOGIN HANDLER ----------------
   const handleLogin = async () => {
+    if (!validateForm()) return;
+
     try {
       setError("");
-      // call for backend
       const data = await loginApi(email, password);
-      // store token in local storage
+
       localStorage.setItem("token", data.token);
 
-      //decode JWT
       const decode = jwtDecode(data.token);
       const role = decode.role;
 
+<<<<<<< HEAD
       // redirecting according to the role
       if(role === "PATIENT"){
         navigate("/patient/dashboard");
@@ -243,22 +283,28 @@ export default function LoginPage() {
         navigate("/doctor/dashboard");
       } else if (role === "ADMIN"){
         navigate("/admin-dashboard");
+=======
+      toast.success("Login successful");
+
+      if (role === "PATIENT") {
+        navigate("/patient-dashboard");
+      } else if (role === "DOCTOR") {
+        navigate("/doctor-dashboard");
+      } else if (role === "ADMIN") {
+        // navigate("/admin-dashboard");
+>>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
       } else {
         setError("Unknown User Role");
       }
-
-    }catch (err){
-      setError(
+    } catch (err) {
+      toast.error(
         err.response?.data?.message || "Invalid email or password"
       );
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
-
-
-      {/* MAIN CONTENT */}
       <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
         <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
 
@@ -286,6 +332,8 @@ export default function LoginPage() {
 
               {/* INPUTS */}
               <div className="flex flex-col gap-4">
+
+                {/* EMAIL */}
                 <input
                   type="email"
                   placeholder="Email address"
@@ -296,15 +344,28 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <input
-                  type="password"
-                  placeholder="Password"
-                  className="h-[48px] w-full px-4 rounded-xl border
-                             border-secondary/30 bg-secondary/5
-                             focus:outline-none focus:ring-2
-                             focus:ring-[#18AAB0]/40 transition"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                {/* PASSWORD WITH EYE */}
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    className="h-[48px] w-full px-4 pr-12 rounded-xl border
+                               border-secondary/30 bg-secondary/5
+                               focus:outline-none focus:ring-2
+                               focus:ring-[#18AAB0]/40 transition"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2
+                               text-gray-500 hover:text-[#18AAB0]"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+
               </div>
 
               {/* FORGOT PASSWORD */}
@@ -319,9 +380,7 @@ export default function LoginPage() {
 
               {/* LOGIN BUTTON */}
               <div className="mt-6">
-
                 <Button
-                  // onClick={() => navigate("/option")}
                   onClick={handleLogin}
                   className="w-full py-3 text-[18px] rounded-xl"
                   type="button"
@@ -345,10 +404,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
-
-
-

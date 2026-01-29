@@ -21,10 +21,17 @@ import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
 import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
+
 import AboutUs from "./pages/QuickLinks/AboutUs";
 import FrequentlyAskedQuestions from "./pages/QuickLinks/FrequentlyAskedQuestions";
 import PrivacyPolicy from "./pages/QuickLinks/PrivacyPolicy";
 import TermsAndConditions from "./pages/QuickLinks/TermsAndConditions";
+import { Toaster } from "react-hot-toast";
+
+
+
+
+
 //test
 import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
 import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
@@ -36,9 +43,18 @@ import PatientLayout from "./layouts/PatientLayout";
 // import { Navigate } from "react-router-dom";
 import DoctorLayout from "./layouts/DoctorLayout";
 
+import PrescriptionPage from "./pages/Prescriptions/PrescriptionPage";
+import DoctorNotePage from "./pages/AllDoctorNotes/DoctorNotePage";
+import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
+import InsideSurgeryFolder from "./pages/SurgeryFolder/InsideSurgeryFolder";
+import ClinicBookPage from "./pages/ClinicBookPage/ClinicBookCollection/ClinicBookPage";
+import ClinicPrescriptionList from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicPrescriptionList";
+import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicBookPrescriptionPage";
 
 function App() {
   return (
+  <>
+  <Toaster position="top-right" reverseOrder={false} /> 
     <Routes>
 
       {/* Legacy patient dashboard redirect
@@ -128,12 +144,22 @@ function App() {
       <Route path="/verify/:id" element={<PrescriptionVerify />} />
 
       <Route path="/surgeries" element={<SurgeryHistory />} />
-      <Route path="/surgery/:pid/:id" element={<SurgeryCardFolder />} />
+      <Route path="/surgery/:id" element={ <InsideSurgeryFolder/>} />
       {/* Doctor Notes Page */}
       <Route path="/doctor-notes" element={<AllDoctorNotes />} />
 
       <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+      <Route path="/medical-reports/surgeries" element={ <SurgeryPage/>  } />
+      <Route path="/medical-reports/prescriptions" element={ <PrescriptionPage/>  } />
+      <Route path="/medical-reports/custom-folders" element={ <DoctorNotePage/>  } />
+      <Route path="/medical-reports/clinic-book" element={ <ClinicBookPage/>  } />
+
+
+      {/* <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } /> */}
+      <Route path="/clinic-book/:id/pages" element={<ClinicBookPrescriptionPage />}/> 
     </Routes>
+  </>
   );
 }
 
