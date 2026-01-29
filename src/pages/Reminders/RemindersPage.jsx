@@ -1,149 +1,97 @@
+import { useState } from 'react';
+import MedicineReminders from './components/MedicineReminders';
+import AppointmentReminders from './components/AppointmentReminders';
+import PeriodTracker from './components/PeriodTracker';
+import OtherReminders from './components/OtherReminders';
 
-//import Header from "./Header";
-//import UserProfile from "./UserProfile";
-
-// import Header from "./Header";
-// import UserProfile from "./UserProfile";
-
-import Tabs from "./Tabs";
-import TodaySection from "./TodaySection";
-import AppointmentSection from "./AppointmentSection";
-import MedicineSection from "./MedicineSection";
-import OtherSection from "./OtherSection";
-import PeriodSection from "./PeriodSection";
-//import Footer from "./Footer";
-// import Footer from "./Footer";
-import { useState } from "react";
-// import logo from "../../assets/logo.png";
+// Mock patient data - replace with actual logged-in patient data
+const mockPatient = {
+  gender: "Female", // Change to "Male" to hide period tracker
+  name: "Parindya Hewage"
+};
 
 export default function RemindersPage() {
-  const [activeTab, setActiveTab] = useState("today");
-
-  const [medicines, setMedicines] = useState([
-    {
-      id: 1,
-      type: "Specific Day",
-      time: "9:00AM",
-      date: "2025-10-03",
-      category: "Medicine",
-      done: false,
-    },
-    {
-      id: 2,
-      type: "Specific Day",
-      time: "9:00AM",
-      date: "2025-10-03",
-      category: "Medicine",
-      done: false,
-    },
-  ]);
-
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      date: "2025-11-20",
-      time: "9:00 AM",
-      hospital: "Nawaloka Hospital",
-      doctor: "Dr. Suren",
-      note: "Note",
-      done: false,
-    },
-  ]);
-
-  const [otherReminders, setOtherReminders] = useState([
-    {
-      id: 1,
-      date: "2025-11-20",
-      time: "9:00 AM",
-      note: "Check blood pressure",
-      done: false,
-    },
-  ]);
-
-  const markAsDone = (type, id) => {
-    if (type === "medicine") {
-      setMedicines(
-        medicines.map((m) => (m.id === id ? { ...m, done: true } : m)),
-      );
-    }
-    if (type === "appointment") {
-      setAppointments(
-        appointments.map((a) => (a.id === id ? { ...a, done: true } : a)),
-      );
-    }
-    if (type === "other") {
-      setOtherReminders(
-        otherReminders.map((o) => (o.id === id ? { ...o, done: true } : o)),
-      );
-    }
-  };
+  const [activeTab, setActiveTab] = useState('medicines');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      {/* <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <img src={logo} className="w-28" />
-          <div className="text-right"> */}
-      {/* <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg">
-                
-              </div> */}
-      {/* <UserProfile />
-          </div>
+    <div className="min-h-screen bg-[#F2FBFA] p-4 lg:p-8">
+      <div className="max-w-7xl mx-auto">
         
-        </div>
-      </header> */}
-
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow">
-        {/* Page Title */}
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-[10px] sm:text-3xl md:text-4xl font-bold text-teal-500">
-            Personal Health Reminder
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#0F4F52] mb-2">
+            My Reminders 🔔
           </h1>
-          <p className="text-xs sm:text-sm md:text-base text-gray-500 mt-1">
-            Track your health, stay on schedule
+          <p className="text-gray-600">
+            Manage your medicines, appointments, and health reminders
           </p>
         </div>
 
-        {/* ✅ Tabs Component */}
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {/* <h1>Today Reminders</h1> */}
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-2">
+          <TabButton
+            active={activeTab === 'medicines'}
+            onClick={() => setActiveTab('medicines')}
+            icon="💊"
+          >
+            Medicines
+          </TabButton>
+          
+          <TabButton
+            active={activeTab === 'appointments'}
+            onClick={() => setActiveTab('appointments')}
+            icon="📅"
+          >
+            Appointments
+          </TabButton>
+          
+          {/* Only show Period Tracker for female patients */}
+          {mockPatient.gender === "Female" && (
+            <TabButton
+              active={activeTab === 'period'}
+              onClick={() => setActiveTab('period')}
+              icon="🌸"
+            >
+              Period Tracker
+            </TabButton>
+          )}
+          
+          <TabButton
+            active={activeTab === 'other'}
+            onClick={() => setActiveTab('other')}
+            icon="📌"
+          >
+            Other Reminders
+          </TabButton>
+        </div>
 
         {/* Content */}
-        <div className="mt-4 sm:mt-6 md:mt-8">
-          {activeTab === "today" && (
-            <TodaySection
-              medicines={medicines}
-              appointments={appointments}
-              otherReminders={otherReminders}
-              onMarkAsDone={markAsDone}
-              onShowMedicineForm={() => setActiveTab("medicine")}
-              onShowAppointmentForm={() => setActiveTab("appointment")}
-              onShowOtherForm={() => setActiveTab("other")}
-            />
-          )}
-
-          {activeTab === "medicine" && (
-            <MedicineSection medicines={medicines} onMarkAsDone={markAsDone} />
-          )}
-
-          {activeTab === "appointment" && (
-            <AppointmentSection
-              appointments={appointments}
-              onMarkAsDone={markAsDone}
-            />
-          )}
-
-          {activeTab === "period" && <PeriodSection />}
-          {activeTab === "other" && (
-            <OtherSection
-              otherReminders={otherReminders}
-              onMarkAsDone={markAsDone}
-            />
-          )}
+        <div className="bg-white rounded-3xl shadow-sm p-6 lg:p-8 border border-[#D3F0ED]">
+          {activeTab === 'medicines' && <MedicineReminders />}
+          {activeTab === 'appointments' && <AppointmentReminders />}
+          {activeTab === 'period' && mockPatient.gender === "Female" && <PeriodTracker />}
+          {activeTab === 'other' && <OtherReminders />}
         </div>
+
       </div>
     </div>
+  );
+}
+
+// Tab Button Component
+function TabButton({ active, onClick, icon, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap
+        ${active
+          ? 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg scale-105'
+          : 'bg-white text-gray-600 hover:bg-[#F7FCFB] border-2 border-[#D3F0ED] hover:border-[#18AAB0]'
+        }
+      `}
+    >
+      <span className="text-xl">{icon}</span>
+      <span>{children}</span>
+    </button>
   );
 }
