@@ -204,7 +204,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
 import { useState, useEffect } from "react";
 import { loginApi } from "../../api/authApi"
-import { q } from "framer-motion/client";
+// import { q } from "framer-motion/client";
 import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
@@ -222,17 +222,7 @@ export default function LoginPage() {
   }, []);
 
 
-  // THE HARDCODE LOG IN PART
-
-  // const handleLogin = () => {
-  //   if (password === "Password123" && email === "doctor@example.com" && role === "DOCTOR") {
-  //     navigate("/doctor-dashboard");
-  //   } else if (password === "Password123" && email === "patient@example.com" && role === "PATIENT") {
-  //     navigate("/patient-dashboard");
-  //   } else {
-  //     alert("Invalid password");
-  //   }
-  // };
+  
 
   const handleLogin = async () => {
     try {
@@ -248,11 +238,11 @@ export default function LoginPage() {
 
       // redirecting according to the role
       if(role === "PATIENT"){
-        navigate("/patient-dashboard");
+        navigate("/patient/dashboard");
       } else if(role === "DOCTOR"){
-        navigate("/doctor-dashboard");
+        navigate("/doctor/dashboard");
       } else if (role === "ADMIN"){
-        //navigate("/admin-dashboard");
+        navigate("/admin-dashboard");
       } else {
         setError("Unknown User Role");
       }
@@ -292,6 +282,8 @@ export default function LoginPage() {
                 Login to your account
               </p>
 
+              {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+
               {/* INPUTS */}
               <div className="flex flex-col gap-4">
                 <input
@@ -318,7 +310,7 @@ export default function LoginPage() {
               {/* FORGOT PASSWORD */}
               <div className="text-right mt-2">
                 <Link
-                  to="/forget"
+                  to="/forgot-password"
                   className="text-sm text-secondary hover:underline"
                 >
                   Forgot password?

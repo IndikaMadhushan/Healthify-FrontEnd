@@ -10,6 +10,8 @@ export default function MyProfile() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
+
+
         const res = await getPatientProfileApi();
         console.log(res.data);
         setPatient(res.data);
@@ -93,7 +95,27 @@ export default function MyProfile() {
 
             <div className="relative flex items-center justify-center">
               <div className="relative z-10">
-                <ProfileImageCropper onCropped={(file) => handleProfileImageUpload(file)} />
+                <ProfileImageCropper
+
+                  
+
+                  imageUrl={patient.photoUrl}
+                  onCropped={async (file) => {
+                    try {
+                      await uploadPatientProfileImageApi(patient.id, file);
+
+                      // invalidate cached /me
+                      localStorage.removeItem("patient_me_cache");
+
+                      //  reload profile
+                      window.location.reload();
+                    } catch (err) {
+                      console.error("Image upload failed", err);
+                      alert("Failed to upload image");
+                    }
+                  }}
+                />
+
               </div>
             </div>
 

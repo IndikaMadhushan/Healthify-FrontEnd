@@ -1,5 +1,5 @@
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 
 /* ================= HELPERS ================= */
@@ -12,6 +12,8 @@ const createImage = (url) =>
     img.crossOrigin = "anonymous";
     img.src = url;
   });
+
+  
 
 async function getCroppedImg(imageSrc, pixelCrop) {
   const image = await createImage(imageSrc);
@@ -45,13 +47,20 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 
 /* ================= COMPONENT ================= */
 
-export default function ProfileImageCropper({ onCropped }) {
+export default function ProfileImageCropper({ onCropped, imageUrl }) {
   // const inputRef = useRef(null);
   const modalInputRef = useRef(null);
 
   const [src, setSrc] = useState(null);
   const [profileSrc, setProfileSrc] = useState(null);
-  const [ setFile] = useState(null);
+  const [ file ,setFile] = useState(null);
+
+  useEffect(() => {
+    if(imageUrl) {
+      setProfileSrc(imageUrl);
+      setSrc(imageUrl);
+    }
+  }, [imageUrl]);
 
   const [showCrop, setShowCrop] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });

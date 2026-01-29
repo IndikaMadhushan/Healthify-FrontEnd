@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../../components/footer";
 import { useNavigate } from "react-router-dom";
-import DoctorNavBar from "./DoctorNavBar";
+import DoctorNavBar from "../../components/DoctorNavBar";
 import DoctorInfoCard from "./DoctorInfoCard";
 import SearchPatientsCard from "./SearchPatientsCard";
 import LatestPatientsCard from "./LatestPatientsCard";
-import { dummyDoctor, dummyPatients } from "./dummyData";
+import { getDoctorProfileApi } from "../../api/DoctorApi";
+import {  dummyPatients } from "./dummyData";
 
 export default function DoctorProfilePage() {
   const navigate = useNavigate();
-  const [doctor, setDoctor] = useState(dummyDoctor);
+  const [doctor, setDoctor] = useState(null);
   const [recentPatients, setRecentPatients] = useState([]);
 
   const handleViewProfile = (patient) => {
@@ -27,9 +28,22 @@ export default function DoctorProfilePage() {
     navigate(`/doctor-consult/${patient.id}`);
   };
 
+  useEffect(() => {
+    const loadDoctor = async () => {
+      try {
+        const res = await getDoctorProfileApi();
+        setDoctor(res.data);
+      } catch (err) {
+        console.error("Failed to load doctor profile", err);
+      }
+    };
+
+    loadDoctor();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <DoctorNavBar doctor={doctor} />
+      
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DoctorInfoCard doctor={doctor} onProfileUpdate={setDoctor} />

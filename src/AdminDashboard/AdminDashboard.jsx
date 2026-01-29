@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   getPendingDoctorsApi, 
-  approveDoctorApi, 
+  approveDoctorApi,
+  rejectDoctorApi,
   getDoctorByIdApi, 
-  getPatientByIdApi 
+  getPatientByIdApi,
+  toggleDoctorStatusApi,
+  togglePatientStatusApi
 } from '../api/AdminApi';
 
 // Mock admin data - replace with actual logged-in admin data
@@ -122,28 +125,71 @@ export default function AdminDashboard() {
   };
 
   const handleRejectDoctor = async (userId) => {
-    // TODO: Add reject endpoint to backend
-    if (confirm('Are you sure you want to reject this doctor registration?')) {
-      console.log('Rejecting doctor (userId):', userId);
-      alert('⚠️ Reject functionality needs to be implemented in the backend');
+    if (!confirm('Are you sure you want to reject this doctor registration? This will permanently delete the account.')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await rejectDoctorApi(userId);
+      alert('✅ Doctor registration rejected successfully.');
+      
+      // Refresh pending doctors list
+      await fetchPendingDoctors();
+    } catch (error) {
+      console.error('Error rejecting doctor:', error);
+      const message = error.response?.data?.message || 'Failed to reject doctor';
+      alert('❌ ' + message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleToggleDoctorStatus = async (doctorId, currentStatus) => {
-    // TODO: Add toggle status endpoint to backend
-    const action = currentStatus === 'active' ? 'disable' : 'activate';
-    if (confirm(`Are you sure you want to ${action} this doctor's account?`)) {
-      console.log(`${action} doctor:`, doctorId);
-      alert(`⚠️ Toggle doctor status functionality needs to be implemented in the backend`);
+    const action = currentStatus === 'ACTIVE' ? 'disable' : 'activate';
+    
+    if (!confirm(`Are you sure you want to ${action} this doctor's account?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await toggleDoctorStatusApi(doctorId);
+      alert(`✅ Doctor account ${action}d successfully!`);
+      
+      // Refresh the doctor details
+      const updatedDoctor = await getDoctorByIdApi(doctorId);
+      setSelectedDoctor(updatedDoctor);
+    } catch (error) {
+      console.error('Error toggling doctor status:', error);
+      const message = error.response?.data?.message || `Failed to ${action} doctor account`;
+      alert('❌ ' + message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleTogglePatientStatus = async (patientId, currentStatus) => {
-    // TODO: Add toggle status endpoint to backend
-    const action = currentStatus === 'active' ? 'disable' : 'activate';
-    if (confirm(`Are you sure you want to ${action} this patient's account?`)) {
-      console.log(`${action} patient:`, patientId);
-      alert(`⚠️ Toggle patient status functionality needs to be implemented in the backend`);
+    const action = currentStatus === 'ACTIVE' ? 'disable' : 'activate';
+    
+    if (!confirm(`Are you sure you want to ${action} this patient's account?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await togglePatientStatusApi(patientId);
+      alert(`✅ Patient account ${action}d successfully!`);
+      
+      // Refresh the patient details
+      const updatedPatient = await getPatientByIdApi(patientId);
+      setPatientData(updatedPatient);
+    } catch (error) {
+      console.error('Error toggling patient status:', error);
+      const message = error.response?.data?.message || `Failed to ${action} patient account`;
+      alert('❌ ' + message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -358,8 +404,8 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                  <InfoItem label="User ID" value={doctor.id} />
-                  <InfoItem label="SLMC Number" value={doctor.slmcRegNo || 'N/A'} />
+                  <InfoItem label="User ID" value={doctor.doctorId} />
+                  <InfoItem label="SLMC Number" value={doctor.licenseNumber || 'N/A'} />
                   <InfoItem label="NIC" value={doctor.nic || 'N/A'} />
                   <InfoItem label="Email" value={doctor.email} />
                   <InfoItem label="Role" value={doctor.role} />
@@ -526,6 +572,10 @@ function InfoItem({ label, value }) {
 
 // Doctor Details Modal
 function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
+  // Determine if doctor is enabled based on user status
+  const isEnabled = doctor.user?.enabled ?? doctor.enabled ?? true;
+  const accountStatus = isEnabled ? 'ACTIVE' : 'DISABLED';
+  
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -540,23 +590,24 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
         </div>
 
         <div className="space-y-4">
-          <DetailRow label="Name" value={doctor.name} />
-          <DetailRow label="Doctor ID" value={doctor.id} />
-          <DetailRow label="SLMC Number" value={doctor.slmcNumber} />
-          <DetailRow label="NIC" value={doctor.nic} />
+          <DetailRow label="Name" value={doctor.fullName} />
+          <DetailRow label="Doctor ID" value={doctor.doctorId} />
+          <DetailRow label="License Number" value={doctor.licenseNumber || 'N/A'} />
+          <DetailRow label="NIC" value={doctor.nic || 'N/A'} />
           <DetailRow label="Email" value={doctor.email} />
-          <DetailRow label="Phone" value={doctor.phone} />
-          <DetailRow label="Specialization" value={doctor.specialization} />
-          <DetailRow label="Joined Date" value={doctor.joinedDate} />
+          <DetailRow label="Phone" value={doctor.phone || 'N/A'} />
+          <DetailRow label="Specialization" value={doctor.specialization || 'N/A'} />
+          <DetailRow label="Hospital" value={doctor.hospital || 'N/A'} />
+          <DetailRow label="Age" value={doctor.age || 'N/A'} />
           <DetailRow 
-            label="Status" 
+            label="Account Status" 
             value={
               <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                doctor.status === 'active' 
+                isEnabled 
                   ? 'bg-green-100 text-green-700' 
                   : 'bg-red-100 text-red-700'
               }`}>
-                {doctor.status === 'active' ? '✓ Active' : '✗ Disabled'}
+                {isEnabled ? '✓ Active' : '✗ Disabled'}
               </span>
             }
           />
@@ -564,14 +615,14 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
 
         <div className="mt-8 flex gap-3">
           <button
-            onClick={() => onToggleStatus(doctor.id, doctor.status)}
+            onClick={() => onToggleStatus(doctor.doctorId, accountStatus)}
             className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
-              doctor.status === 'active'
+              isEnabled
                 ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
                 : 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg'
             }`}
           >
-            {doctor.status === 'active' ? '🔒 Disable Account' : '✓ Activate Account'}
+            {isEnabled ? '🔒 Disable Account' : '✓ Activate Account'}
           </button>
           <button
             onClick={onClose}
@@ -588,6 +639,8 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
 // Patient Existence Modal
 function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
   const patientExists = patient && patient.patientId;
+  const isEnabled = patient?.user?.enabled ?? patient?.enabled ?? true;
+  const accountStatus = isEnabled ? 'ACTIVE' : 'DISABLED';
   
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -611,11 +664,24 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
 
             <DetailRow label="Patient ID" value={patient.patientId} />
             <DetailRow label="Email" value={patient.email} />
-            <DetailRow label="Phone" value={patient.phone} />
+            <DetailRow label="Phone" value={patient.phone || 'N/A'} />
             
             {patient.registrationDate && (
               <DetailRow label="Registered Date" value={new Date(patient.registrationDate).toLocaleDateString()} />
             )}
+
+            <DetailRow 
+              label="Account Status" 
+              value={
+                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  isEnabled 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  {isEnabled ? '✓ Active' : '✗ Disabled'}
+                </span>
+              }
+            />
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-4">
               <p className="text-xs text-amber-800">
@@ -623,11 +689,17 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
               </p>
             </div>
 
-            {/* Note: Toggle status functionality needs backend endpoint */}
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mt-4">
-              <p className="text-xs text-blue-800">
-                ℹ️ Account status management requires additional backend endpoints
-              </p>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => onToggleStatus(patient.patientId, accountStatus)}
+                className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
+                  isEnabled
+                    ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
+                    : 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg'
+                }`}
+              >
+                {isEnabled ? 'Disable Account' : 'Activate Account'}
+              </button>
             </div>
           </div>
         ) : (
