@@ -205,12 +205,7 @@ import Button from "../HomePage/HomeButton";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../../assets/loginIcon.png";
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { loginApi } from "../../api/authApi"
-// import { q } from "framer-motion/client";
-=======
 import { loginApi } from "../../api/authApi";
->>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -238,9 +233,7 @@ export default function LoginPage() {
       return false;
     }
 
-<<<<<<< HEAD
   
-=======
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Invalid email format", { id: "email-format-error" });
       return false;
@@ -250,7 +243,6 @@ export default function LoginPage() {
       toast.error("Password is required", { id: "password-error" });
       return false;
     }
->>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
 
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters", {
@@ -275,24 +267,14 @@ export default function LoginPage() {
       const decode = jwtDecode(data.token);
       const role = decode.role;
 
-<<<<<<< HEAD
-      // redirecting according to the role
-      if(role === "PATIENT"){
-        navigate("/patient/dashboard");
-      } else if(role === "DOCTOR"){
-        navigate("/doctor/dashboard");
-      } else if (role === "ADMIN"){
-        navigate("/admin-dashboard");
-=======
       toast.success("Login successful");
 
       if (role === "PATIENT") {
-        navigate("/patient-dashboard");
+        navigate("/patient/dashboard");
       } else if (role === "DOCTOR") {
-        navigate("/doctor-dashboard");
+        navigate("/doctor/dashboard");
       } else if (role === "ADMIN") {
-        // navigate("/admin-dashboard");
->>>>>>> 1d4ce69fa8762f01ce60809080a81b3c9eb18eab
+         navigate("/admin-dashboard");
       } else {
         setError("Unknown User Role");
       }
@@ -328,7 +310,7 @@ export default function LoginPage() {
                 Login to your account
               </p>
 
-              {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+              {errors && <p className="text-red-500 text-sm text-center mb-4">{errors}</p>}
 
               {/* INPUTS */}
               <div className="flex flex-col gap-4">
