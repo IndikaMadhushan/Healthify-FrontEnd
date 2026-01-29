@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
 import {
   getOtherRemindersApi,
   createOtherReminderApi,
@@ -45,10 +44,10 @@ export default function OtherReminders() {
     try {
       await deleteOtherReminderApi(id);
       await fetchReminders();
-      toast.success('Reminder deleted successfully!');
+      alert('✅ Reminder deleted successfully!');
     } catch (error) {
       console.error('Error deleting reminder:', error);
-      toast.error('Failed to delete reminder. Please try again.');
+      alert('❌ Failed to delete reminder. Please try again.');
     }
   };
 
@@ -237,15 +236,15 @@ function ReminderModal({ reminder, onClose, onSave }) {
       setLoading(true);
       if (reminder) {
         await updateOtherReminderApi(reminder.id, formData);
-        toast.success('Reminder updated successfully!');
+        alert('✅ Reminder updated successfully!');
       } else {
         await createOtherReminderApi(formData);
-        toast.success('Reminder created successfully! You will receive email notifications.');
+        alert('✅ Reminder created successfully! You will receive email notifications.');
       }
       onSave();
     } catch (error) {
       console.error('Error saving reminder:', error);
-      toast.error('Failed to save reminder. Please try again.');
+      alert('❌ Failed to save reminder. Please try again.');
     } finally {
       setLoading(false);
     }

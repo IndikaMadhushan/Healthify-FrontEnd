@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
 import {
   getPeriodTrackerApi,
   updatePeriodTrackerApi,
@@ -33,10 +32,10 @@ export default function PeriodTracker() {
     try {
       await deletePeriodTrackerApi(tracker.id);
       await fetchTracker();
-      toast.success('Period tracker deleted successfully!');
+      alert('✅ Period tracker deleted successfully!');
     } catch (error) {
       console.error('Error deleting tracker:', error);
-      toast.error('Failed to delete tracker.');
+      alert('❌ Failed to delete tracker.');
     }
   };
 
@@ -304,11 +303,11 @@ function PeriodTrackerModal({ tracker, onClose, onSave }) {
     try {
       setLoading(true);
       await updatePeriodTrackerApi(formData);
-      toast.success('Period tracker saved! You will receive email reminders 2-3 days before your next period.');
+      alert('✅ Period tracker saved! You will receive email reminders 2-3 days before your next period.');
       onSave();
     } catch (error) {
       console.error('Error saving tracker:', error);
-      toast.error('Failed to save tracker.');
+      alert('❌ Failed to save tracker.');
     } finally {
       setLoading(false);
     }

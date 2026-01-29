@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
 import {
   getMedicineRemindersApi,
   createMedicineReminderApi,
@@ -45,10 +44,10 @@ export default function MedicineReminders() {
     try {
       await deleteMedicineReminderApi(id);
       await fetchReminders();
-      toast.success('Medicine reminder deleted successfully!');
+      alert('✅ Medicine reminder deleted successfully!');
     } catch (error) {
       console.error('Error deleting reminder:', error);
-      toast.error('Failed to delete reminder. Please try again.');
+      alert('❌ Failed to delete reminder. Please try again.');
     }
   };
 
@@ -203,15 +202,15 @@ function MedicineModal({ reminder, onClose, onSave }) {
       setLoading(true);
       if (reminder) {
         await updateMedicineReminderApi(reminder.id, formData);
-        toast.success('Medicine reminder updated successfully!');
+        alert('✅ Medicine reminder updated successfully!');
       } else {
         await createMedicineReminderApi(formData);
-        toast.success('Medicine reminder created successfully! You will receive email notifications.');
+        alert('✅ Medicine reminder created successfully! You will receive email notifications.');
       }
       onSave();
     } catch (error) {
       console.error('Error saving reminder:', error);
-      toast.error('Failed to save reminder. Please try again.');
+      alert('❌ Failed to save reminder. Please try again.');
     } finally {
       setLoading(false);
     }

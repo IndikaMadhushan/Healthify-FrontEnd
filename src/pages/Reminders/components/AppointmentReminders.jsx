@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
 import {
   getAppointmentRemindersApi,
   createAppointmentReminderApi,
@@ -35,10 +34,10 @@ export default function AppointmentReminders() {
     try {
       await deleteAppointmentReminderApi(id);
       await fetchReminders();
-      toast.success('Appointment deleted successfully!');
+      alert('✅ Appointment deleted successfully!');
     } catch (error) {
       console.error('Error deleting appointment:', error);
-      toast.error('Failed to delete appointment.');
+      alert('❌ Failed to delete appointment.');
     }
   };
 
@@ -205,15 +204,15 @@ function AppointmentModal({ reminder, onClose, onSave }) {
       setLoading(true);
       if (reminder) {
         await updateAppointmentReminderApi(reminder.id, formData);
-        toast.success('Appointment updated successfully!');
+        alert('✅ Appointment updated successfully!');
       } else {
         await createAppointmentReminderApi(formData);
-        toast.success('Appointment created! You will receive email reminders.');
+        alert('✅ Appointment created! You will receive email reminders.');
       }
       onSave();
     } catch (error) {
       console.error('Error saving appointment:', error);
-      toast.error('Failed to save appointment.');
+      alert('❌ Failed to save appointment.');
     } finally {
       setLoading(false);
     }
