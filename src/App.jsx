@@ -13,16 +13,14 @@ import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
 import PatientFormDoctorView from "./pages/PatientFormPage/patientFormDoctorView";
 import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
-
 import RemindersPage from "./pages/Reminders/RemindersPage";
-
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
-
-//
+import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import VerifyOtpPage from "./pages/Auth/VerifyOtpPage";
 import PrescriptionVerify from "./pages/Prescriptions/PrescriptionVerify";
 import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
+import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
 import AboutUs from "./pages/QuickLinks/AboutUs";
 import FrequentlyAskedQuestions from "./pages/QuickLinks/FrequentlyAskedQuestions";
@@ -39,6 +37,12 @@ import CustomizeFolder from "./pages/RepoteManagePages/CustomizeFolderPage";
 import Uploader from "./pages/RepoteManagePages/reportUploadComponent";
 import VaccinePage from "./pages/RepoteManagePages/VaccinePage";
 import AllDoctorNotes from "./pages/AllDoctorNotes/AllDoctorNotes";
+import ForgotPasswordPage from "./pages/PasswordReset/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/PasswordReset/ResetPasswordPage";
+import PatientLayout from "./layouts/PatientLayout";
+// import { Navigate } from "react-router-dom";
+import DoctorLayout from "./layouts/DoctorLayout";
+
 import PrescriptionPage from "./pages/Prescriptions/PrescriptionPage";
 import DoctorNotePage from "./pages/AllDoctorNotes/DoctorNotePage";
 import SurgeryPage from "./pages/SurgeryFolder/SurgeryPage";
@@ -52,28 +56,51 @@ function App() {
   <>
   <Toaster position="top-right" reverseOrder={false} /> 
     <Routes>
+
+      {/* Legacy patient dashboard redirect
+      <Route
+        path="/patient-dashboard"
+        element={<Navigate to="/patient/dashboard" replace />}
+      /> */}
+
+
+      {/* PATIENT AREA */}
+      <Route path="/patient" element={<PatientLayout />}>
+
+        {/* Main patient dashboard (sidebar-based UI) */}
+        <Route path="dashboard" element={<Dashboard />} />
+
+        {/* Profile */}
+        {/* <Route path="profile" element={<MyProfile />} /> */}
+
+        {/* Reminders */}
+        <Route path="reminders" element={<RemindersPage />} />
+
+        {/* Medical records */}
+        <Route path="medical-reports" element={<MedicalReportsPage />} />
+        <Route path="prescription" element={<PrescriptionList />} />
+        <Route path="surgeries" element={<SurgeryHistory />} />
+
+        {/* Forms */}
+        <Route path="firstFillForm" element={<PatientFirstFillForm />} />
+      </Route>
+
+
+
+
       <Route path="/customize-folders" element={<CustomizeFolder />} />
       <Route path="/report-upload" element={<Uploader />} />
       <Route path="/vaccine-page" element={<VaccinePage />} />
       <Route path="/" element={<HomePage />} />
       <Route path="/option" element={<OptionPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
-
-      <Route path="/firstFillForm" element={<PatientFirstFillForm/> } />
-
-    
-
+      <Route path="/firstFillForm" element={<PatientFirstFillForm />} />
       <Route path="/patientMain" element={<Dashboard />} />
-
       <Route path="/reminders" element={<RemindersPage />} />
-
-
-      
       <Route path="/verify-otp" element={<VerifyOtpPage />} />
-
-
-
       {/* Doctor Registration Routes */}
       <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
       <Route path="/doctor-register-2" element={<DoctorRegisterPage2 />} />
@@ -84,16 +111,18 @@ function App() {
       <Route path="/patient-dashboard" element={<Dashboard />} />
 
       {/* Quick Links */}
-      <Route path="/aboutUs" element={<AboutUs/>}/>
-      <Route path="/faq" element={<FrequentlyAskedQuestions/>}/>
-      <Route path="/privacyPolicy" element={<PrivacyPolicy/>}/>
-      <Route path="/termsandConditions" element={<TermsAndConditions/>}/>
+      <Route path="/aboutUs" element={<AboutUs />} />
+      <Route path="/faq" element={<FrequentlyAskedQuestions />} />
+      <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+      <Route path="/termsandConditions" element={<TermsAndConditions />} />
+
+      <Route path="/doctor" element={<DoctorLayout />}>
+        <Route path="dashboard" element={<DoctorDashBoardPage />} />
+        <Route path="consult/:patientId" element={<DoctorConsultPage />} />
+      </Route>
 
 
-      
 
-      {/* Doctor dashboard Page */}
-      <Route path="/doctor-dashboard" element={<DoctorDashBoardPage />} />
 
       {/* Doctor Consult Page */}
       <Route
@@ -119,6 +148,7 @@ function App() {
       {/* Doctor Notes Page */}
       <Route path="/doctor-notes" element={<AllDoctorNotes />} />
 
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
       <Route path="/medical-reports/surgeries" element={ <SurgeryPage/>  } />
       <Route path="/medical-reports/prescriptions" element={ <PrescriptionPage/>  } />

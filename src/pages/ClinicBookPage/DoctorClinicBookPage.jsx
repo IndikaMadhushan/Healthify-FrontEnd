@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { DoctorNavBar } from "../../components/DoctorNavBar";
+import DoctorNavBar  from "../../components/DoctorNavBar";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";

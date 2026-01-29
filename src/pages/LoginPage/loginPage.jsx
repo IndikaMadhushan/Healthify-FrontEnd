@@ -233,6 +233,7 @@ export default function LoginPage() {
       return false;
     }
 
+  
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Invalid email format", { id: "email-format-error" });
       return false;
@@ -269,11 +270,11 @@ export default function LoginPage() {
       toast.success("Login successful");
 
       if (role === "PATIENT") {
-        navigate("/patient-dashboard");
+        navigate("/patient/dashboard");
       } else if (role === "DOCTOR") {
-        navigate("/doctor-dashboard");
+        navigate("/doctor/dashboard");
       } else if (role === "ADMIN") {
-        // navigate("/admin-dashboard");
+         navigate("/admin-dashboard");
       } else {
         setError("Unknown User Role");
       }
@@ -308,6 +309,8 @@ export default function LoginPage() {
               <p className="text-center text-gray-500 mb-6">
                 Login to your account
               </p>
+
+              {errors && <p className="text-red-500 text-sm text-center mb-4">{errors}</p>}
 
               {/* INPUTS */}
               <div className="flex flex-col gap-4">
@@ -350,7 +353,7 @@ export default function LoginPage() {
               {/* FORGOT PASSWORD */}
               <div className="text-right mt-2">
                 <Link
-                  to="/forget"
+                  to="/forgot-password"
                   className="text-sm text-secondary hover:underline"
                 >
                   Forgot password?
