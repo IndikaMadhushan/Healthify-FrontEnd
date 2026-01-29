@@ -3,7 +3,7 @@ import { FaFilter } from "react-icons/fa";
 import { prescriptions } from "./clinicBookPages.js";
 
 import { useParams } from "react-router-dom";
-import PrescriptionCard from "../../Prescriptions/PrescriptionCard.jsx";
+import PrescriptionCard from "./ClinicPrescriptionCard.jsx";
 import PrescriptionModal from "../../Prescriptions/PrescriptionModal.jsx";
 import { PatinetNavBar } from "../../../components/PatientNavBar.jsx";
 
@@ -117,7 +117,7 @@ export default function ClinicPrescriptionList() {
           </p>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid  gap-6">
           {filteredAndSortedPrescriptions.map((rx) => (
             <PrescriptionCard
               key={rx.id}
