@@ -53,8 +53,38 @@ import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescri
 
 function App() {
   return (
-  <>
-  <Toaster position="top-right" reverseOrder={false} /> 
+    <>
+      <Toaster 
+        position="top-right" 
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#fff',
+            color: '#333',
+          },
+          success: {
+            style: {
+              background: '#10b981',
+              color: '#fff',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#10b981',
+            },
+          },
+          error: {
+            style: {
+              background: '#ef4444',
+              color: '#fff',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#ef4444',
+            },
+          },
+        }}
+      /> 
     <Routes>
 
       {/* Legacy patient dashboard redirect
