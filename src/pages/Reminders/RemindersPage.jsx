@@ -1,129 +1,117 @@
-import Tabs from "./Tabs";
-import TodaySection from "./TodaySection";
-import AppointmentSection from "./AppointmentSection";
-import MedicineSection from "./MedicineSection";
-import OtherSection from "./OtherSection";
-import PeriodSection from "./PeriodSection";
-import { useState, useEffect } from "react";
-import axiosInstance from "../../api/axiosInstance";
-import {
-  getMedicinesApi,
-  getAppointmentsApi,
-  getOtherRemindersApi,
-  getPeriodHistoryApi,
-  deactivateOtherReminderApi,
-} from "../../api/ReminderApi";
+import { useState, useEffect } from 'react';
+import MedicineReminders from './components/MedicineReminders';
+import AppointmentReminders from './components/AppointmentReminders';
+import PeriodTracker from './components/PeriodTracker';
+import OtherReminders from './components/OtherReminders';
+import { getPatientProfileApi } from '../../api/PatientApi';
+
+// // Mock patient data
+// const mockPatient = {
+//   gender: "Female", // Change to "Male" to hide period tracker
+//   name: "Parindya Hewage"
+// };
 
 export default function RemindersPage() {
-  const [activeTab, setActiveTab] = useState("today");
-  const [medicines, setMedicines] = useState([]);
-  const [appointments, setAppointments] = useState([]);
-  const [otherReminders, setOtherReminders] = useState([]);
+    const [activeTab, setActiveTab] = useState('medicines');
+    const [patient, setPatient] = useState(null);
 
+    useEffect(() => {
+        const loadPatient = async () => {
+            try {
+                const res = await getPatientProfileApi();
+                setPatient(res.data);
+            } catch (e) {
+                console.error("Failed to load patient profile", e);
+            }
+        };
+        loadPatient();
+    }, []);
 
-  const markAsDone = async (type, id) => {
-    try {
-      if (type === "appointment") {
-        await markAppointmentDoneApi(id);
-        setAppointments((prev) =>
-          prev.map((a) => (a.id === id ? { ...a, done: true } : a))
-        );
-      }
-
-      if (type === "medicine") {
-        await deactivateMedicineApi(id);
-        setMedicines((prev) => prev.filter((m) => m.id !== id));
-      }
-
-      if (type === "other") {
-        await deactivateOtherReminderApi(id);
-        setOtherReminders((prev) => prev.filter((o) => o.id !== id));
-      }
-    } catch (err) {
-      console.error("Failed to update reminder", err);
+    if (!patient) {
+        return <div className="p-10 text-gray-500">Loading reminders…</div>;
     }
-  };
-
-
-  useEffect(() => {
-    const loadReminders = async () => {
-      try {
-        const profileRes = await axiosInstance.get("/api/patients/me");
-        const patientId = profileRes.data.id;
-
-        const [medRes, aptRes, otherRes] = await Promise.all([
-          getMedicinesApi(patientId),
-          getAppointmentsApi(patientId),
-          getOtherRemindersApi(patientId),
-        ]);
-
-        setMedicines(medRes.data);
-        setAppointments(aptRes.data);
-        setOtherReminders(otherRes.data);
-      } catch (err) {
-        console.error("Failed to load reminders", err);
-      }
-    };
-
-    loadReminders();
-  }, []);
 
 
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    return (
+        <div className="min-h-screen bg-[#F2FBFA] p-4 lg:p-8">
+            <div className="max-w-7xl mx-auto">
 
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-[#0F4F52] mb-2">
+                        My Reminders 🔔
+                    </h1>
+                    <p className="text-gray-600">
+                        Manage your medicines, appointments, and health reminders
+                    </p>
+                </div>
 
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow">
-        {/* Page Title */}
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-[10px] sm:text-3xl md:text-4xl font-bold text-teal-500">
-            Personal Health Reminder
-          </h1>
-          <p className="text-xs sm:text-sm md:text-base text-gray-500 mt-1">
-            Track your health, stay on schedule
-          </p>
+                {/* Tabs */}
+                <div className="flex flex-wrap gap-2 mb-8 overflow-x-auto pb-2">
+                    <TabButton
+                        active={activeTab === 'medicines'}
+                        onClick={() => setActiveTab('medicines')}
+                        icon="💊"
+                    >
+                        Medicines
+                    </TabButton>
+
+                    <TabButton
+                        active={activeTab === 'appointments'}
+                        onClick={() => setActiveTab('appointments')}
+                        icon="📅"
+                    >
+                        Appointments
+                    </TabButton>
+
+                    {/* Only show Period Tracker for female patients */}
+                    {patient.gender === "Female" && (
+                        <TabButton
+                            active={activeTab === 'period'}
+                            onClick={() => setActiveTab('period')}
+                            icon="🌸"
+                        >
+                            Period Tracker
+                        </TabButton>
+                    )}
+
+                    <TabButton
+                        active={activeTab === 'other'}
+                        onClick={() => setActiveTab('other')}
+                        icon="📌"
+                    >
+                        Other Reminders
+                    </TabButton>
+                </div>
+
+                {/* Content */}
+                <div className="bg-white rounded-3xl shadow-sm p-6 lg:p-8 border border-[#D3F0ED]">
+                    {activeTab === 'medicines' && <MedicineReminders />}
+                    {activeTab === 'appointments' && <AppointmentReminders />}
+                    {activeTab === 'period' && patient.gender === "Female" && <PeriodTracker />}
+                    {activeTab === 'other' && <OtherReminders />}
+                </div>
+
+            </div>
         </div>
+    );
+}
 
-        {/*Tabs Component */}
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {/* <h1>Today Reminders</h1> */}
-
-        {/* Content */}
-        <div className="mt-4 sm:mt-6 md:mt-8">
-          {activeTab === "today" && (
-            <TodaySection
-              medicines={medicines}
-              appointments={appointments}
-              otherReminders={otherReminders}
-              onMarkAsDone={markAsDone}
-              onShowMedicineForm={() => setActiveTab("medicine")}
-              onShowAppointmentForm={() => setActiveTab("appointment")}
-              onShowOtherForm={() => setActiveTab("other")}
-            />
-          )}
-
-          {activeTab === "medicine" && (
-            <MedicineSection medicines={medicines} onMarkAsDone={markAsDone} />
-          )}
-
-          {activeTab === "appointment" && (
-            <AppointmentSection
-              appointments={appointments}
-              onMarkAsDone={markAsDone}
-            />
-          )}
-
-          {activeTab === "period" && <PeriodSection />}
-          {activeTab === "other" && (
-            <OtherSection
-              otherReminders={otherReminders}
-              onMarkAsDone={markAsDone}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  );
+// Tab Button Component
+function TabButton({ active, onClick, icon, children }) {
+    return (
+        <button
+            onClick={onClick}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap
+        ${active
+                    ? 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-600 hover:bg-[#F7FCFB] border-2 border-[#D3F0ED] hover:border-[#18AAB0]'
+                }
+      `}
+        >
+            <span className="text-xl">{icon}</span>
+            <span>{children}</span>
+        </button>
+    );
 }
