@@ -12,12 +12,15 @@ import {
 import {
   getPatientProfileApi,
   getPatientBmiApi,
-  getMedicineRemindersApi,
-  getAppointmentRemindersApi,
-  getPeriodRemindersApi,
-  getOtherRemindersApi,
   getPatientMetricGraphApi
 } from "../../api/PatientApi";
+
+import {
+  getMedicineRemindersApi,
+  getAppointmentRemindersApi,
+  getPeriodTrackerApi,
+  getOtherRemindersApi
+} from "../../api/RemindersApi";
 
 export default function SummaryPage() {
   const [greeting, setGreeting] = useState("");
@@ -39,6 +42,38 @@ export default function SummaryPage() {
     other: []
   });
 
+  const todayString = new Date().toDateString();
+  const isSameDay = (dateValue) => {
+    if (!dateValue) return false;
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return false;
+    return date.toDateString() === todayString;
+  };
+
+  const todayAppointments = reminders.appointments.filter((a) =>
+    isSameDay(a.appointmentDate)
+  );
+  const todayMedicines = reminders.medicines;
+  const todayOtherReminders = reminders.other.filter((o) =>
+    isSameDay(o.reminderDate)
+  );
+
+  const periodTracker = reminders.period?.[0];
+  const computeNextPeriodDate = (tracker) => {
+    if (!tracker?.lastPeriodDate || !tracker?.cycleLength) return null;
+    const lastPeriod = new Date(tracker.lastPeriodDate);
+    if (Number.isNaN(lastPeriod.getTime())) return null;
+    const nextPeriod = new Date(lastPeriod);
+    nextPeriod.setDate(nextPeriod.getDate() + Number(tracker.cycleLength));
+    return nextPeriod;
+  };
+  const nextPeriodDate = periodTracker?.nextPeriodDate
+    ? new Date(periodTracker.nextPeriodDate)
+    : computeNextPeriodDate(periodTracker);
+  const daysUntilNextPeriod = nextPeriodDate
+    ? Math.ceil((nextPeriodDate - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
+
   useEffect(() => {
     const hour = new Date().getHours();
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -55,7 +90,7 @@ export default function SummaryPage() {
 
         const patientId = patientData.id;
 
-        const [
+                const [
           bmiRes,
           medicineRes,
           appointmentRes,
@@ -67,10 +102,10 @@ export default function SummaryPage() {
           cholesterolRes
         ] = await Promise.all([
           getPatientBmiApi(patientId),
-          getMedicineRemindersApi(patientId),
-          getAppointmentRemindersApi(patientId),
-          getPeriodRemindersApi(patientId),
-          getOtherRemindersApi(patientId),
+          getMedicineRemindersApi(),
+          getAppointmentRemindersApi(),
+          getPeriodTrackerApi(),
+          getOtherRemindersApi(),
 
           getPatientMetricGraphApi(patientId, "WEIGHT"),
           getPatientMetricGraphApi(patientId, "HEIGHT"),
@@ -81,10 +116,10 @@ export default function SummaryPage() {
         setBmiInfo(bmiRes.data);
 
         setReminders({
-          medicines: medicineRes.data || [],
-          appointments: appointmentRes.data || [],
-          period: periodRes.data || [],
-          other: otherRes.data || []
+          medicines: medicineRes || [],
+          appointments: appointmentRes || [],
+          period: periodRes ? [periodRes] : [],
+          other: otherRes || []
         });
 
         setMetrics({
@@ -201,15 +236,27 @@ export default function SummaryPage() {
             <ReminderSection
               title="Appointments"
               icon="📅"
-              items={reminders.appointments}
+              items={todayAppointments}
               empty="No appointments today"
               render={(a) => (
                 <>
-                  <p className="font-medium text-sm">{a.doctorName}</p>
-                  <p className="text-xs text-gray-500">🏥 {a.hospital}</p>
-                  <p className="text-xs text-gray-500">
-                    🕐 {a.appointmentTime}
+                  <p className="font-medium text-sm">
+                    {a.title || "Appointment"}
                   </p>
+                  <p className="text-xs text-gray-500">
+                    🏥 {a.location || a.hospital || "Location not set"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🕐 {a.time || a.appointmentTime || "Time not set"}
+                  </p>
+                  {(a.doctor || a.doctorName) && (
+                    <p className="text-xs text-gray-500">
+                      👨‍⚕️ {a.doctor || a.doctorName}
+                    </p>
+                  )}
+                  {a.reason && (
+                    <p className="text-xs text-gray-500">📝 {a.reason}</p>
+                  )}
                 </>
               )}
             />
@@ -217,12 +264,26 @@ export default function SummaryPage() {
             <ReminderSection
               title="Medicines"
               icon="💊"
-              items={reminders.medicines}
+              items={todayMedicines}
               empty="No medicine reminders"
               render={(m) => (
                 <>
                   <p className="font-medium text-sm">{m.medicineName}</p>
+                  <p className="text-xs text-gray-500">
+                    💊 {m.dosage || "Dosage not set"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🔁 {m.frequency || "Frequency not set"}
+                  </p>
                   <p className="text-xs text-gray-500">🕐 {m.time}</p>
+                  {m.duration && (
+                    <p className="text-xs text-gray-500">
+                      📆 {m.duration} days
+                    </p>
+                  )}
+                  {m.notes && (
+                    <p className="text-xs text-gray-500">📝 {m.notes}</p>
+                  )}
                 </>
               )}
             />
@@ -231,12 +292,29 @@ export default function SummaryPage() {
               <ReminderSection
                 title="Period Tracker"
                 icon="🌸"
-                items={reminders.period}
+                items={periodTracker ? [periodTracker] : []}
                 empty="No period reminders"
                 render={(p) => (
-                  <p className="text-sm">
-                    Next cycle expected around {p.nextPeriodDate}
-                  </p>
+                  <>
+                    <p className="text-sm">
+                      Next cycle expected around{" "}
+                      {nextPeriodDate
+                        ? nextPeriodDate.toLocaleDateString("en-US", {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric"
+                          })
+                        : "Not available"}
+                    </p>
+                    {daysUntilNextPeriod !== null && (
+                      <p className="text-xs text-gray-500">
+                        ⏳ {daysUntilNextPeriod} days remaining
+                      </p>
+                    )}
+                    {p.notes && (
+                      <p className="text-xs text-gray-500">📝 {p.notes}</p>
+                    )}
+                  </>
                 )}
               />
             )}
@@ -244,12 +322,23 @@ export default function SummaryPage() {
             <ReminderSection
               title="Other Reminders"
               icon="📌"
-              items={reminders.other}
+              items={todayOtherReminders}
               empty="No other reminders"
               render={(o) => (
                 <>
-                  <p className="font-medium text-sm">{o.note}</p>
-                  <p className="text-xs text-gray-500">🕐 {o.time}</p>
+                  <p className="font-medium text-sm">{o.title}</p>
+                  {o.category && (
+                    <p className="text-xs text-gray-500">🏷️ {o.category}</p>
+                  )}
+                  <p className="text-xs text-gray-500">
+                    📅 {new Date(o.reminderDate).toLocaleDateString("en-US")}
+                  </p>
+                  {o.time && (
+                    <p className="text-xs text-gray-500">🕐 {o.time}</p>
+                  )}
+                  {o.description && (
+                    <p className="text-xs text-gray-500">📝 {o.description}</p>
+                  )}
                 </>
               )}
             />
