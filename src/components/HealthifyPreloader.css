@@ -1,0 +1,306 @@
+.healthify-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 0.6s ease-in-out 1.4s forwards;
+}
+
+.healthify-preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* Logo Container */
+.healthify-logo-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+/* Heart Icon */
+.healthify-heart {
+  width: 60px;
+  height: 60px;
+  animation: heartbeat 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.heart-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 15px rgba(229, 57, 53, 0.4));
+}
+
+.heart-path {
+  animation: fillHeart 1s ease-in-out forwards;
+  transform-origin: center;
+}
+
+/* Leaf Icon */
+.healthify-leaf {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: 45px;
+  top: -5px;
+  animation: leafSway 2s ease-in-out infinite;
+  transform-origin: bottom left;
+}
+
+.leaf-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 15px rgba(24, 170, 176, 0.4));
+}
+
+.leaf-path {
+  animation: fillLeaf 1s ease-in-out 0.2s forwards;
+  opacity: 0;
+}
+
+.leaf-vein {
+  animation: drawVein 1s ease-in-out 0.5s forwards;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+/* Healthify Text */
+.healthify-text {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  display: flex;
+  margin-left: 1rem;
+  letter-spacing: -0.05em;
+}
+
+.healthify-letter {
+  display: inline-block;
+  animation: letterPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.health-part {
+  color: #18AAB0;
+  text-shadow: 0 4px 15px rgba(24, 170, 176, 0.5);
+}
+
+.ify-part {
+  color: #86c443;
+  text-shadow: 0 4px 15px rgba(134, 196, 67, 0.5);
+}
+
+/* Loading Dots */
+.loading-dots {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #18AAB0, #86c443);
+  animation: dotBounce 1.4s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(24, 170, 176, 0.6);
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Progress Bar */
+.progress-container {
+  width: 300px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #18AAB0, #86c443);
+  border-radius: 10px;
+  animation: fillProgress 1.8s ease-in-out forwards;
+  box-shadow: 0 0 15px rgba(134, 196, 67, 0.6);
+  width: 0;
+}
+
+/* Animations */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.15);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.15);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fillHeart {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes leafSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes fillLeaf {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes drawVein {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes letterPop {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-15px) scale(1.1);
+  }
+}
+
+@keyframes fillProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .healthify-text {
+    font-size: 3rem;
+  }
+
+  .healthify-heart {
+    width: 50px;
+    height: 50px;
+  }
+
+  .healthify-leaf {
+    width: 40px;
+    height: 40px;
+    left: 38px;
+  }
+
+  .progress-container {
+    width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .healthify-text {
+    font-size: 2.5rem;
+  }
+
+  .healthify-heart {
+    width: 40px;
+    height: 40px;
+  }
+
+  .healthify-leaf {
+    width: 35px;
+    height: 35px;
+    left: 30px;
+  }
+
+  .progress-container {
+    width: 200px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+  }
+}
