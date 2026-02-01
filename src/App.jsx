@@ -46,6 +46,7 @@ import InsideSurgeryFolder from "./pages/SurgeryFolder/InsideSurgeryFolder";
 import ClinicBookPage from "./pages/ClinicBookPage/ClinicBookCollection/ClinicBookPage";
 import ClinicPrescriptionList from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicPrescriptionList";
 import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicBookPrescriptionPage";
+import RouteTransition from "./components/RouteTransition";
 
 function App() {
   return (
@@ -81,112 +82,121 @@ function App() {
           },
         }}
       />
-      <Routes>
-        {/* Legacy patient dashboard redirect
+
+      <RouteTransition>
+        <Routes>
+          {/* Legacy patient dashboard redirect
       <Route
         path="/patient-dashboard"
         element={<Navigate to="/patient/dashboard" replace />}
       /> */}
 
-        {/* PATIENT AREA */}
-        <Route path="/patient" element={<PatientLayout />}>
-          {/* Main patient dashboard (sidebar-based UI) */}
-          <Route path="dashboard" element={<Dashboard />} />
+          {/* PATIENT AREA */}
+          <Route path="/patient" element={<PatientLayout />}>
+            {/* Main patient dashboard (sidebar-based UI) */}
+            <Route path="dashboard" element={<Dashboard />} />
 
-          {/* Profile */}
-          {/* <Route path="profile" element={<MyProfile />} /> */}
+            {/* Profile */}
+            {/* <Route path="profile" element={<MyProfile />} /> */}
 
-          {/* Reminders */}
-          <Route path="reminders" element={<RemindersPage />} />
+            {/* Reminders */}
+            <Route path="reminders" element={<RemindersPage />} />
 
-          {/* Medical records */}
-          <Route path="medical-reports" element={<MedicalReportsPage />} />
-          <Route path="prescription" element={<PrescriptionList />} />
-          <Route path="surgeries" element={<SurgeryHistory />} />
+            {/* Medical records */}
+            <Route path="medical-reports" element={<MedicalReportsPage />} />
+            <Route path="prescription" element={<PrescriptionList />} />
+            <Route path="surgeries" element={<SurgeryHistory />} />
 
-          {/* Forms */}
-          <Route path="firstFillForm" element={<PatientFirstFillForm />} />
-        </Route>
+            {/* Forms */}
+            <Route path="firstFillForm" element={<PatientFirstFillForm />} />
+          </Route>
 
-        <Route path="/customize-folders" element={<CustomizeFolder />} />
-        <Route path="/report-upload" element={<Uploader />} />
-        <Route path="/vaccine-page" element={<VaccinePage />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/option" element={<OptionPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
-        <Route path="/firstFillForm" element={<PatientFirstFillForm />} />
-        <Route path="/patientMain" element={<Dashboard />} />
-        <Route path="/reminders" element={<RemindersPage />} />
-        <Route path="/verify-otp" element={<VerifyOtpPage />} />
-        {/* Doctor Registration Routes */}
-        <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
-        <Route path="/doctor-register-2" element={<DoctorRegisterPage2 />} />
-        {/* Patient Registration Routes */}
-        <Route path="/patient-register-1" element={<PatientRegisterPage1 />} />
-        <Route path="/patient-register-2" element={<PatientRegisterPage2 />} />
+          <Route path="/customize-folders" element={<CustomizeFolder />} />
+          <Route path="/report-upload" element={<Uploader />} />
+          <Route path="/vaccine-page" element={<VaccinePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/option" element={<OptionPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/doctorViewform" element={<PatientFormDoctorView />} />
+          <Route path="/firstFillForm" element={<PatientFirstFillForm />} />
+          <Route path="/patientMain" element={<Dashboard />} />
+          <Route path="/reminders" element={<RemindersPage />} />
+          <Route path="/verify-otp" element={<VerifyOtpPage />} />
+          {/* Doctor Registration Routes */}
+          <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
+          <Route path="/doctor-register-2" element={<DoctorRegisterPage2 />} />
+          {/* Patient Registration Routes */}
+          <Route
+            path="/patient-register-1"
+            element={<PatientRegisterPage1 />}
+          />
+          <Route
+            path="/patient-register-2"
+            element={<PatientRegisterPage2 />}
+          />
 
-        <Route path="/patient-dashboard" element={<Dashboard />} />
+          <Route path="/patient-dashboard" element={<Dashboard />} />
 
-        {/* Quick Links */}
-        <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/faq" element={<FrequentlyAskedQuestions />} />
-        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-        <Route path="/termsandConditions" element={<TermsAndConditions />} />
+          {/* Quick Links */}
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/faq" element={<FrequentlyAskedQuestions />} />
+          <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+          <Route path="/termsandConditions" element={<TermsAndConditions />} />
 
-        <Route path="/doctor" element={<DoctorLayout />}>
-          <Route path="dashboard" element={<DoctorDashBoardPage />} />
-          <Route path="consult/:patientId" element={<DoctorConsultPage />} />
-        </Route>
+          <Route path="/doctor" element={<DoctorLayout />}>
+            <Route path="dashboard" element={<DoctorDashBoardPage />} />
+            <Route path="consult/:patientId" element={<DoctorConsultPage />} />
+          </Route>
 
-        {/* Doctor Consult Page */}
-        <Route
-          path="/doctor-consult/:patientId"
-          element={<DoctorConsultPage />}
-        />
+          {/* Doctor Consult Page */}
+          <Route
+            path="/doctor-consult/:patientId"
+            element={<DoctorConsultPage />}
+          />
 
-        <Route path="/medical-reports" element={<MedicalReportsPage />} />
+          <Route path="/medical-reports" element={<MedicalReportsPage />} />
 
-        {/* http://localhost:5173/doctor-clinic-book/:UR5678/:CB001 */}
-        {/* Doctor Clinic Book Page */}
-        <Route
-          path="/doctor-clinic-book/:patientId/:bookId"
-          element={<DoctorClinicBookPage />}
-        />
+          {/* http://localhost:5173/doctor-clinic-book/:UR5678/:CB001 */}
+          {/* Doctor Clinic Book Page */}
+          <Route
+            path="/doctor-clinic-book/:patientId/:bookId"
+            element={<DoctorClinicBookPage />}
+          />
 
-        <Route path="/patient-dashboard" element={<Dashboard />} />
-        <Route path="/prescription" element={<PrescriptionList />} />
-        <Route path="/verify/:id" element={<PrescriptionVerify />} />
+          <Route path="/patient-dashboard" element={<Dashboard />} />
+          <Route path="/prescription" element={<PrescriptionList />} />
+          <Route path="/verify/:id" element={<PrescriptionVerify />} />
 
-        <Route path="/surgeries" element={<SurgeryHistory />} />
-        <Route path="/surgery/:id" element={<InsideSurgeryFolder />} />
-        {/* Doctor Notes Page */}
-        <Route path="/doctor-notes" element={<AllDoctorNotes />} />
+          <Route path="/surgeries" element={<SurgeryHistory />} />
+          <Route path="/surgery/:id" element={<InsideSurgeryFolder />} />
+          {/* Doctor Notes Page */}
+          <Route path="/doctor-notes" element={<AllDoctorNotes />} />
 
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
-        <Route path="/medical-reports/surgeries" element={<SurgeryPage />} />
-        <Route
-          path="/medical-reports/prescriptions"
-          element={<PrescriptionPage />}
-        />
-        <Route
-          path="/medical-reports/custom-folders"
-          element={<DoctorNotePage />}
-        />
-        <Route
-          path="/medical-reports/clinic-book"
-          element={<ClinicBookPage />}
-        />
+          <Route path="/medical-reports/surgeries" element={<SurgeryPage />} />
+          <Route
+            path="/medical-reports/prescriptions"
+            element={<PrescriptionPage />}
+          />
+          <Route
+            path="/medical-reports/custom-folders"
+            element={<DoctorNotePage />}
+          />
+          <Route
+            path="/medical-reports/clinic-book"
+            element={<ClinicBookPage />}
+          />
 
-        {/* <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } /> */}
-        <Route
-          path="/clinic-book/:id/pages"
-          element={<ClinicBookPrescriptionPage />}
-        />
-      </Routes>
+          {/* <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } /> */}
+          <Route
+            path="/clinic-book/:id/pages"
+            element={<ClinicBookPrescriptionPage />}
+          />
+        </Routes>
+      </RouteTransition>
     </>
   );
 }
