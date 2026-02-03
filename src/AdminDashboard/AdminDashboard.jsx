@@ -9,15 +9,9 @@ import {
   getPatientByIdApi,
   toggleDoctorStatusApi,
   togglePatientStatusApi,
-  buildAdminFileUrl
+  buildAdminFileUrl,
+  getAdminProfileApi
 } from '../api/AdminApi';
-
-// Mock admin data - replace with actual logged-in admin data
-const mockAdminData = {
-  id: "ADM-001",
-  email: "admin@healthify.com",
-  name: "Admin"
-};
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -33,6 +27,8 @@ export default function AdminDashboard() {
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [showPatientModal, setShowPatientModal] = useState(false);
   const [patientData, setPatientData] = useState(null);
+  const [adminProfile, setAdminProfile] = useState({ id: 'ADMIN', email: '', name: 'Admin' });
+  const [adminLoading, setAdminLoading] = useState(true);
   
   // Document viewer states
   const [showDocumentModal, setShowDocumentModal] = useState(false);
@@ -53,7 +49,25 @@ export default function AdminDashboard() {
 
     // Fetch pending doctors on mount
     fetchPendingDoctors();
+    fetchAdminProfile();
   }, []);
+
+  const fetchAdminProfile = async () => {
+    try {
+      setAdminLoading(true);
+      const data = await getAdminProfileApi();
+      setAdminProfile({
+        id: data?.id || 'ADMIN',
+        email: data?.email || '',
+        name: data?.name || 'Admin'
+      });
+    } catch (error) {
+      console.error('Error fetching admin profile:', error);
+      toast.error('Failed to load admin profile');
+    } finally {
+      setAdminLoading(false);
+    }
+  };
 
 
   const fetchPendingDoctors = async () => {
@@ -230,14 +244,16 @@ export default function AdminDashboard() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-[#0F4F52]">
-                {greeting}, Admin! 👋
+                {greeting}, {adminProfile.name || 'Admin'}! 👋
               </h1>
               <div className="mt-2 space-y-1">
                 <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">ID:</span> {mockAdminData.id}
+                  <span className="font-medium text-[#18AAB0]">ID:</span>{' '}
+                  {adminLoading ? 'Loading...' : adminProfile.id}
                 </p>
                 <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">Email:</span> {mockAdminData.email}
+                  <span className="font-medium text-[#18AAB0]">Email:</span>{' '}
+                  {adminLoading ? 'Loading...' : (adminProfile.email || '—')}
                 </p>
               </div>
             </div>
