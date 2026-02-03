@@ -1,5 +1,6 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 
 const API_BASE_URL = "http://localhost:8080/api/admin";
@@ -11,6 +12,23 @@ export const buildAdminFileUrl = (url) => {
   if (!FILE_BASE_URL) return url;
   if (url.startsWith("/")) return `${FILE_BASE_URL}${url}`;
   return `${FILE_BASE_URL}/${url}`;
+};
+
+export const getAdminProfileApi = async () => {
+  try {
+    const response = await axiosInstance.get("/api/admin/me");
+    return response.data;
+  } catch (error) {
+    const token = localStorage.getItem("token");
+    if (!token) throw error;
+
+    const decoded = jwtDecode(token);
+    return {
+      id: decoded.userId || decoded.id || decoded.sub || "ADMIN",
+      email: decoded.email || decoded.sub || "",
+      name: decoded.name || decoded.username || "Admin",
+    };
+  }
 };
 
 // Get pending doctor registrations
