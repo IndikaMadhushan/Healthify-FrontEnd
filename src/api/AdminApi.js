@@ -3,6 +3,15 @@ import axiosInstance from "./axiosInstance";
 
 
 const API_BASE_URL = "http://localhost:8080/api/admin";
+const FILE_BASE_URL = axiosInstance.defaults.baseURL || "";
+
+export const buildAdminFileUrl = (url) => {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url)) return url;
+  if (!FILE_BASE_URL) return url;
+  if (url.startsWith("/")) return `${FILE_BASE_URL}${url}`;
+  return `${FILE_BASE_URL}/${url}`;
+};
 
 // Get pending doctor registrations
 export const getPendingDoctorsApi = async () => {
