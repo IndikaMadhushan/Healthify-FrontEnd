@@ -1,6 +1,6 @@
 //thathsara
 // src/pages/DoctorNotesPage/AllDoctorNotes.jsx
-
+// code eke edit krna than comment krnna .
 import { useState } from "react";
 import {
   FaUserMd,

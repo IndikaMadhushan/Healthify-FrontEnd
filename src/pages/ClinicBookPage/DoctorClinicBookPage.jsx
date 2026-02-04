@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import DoctorNavBar  from "../../components/DoctorNavBar";
+import DoctorNavBar from "../../components/DoctorNavBar2";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
@@ -14,7 +14,6 @@ import { pastClinicPagesDummy } from "./pastClinicPages";
 
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
-
 
   // ==================== MOCK PATIENT DATA ====================
   const patientInfo = {
@@ -32,46 +31,32 @@ export default function DoctorClinicBookPage() {
   //   return saved ? JSON.parse(saved) : [];
   // });
 
+  //comment when remove dummy data()//////////////////////////////////
+  const [pastPages, setPastPages] = useState(() => {
+    const saved = localStorage.getItem("pastClinicPages");
 
+    if (saved) {
+      const parsed = JSON.parse(saved);
 
-
-
-
-
-
-//comment when remove dummy data()//////////////////////////////////
-const [pastPages, setPastPages] = useState(() => {
-  const saved = localStorage.getItem("pastClinicPages");
-
-  if (saved) {
-    const parsed = JSON.parse(saved);
-
-    // 👇 THIS IS THE KEY FIX
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      // 👇 THIS IS THE KEY FIX
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
-  }
 
-  // If empty or not found → load dummy
-  localStorage.setItem(
-    "pastClinicPages",
-    JSON.stringify(pastClinicPagesDummy)
-  );
+    // If empty or not found → load dummy
+    localStorage.setItem(
+      "pastClinicPages",
+      JSON.stringify(pastClinicPagesDummy),
+    );
 
-  return pastClinicPagesDummy;
-});
+    return pastClinicPagesDummy;
+  });
 
   useEffect(() => {
-  console.log("PAST PAGES STATE:", pastPages);
-}, [pastPages]);
-//this ////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
+    console.log("PAST PAGES STATE:", pastPages);
+  }, [pastPages]);
+  //this ////////////////////////////////////////////////////////////////
 
   // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
@@ -247,14 +232,14 @@ const [pastPages, setPastPages] = useState(() => {
   };
 
   //  HANDLERS
-  const handleNavigate = (path) => {
-    navigate(path);
-  };
+  // const handleNavigate = (path) => {
+  //   navigate(path);
+  // };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   sessionStorage.clear();
+  //   navigate("/login");
+  // };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -499,7 +484,8 @@ const [pastPages, setPastPages] = useState(() => {
   // ==================== RENDER ====================
   return (
     <>
-      <DoctorNavBar
+      {/* Navigation Bar previous one*/}
+      {/* <DoctorNavBar
         patientData={patientInfo}
         doctorData={{
           fullName: "Dr. Samantha Silva",
@@ -507,7 +493,23 @@ const [pastPages, setPastPages] = useState(() => {
         }}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
+      /> */}
+
+      <DoctorNavBar
+        doctor={{
+          doctorId: "DR123",
+          fullName: "Dr. Samantha Silva",
+          email: "doctor@hospital.com",
+          photoUrl: null,
+        }}
+        patient={{
+          patientId: patientInfo.patientId,
+          fullName: patientInfo.fullName,
+          email: patientInfo.email,
+          profilePic: "/profilePic.png",
+        }}
       />
+
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-2xl font-bold text-mainblack mb-6">
