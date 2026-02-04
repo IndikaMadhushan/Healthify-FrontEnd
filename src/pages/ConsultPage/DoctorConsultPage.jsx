@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import  DoctorNavBar  from "../../components/DoctorNavBar"; //patientge details ekka pennanna nav bar eka
+import DoctorNavBar from "../../components/DoctorNavBar2"; //patientge details ekka pennanna nav bar eka
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
@@ -105,14 +105,14 @@ export default function DoctorConsultPage() {
     navigate("/doctorViewform");
   };
 
-  const handleNavigate = (path) => {
-    navigate(path);
-  };
+  // const handleNavigate = (path) => {
+  //   navigate(path);
+  // };
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/login");
-  };
+  // const handleLogout = () => {
+  //   sessionStorage.clear();
+  //   navigate("/login");
+  // };
 
   const validate = () => {
     const newErrors = {};
@@ -283,8 +283,8 @@ export default function DoctorConsultPage() {
   // ==================== RENDER ====================
   return (
     <>
-      {/* Navigation Bar */}
-      <DoctorNavBar
+      {/* Navigation Bar previous one*/}
+      {/* <DoctorNavBar
         patientData={patientInfo}
         doctorData={{
           fullName: "Dr. Samantha Silva",
@@ -292,6 +292,20 @@ export default function DoctorConsultPage() {
         }}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
+      /> */}
+      <DoctorNavBar
+        doctor={{
+          doctorId: "DR123",
+          fullName: "Dr. Samantha Silva",
+          email: "doctor@hospital.com",
+          photoUrl: null,
+        }}
+        patient={{
+          patientId: patientInfo.patientId,
+          fullName: patientInfo.fullName,
+          email: patientInfo.email,
+          profilePic: "/profilePic.png",
+        }}
       />
 
       <div className="min-h-screen bg-gray-50 py-6">
