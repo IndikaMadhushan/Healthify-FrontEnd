@@ -22,13 +22,90 @@
 //   );
 // }
 
-import { useRef } from "react";
+import { useRef,useState,useEffect } from "react";
 import html2pdf from "html2pdf.js";
 import PrescriptionTemplate from "./PrescriptionTemplate";
 import PrescriptionA4Wrapper from "./PrescriptionA4Wrapper";
-
+import {getClinicPageById} from "../../api/ClinicPageApi.js"; 
 export default function PrescriptionModal({ data, onClose }) {
   const pdfRef = useRef(null);
+
+  const [prescription, setPrescription] = useState(null);
+
+  useEffect(() => {
+    async function loadPrescription() {
+      try {
+        const pageRes = await getClinicPageById(data.clinicPageId);
+        // const bookRes = await getClinicBookById(data.clinicBookId);
+
+        const page = pageRes.data.data;
+        const book = bookRes.data;
+
+        const metrics = page.healthMetricRequestSetDTO?.metrics || {};
+
+        setPrescription({
+          id: data.clinicPageId,
+
+          // doctor: {
+          //   name: book.doctorFullName,
+          //   slmc: book.licenseNumber
+          // },
+
+          // patient: {
+          //   name: book.patientFullName,
+          //   age: book.patientAge,
+          //   gender: book.patientGender
+          // },
+
+          // createdAt: book.createdDate,
+
+          vitals: {
+            bp: metrics.BLOOD_PRESSURE_SYSTOLIC ?? "—",
+            HeartRate: metrics.HEART_RATE ?? "—",
+            temp: metrics.TEMPERATURE ?? "—",
+            BloodSugar: metrics.BLOOD_SUGAR ?? "—",
+            weight: "—"
+          },
+
+          medications: page.medication.map(m => ({
+            name: m.drugName,
+            dose: m.dosage,
+            freq: m.frequency,
+            days: m.duration
+          })),
+
+          examine: page.clinicExaming,
+          tests: page.clinicSuggestTest
+        });
+      } catch (e) {
+        console.error("Failed to load prescription", e);
+      }
+    }
+
+    loadPrescription();
+  }, [data]);
+
+  // if (!prescription) {
+  //   return (
+  //     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+  //       <div className="bg-white p-6 rounded-xl">
+  //         Loading prescription...
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+
+
+
+
+
+
+
+
+
+
+  /////////////////////
 
   const downloadPDF = async () => {
     if (!pdfRef.current) return;

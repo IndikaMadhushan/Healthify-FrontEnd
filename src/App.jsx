@@ -181,7 +181,7 @@ function App() {
           />
           {/* <Route path="/clinic-book/:id/pages" element={ <ClinicPrescriptionList/>  } /> */}
           <Route
-            path="/clinic-book/:id/pages"
+            path="/clinic-book/:clinicBookId/pages"
             element={<ClinicBookPrescriptionPage />}
           />
         </Routes>

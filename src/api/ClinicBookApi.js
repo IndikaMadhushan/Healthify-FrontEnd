@@ -9,3 +9,8 @@ export const getClinicBooksByPatientId = (patientId) => {
 export const getMyClinicBooks = () => {
   return axiosInstance.get("/api/v1/cbook/patient-clinic");
 };
+
+// get unique clinic book important data like dr name reason....
+export const getUniqueClinicBookData = (clinicBookId) => {
+  return axiosInstance.get(`/api/v1/cbook/clinic_data/${clinicBookId}`);
+};
