@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { PatinetNavBar } from "../../../components/PatientNavBar";
+// import PatientNavBar  from "../../../components/PatientNavBar";
 import MyClinicBooks from "./MyClinicBooks";
 
 
@@ -10,7 +10,7 @@ export default  function ClinicBookPage() {
 
   return (
 <>
-    <PatinetNavBar/>
+    {/* <PatientNavBar/> */}
     <div className="min-h-screen bg-gray-50 p-6">
         
       {/* Header */}
