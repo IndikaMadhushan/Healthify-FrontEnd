@@ -7,11 +7,13 @@ import SearchPatientsCard from "./SearchPatientsCard";
 import LatestPatientsCard from "./LatestPatientsCard";
 import { getDoctorProfileApi } from "../../api/DoctorApi";
 import {  dummyPatients } from "./dummyData";
+import { getAllPatients } from "../../api/PatientApi";
 
 export default function DoctorProfilePage() {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
   const [recentPatients, setRecentPatients] = useState([]);
+  const [patients, setPatients] = useState([]); 
 
   const handleViewProfile = (patient) => {
     // Add to recent patients if not already there
@@ -33,6 +35,9 @@ export default function DoctorProfilePage() {
       try {
         const res = await getDoctorProfileApi();
         setDoctor(res.data);
+
+        const patientRes = await getAllPatients();
+        setPatients(patientRes.data); // ✅ FIXED
       } catch (err) {
         console.error("Failed to load doctor profile", err);
       }
@@ -56,8 +61,9 @@ export default function DoctorProfilePage() {
             />
           </div>
           <div className="lg:col-span-1">
+            {/* ✅ BACKEND CONNECTED */}
             <SearchPatientsCard
-              patients={dummyPatients}
+              patients={patients}
               onViewProfile={handleViewProfile}
             />
           </div>
