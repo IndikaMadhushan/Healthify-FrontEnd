@@ -397,19 +397,12 @@ export default function ClinicPrescriptionList() {
         </div>
       ) : (
         <div className="grid gap-6">
-          {/* {filteredAndSortedPrescriptions.map((rx) => (
-            <PrescriptionCard
-              key={rx.clinicPageId}
-              data={rx}
-              onClick={() => setSelected(rx)}
-            />
-          ))} */}
           
 
           {filteredAndSortedPrescriptions.map((rx) => (
             <PrescriptionCard
-              key={rx.clinicPageId}   // ✅ UNIQUE KEY
-              data={rx}
+              key={rx.clinicPageId}        // ✅ UNIQUE NUMBER
+              data={rx}                   // ✅ FULL OBJECT
               onClick={() => setSelected(rx)}
             />
           ))}

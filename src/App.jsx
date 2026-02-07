@@ -160,7 +160,7 @@ function App() {
           />
           <Route path="/patient-dashboard" element={<Dashboard />} />
           <Route path="/prescription" element={<PrescriptionList />} />
-          <Route path="/verify/:id" element={<PrescriptionVerify />} />
+          <Route path="/verify/:clinicPageId" element={<PrescriptionVerify />} />
           <Route path="/surgeries" element={<SurgeryHistory />} />
           <Route path="/surgery/:id" element={<InsideSurgeryFolder />} />
           {/* Doctor Notes Page */}
