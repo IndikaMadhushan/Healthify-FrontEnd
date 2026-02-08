@@ -41,7 +41,7 @@ export function PatinetNavBar({
               <img
                 src={photoUrl || "/profilePic.png"}
                 alt={fullName}
-                className="w-10 h-10 rounded-full border-2 border-primary object-cover"
+                className="w-10 h-10 rounded-full object-cover"
               />
 
               <div className="hidden sm:block text-left">

@@ -14,3 +14,8 @@ export const getMyClinicBooks = () => {
 export const getUniqueClinicBookData = (clinicBookId) => {
   return axiosInstance.get(`/api/v1/cbook/clinic_data/${clinicBookId}`);
 };
+
+//get patient all clinic bookby doctor  api/v1/cbook/patient/8 ///not yet connect to frontend
+export const getAllPatientClinicBooks = (patientId) => {
+  return axiosInstance.get(`/api/v1/cbook/patient/${patientId}`);
+};

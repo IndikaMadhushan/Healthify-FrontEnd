@@ -19,7 +19,7 @@ export default function DoctorNavBar({ doctor }) {
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
 
           {/* LOGO */}
@@ -87,6 +87,12 @@ export default function DoctorNavBar({ doctor }) {
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                 >
                   🏠 Dashboard
+                </button>
+                <button
+                  onClick={() => handleNavigation("/doctor/doctor-profile")}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                >
+                  👨‍⚕️ My Profile
                 </button>
 
                 <hr className="my-2" />

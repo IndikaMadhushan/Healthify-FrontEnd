@@ -27,7 +27,7 @@ export default function DoctorProfilePage() {
     });
 
     // Navigate to patient profile placeholder
-    navigate(`/doctor-consult/${patient.id}`);
+    navigate(`/doctor/patient/medical-reports`);
   };
 
   useEffect(() => {
