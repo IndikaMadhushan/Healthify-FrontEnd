@@ -406,9 +406,10 @@ export default function MyClinicBooks() {
           <CreateClinicBookCard
             onCreate={() => {
               setMode("create");
-              setEditingBook({});
+              setEditingBook({ patientId }); // ✅ pass patientId
             }}
           />
+
         )}
       </div>
 

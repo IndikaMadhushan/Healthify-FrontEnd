@@ -19,3 +19,7 @@ export const getUniqueClinicBookData = (clinicBookId) => {
 export const getAllPatientClinicBooks = (patientId) => {
   return axiosInstance.get(`/api/v1/cbook/patient/${patientId}`);
 };
+
+export const createClinicBook = (patientId,data) => {
+  return axiosInstance.post(`/api/v1/cbook/create/${patientId}`,data);
+};

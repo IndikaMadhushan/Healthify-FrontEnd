@@ -96,6 +96,7 @@
 
 
 import { useState, useEffect } from "react";
+import { createClinicBook } from "../../../api/ClinicBookApi";
 
 export default function EditClinicBookModal({
   book,
@@ -105,7 +106,7 @@ export default function EditClinicBookModal({
   onDelete,
 }) {
   const [reason, setReason] = useState("");
-  const [access, setAccess] = useState("ACCESS_ALL");
+  const [access, setAccess] = useState("ALLOW");
 
   useEffect(() => {
     if (mode === "edit" && book) {
@@ -115,22 +116,39 @@ export default function EditClinicBookModal({
 
     if (mode === "create") {
       setReason("");
-      setAccess("ACCESS_ALL");
+      setAccess("ALLOW");
     }
   }, [book, mode]);
 
-    const handleSave = () => {
-    onSave({
-        ...book,
-
-        // ✅ SYNC BOTH (IMPORTANT)
-        reason,
-        medicationPurpose: reason,
-
-        access,
-        lastUpdated: new Date().toISOString(),
-    });
+   const handleSave = async () => {
+  if (mode === "create") {
+    const payload = {
+      visit_reason: reason,
+      accessControl: access,
     };
+
+    const res = await createClinicBook(book.patientId, payload);
+
+    onSave({
+      id: res.data.id,
+      doctorName: res.data.doctorFullName,
+      doctorNo: res.data.licenseNumber,
+      specialization: res.data.specialization,
+      medicationPurpose: res.data.visitReason,
+      access: res.data.accessControl,
+      lastUpdatedBy: res.data.updatedDoctor,
+      lastUpdated: res.data.updatedTime,
+    });
+  } else {
+    onSave({
+      ...book,
+      medicationPurpose: reason,
+      access,
+      lastUpdated: new Date().toISOString(),
+    });
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -155,8 +173,8 @@ export default function EditClinicBookModal({
           onChange={(e) => setAccess(e.target.value)}
           className="w-full border rounded-lg px-4 py-2 mt-1 mb-6"
         >
-          <option value="ACCESS_ALL">Access All Doctors</option>
-          <option value="ACCESS_DENY">Access Deny</option>
+          <option value="ALLOW">DENY</option>
+          <option value="DENY">ALLOW</option>
         </select>
 
         <div className="flex justify-between items-center">
