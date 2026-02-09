@@ -152,6 +152,8 @@ function App() {
 
 
 
+
+          
           <Route path="/doctor" element={<DoctorLayout />}>
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<DoctorDashBoardPage />} />
