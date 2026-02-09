@@ -236,7 +236,9 @@ export default function DoctorLayout() {
       <div className="lg:px-14 px-6 ">
         <Outlet />
       </div>
-      <Footer/>
+      <div className="mt-[100px]">
+        <Footer />
+      </div>
     </>
   );
 }
