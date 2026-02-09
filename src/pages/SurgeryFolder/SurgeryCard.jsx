@@ -122,8 +122,17 @@ export default function SurgeryCard({ data, onCreateFolder }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    if (data.isFolder) {
+    if (!data.isFolder) return;
+
+    const rawRole = localStorage.getItem("role");
+    const role = rawRole?.toUpperCase();
+
+    if (role === "DOCTOR") {
       navigate(`/surgery/${data.id}`);
+    } else if (role === "PATIENT") {
+      navigate(`/patient/medical-reports/surgeries/${data.id}`);
+    } else {
+      console.warn("Unknown role, navigation blocked");
     }
   };
 

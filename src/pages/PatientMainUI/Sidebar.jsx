@@ -41,9 +41,9 @@ export default function Dashboard() {
       <PatinetNavBar />
 
       {/* MAIN LAYOUT */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* LEFT SIDEBAR (DESKTOP ONLY) */}
-        <div className="hidden sm:block lg:w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED]">
+      <div className="flex flex-1 h-full overflow-hidden ">
+        {/* LEFT SIDEBAR (DESKTOP ONLY) */} 
+        <div className="hidden sm:flex lg:w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED] flex-col h-full overflow-hidden">
           <SidebarButton
             text="Summary"
             icon={<FaHome />}
@@ -77,7 +77,7 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="flex-1 p-2 lg:p-10 bg-white overflow-y-auto">
+        <div className="flex-1 py-6 px-4 bg-white overflow-y-auto">
           {renderContent(active)}
         </div>
       </div>
