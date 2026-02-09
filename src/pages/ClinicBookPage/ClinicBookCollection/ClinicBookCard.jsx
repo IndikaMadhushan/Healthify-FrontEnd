@@ -238,10 +238,12 @@ import { useState } from "react";
 import { BookOpen, Clock, User, Edit2, ArrowRight } from "lucide-react";
 import { useNavigate,useParams } from "react-router-dom";
 
-export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
+export default function ClinicBookCard({ book, onEdit, onView }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
   const { patientId } = useParams();
+
+  
 
   const rawRole = localStorage.getItem("role");
    const role = rawRole?.toUpperCase();
@@ -252,7 +254,7 @@ export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
     navigate(`/doctor/${patientId}/medical-reports/clinic-book/${book.id}/pages`);
   }
 };
-
+const canEdit = role === "DOCTOR";
   return (
     <div
       onMouseEnter={() => setHovered(true)}
