@@ -233,10 +233,10 @@ export default function DoctorLayout() {
       )}
 
       {/* 🔹 Middle content changes by URL */}
-      <div className="lg:px-14 px-6 ">
+      <div className="lg:px-14 px-6 bg-gray-50 pb-[100px]">
         <Outlet />
       </div>
-      <div className="mt-[100px]">
+      <div className="">
         <Footer />
       </div>
     </>

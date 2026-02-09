@@ -600,10 +600,10 @@ export default function MedicalReportsPage() {
   const categories = [
     { id: CATEGORIES.LAB_REPORTS, title: "Lab Reports", count: labReports.length, icon: "🧪", color: "bg-blue-100" },
     { id: CATEGORIES.PRESCRIPTIONS, title: "Prescriptions", count: prescriptions.length, icon: "💊", color: "bg-green-100" },
-    { id: CATEGORIES.VACCINES, title: "Vaccines", count: vaccines.length, icon: "💉", color: "bg-purple-100" },
+    // { id: CATEGORIES.VACCINES, title: "Vaccines", count: vaccines.length, icon: "💉", color: "bg-purple-100" },
     { id: CATEGORIES.CLINIC_BOOK, title: "Clinic Book", count: clinicBook.length, icon: "📋", color: "bg-orange-100" },
     { id: CATEGORIES.SURGERIES, title: "Surgeries", count: surgeries.length, icon: "🩺", color: "bg-red-100" },
-    { id: CATEGORIES.CUSTOM, title: "Doctor Notes", count: customFolders.length, icon: "📝", color: "bg-gray-100" },
+    { id: CATEGORIES.CUSTOM, title: "Doctor Notes", count: customFolders.length, icon: "📝", color: "bg-purple-100" },
   ];
 
   const location = useLocation();
