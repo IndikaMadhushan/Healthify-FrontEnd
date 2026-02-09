@@ -16,19 +16,22 @@ export default function DoctorProfilePage() {
   const [patients, setPatients] = useState([]); 
 
   const handleViewProfile = (patient) => {
-    // Add to recent patients if not already there
-    setRecentPatients((prev) => {
-      const exists = prev.find((p) => p.id === patient.id);
-      if (!exists) {
-        return [patient, ...prev].slice(0, 6);
-      }
-      // Move to top if already exists
-      return [patient, ...prev.filter((p) => p.id !== patient.id)].slice(0, 6);
-    });
+  // ✅ Save selected patient globally
+  localStorage.setItem("selectedPatientId", patient.id);
+  localStorage.setItem("selectedPatient", JSON.stringify(patient));
 
-    // Navigate to patient profile placeholder
-    navigate(`/doctor/patient/medical-reports`);
-  };
+  // Recent patients logic (keep as-is)
+  setRecentPatients((prev) => {
+    const exists = prev.find((p) => p.id === patient.id);
+    if (!exists) {
+      return [patient, ...prev].slice(0, 6);
+    }
+    return [patient, ...prev.filter((p) => p.id !== patient.id)].slice(0, 6);
+  });
+
+  // ✅ Navigate WITH patientId
+  navigate(`/doctor/${patient.id}/medical-reports`);
+};
 
   useEffect(() => {
     const loadDoctor = async () => {

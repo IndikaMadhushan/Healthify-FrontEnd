@@ -445,6 +445,13 @@ export default function DoctorNavBar({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+    const goToProfile = () => {
+    navigate("/doctor/doctor-profile", {
+      state: { fromNav: "NAV2" },
+    });
+  };
+
+
   if (!doctor) return null;
   const safePatient = patient || null;
 
@@ -604,7 +611,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                 {/* DOCTOR SECTION */}
                 <hr className="my-2 border-gray-200" />
                 <button
-                  onClick={() => handleNavigation(`/doctor/doctor-profile`)}
+                  onClick={goToProfile}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                 >
                   👨‍⚕️ My Profile

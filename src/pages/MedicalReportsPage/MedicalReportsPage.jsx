@@ -632,7 +632,7 @@ return (
 
             <button
               onClick={() => goToCategory(c.id)}
-              className="mt-4 w-full border bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg"
+              className="mt-4 w-full bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg"
             >
               View Files
             </button>

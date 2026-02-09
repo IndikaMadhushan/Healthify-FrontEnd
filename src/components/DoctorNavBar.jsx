@@ -5,6 +5,12 @@ export default function DoctorNavBar({ doctor }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+ const goToProfile = () => {
+    navigate("/doctor/doctor-profile", {
+      state: { fromNav: "NAV1" },
+    });
+  };
+
   const handleNavigation = (path) => {
     setDropdownOpen(false);
     navigate(path);
@@ -89,7 +95,7 @@ export default function DoctorNavBar({ doctor }) {
                   🏠 Dashboard
                 </button>
                 <button
-                  onClick={() => handleNavigation("/doctor/doctor-profile")}
+                  onClick={goToProfile}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                 >
                   👨‍⚕️ My Profile

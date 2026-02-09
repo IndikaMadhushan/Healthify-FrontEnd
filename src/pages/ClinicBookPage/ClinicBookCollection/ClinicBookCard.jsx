@@ -236,11 +236,22 @@
 // change edit button with role
 import { useState } from "react";
 import { BookOpen, Clock, User, Edit2, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 
 export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
+  const { patientId } = useParams();
+
+  const rawRole = localStorage.getItem("role");
+   const role = rawRole?.toUpperCase();
+  const handleGoInside = () => {
+  if (role === "PATIENT") {
+    navigate(`/patient/medical-reports/clinic-book/${book.id}/pages`);
+  } else if (role === "DOCTOR") {
+    navigate(`/doctor/${patientId}/medical-reports/clinic-book/${book.id}/pages`);
+  }
+};
 
   return (
     <div
@@ -328,10 +339,9 @@ export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
 
         <button
           className="flex-1 px-4 py-2 rounded-xl
-                     bg-gradient-to-r from-[#86c443] to-[#18AAB0]
-                     text-white flex items-center justify-center gap-2"
-          onClick={() => navigate(`/patient/medical-reports/clinic-book/${book.id}/pages`)}
-          // onClick={() => navigate(`patient/medical-reports/clinic-book/${book.id}/pages`)}
+                    bg-gradient-to-r from-[#86c443] to-[#18AAB0]
+                    text-white flex items-center justify-center gap-2"
+          onClick={handleGoInside}
         >
           Go Inside
           <ArrowRight size={16} />
