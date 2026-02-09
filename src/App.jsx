@@ -94,8 +94,16 @@ function App() {
           {/* PATIENT AREA */}
           <Route path="/patient" element={<PatientLayout />}>
             {/* Main patient dashboard (sidebar-based UI) */}
-            <Route path="dashboard" element={<Dashboard />} />
-
+            <Route path="medical-reports" element={<Dashboard />} >
+              <Route path="prescriptions" element={<PrescriptionPage />} />
+              <Route path="clinic-book" element={<ClinicBookPage />} >
+                <Route path=":clinicBookId/pages" element={<ClinicBookPrescriptionPage />} />
+              </Route>
+              <Route path="surgeries" element={<SurgeryPage />} >
+                 <Route path=":surgeryId" element={<InsideSurgeryFolder />} />
+              </Route>
+              <Route path="drnote" element={<DoctorNotePage />} />
+            </Route>
             {/* Profile */}
             <Route path="profile" element={<MyProfile />} />
 
@@ -103,7 +111,7 @@ function App() {
             <Route path="reminders" element={<RemindersPage />} />
 
             {/* Medical records */}
-            <Route path="medical-reports" element={<MedicalReportsPage />} />
+            {/* <Route path="medical-reports" element={<MedicalReportsPage />} /> */}
             <Route path="prescription" element={<PrescriptionList />} />
             <Route path="surgeries" element={<SurgeryHistory />} />
 
@@ -135,7 +143,7 @@ function App() {
             path="/patient-register-2"
             element={<PatientRegisterPage2 />}
           />
-          <Route path="/patient-dashboard" element={<Dashboard />} />
+          {/* <Route path="/patient-dashboard" element={<Dashboard />} /> */}
           {/* Quick Links */}
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/faq" element={<FrequentlyAskedQuestions />} />

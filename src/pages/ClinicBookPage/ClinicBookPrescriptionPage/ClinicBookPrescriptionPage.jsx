@@ -121,7 +121,10 @@ export default function ClinicBookPrescriptionPage() {
   const { clinicBookId } = useParams();
   const [book, setBook] = useState(null);
 
-  const userRole = "DOCTOR";
+
+    const rawRole = localStorage.getItem("role");
+   const role = rawRole?.toUpperCase();
+   
 
   useEffect(() => {
     if (!clinicBookId) return;
@@ -184,7 +187,7 @@ export default function ClinicBookPrescriptionPage() {
               </p>
             </div>
 
-            {userRole === "DOCTOR" && (
+            {role === "DOCTOR" && (
               <button
                 onClick={() => alert("Create Today Page")}
                 className="

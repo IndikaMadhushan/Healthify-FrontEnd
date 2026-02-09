@@ -115,7 +115,7 @@ export default function DoctorLayout() {
 
         // ✅ TEMP HARD-CODED PATIENT (until backend is ready)
         const hardCodedPatient = {
-          id: 101,
+          id: 1,
           fullName: "Test Patient",
           email: "patient@test.com",
           profilePic: "/profilePic.png",

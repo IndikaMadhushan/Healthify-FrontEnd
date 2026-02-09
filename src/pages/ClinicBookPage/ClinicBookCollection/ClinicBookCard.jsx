@@ -330,7 +330,8 @@ export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
           className="flex-1 px-4 py-2 rounded-xl
                      bg-gradient-to-r from-[#86c443] to-[#18AAB0]
                      text-white flex items-center justify-center gap-2"
-          onClick={() => navigate(`/clinic-book/${book.id}/pages`)}
+          onClick={() => navigate(`/patient/medical-reports/clinic-book/${book.id}/pages`)}
+          // onClick={() => navigate(`patient/medical-reports/clinic-book/${book.id}/pages`)}
         >
           Go Inside
           <ArrowRight size={16} />

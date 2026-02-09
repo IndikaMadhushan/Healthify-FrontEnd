@@ -16,7 +16,7 @@ export default function DoctorNotePage() {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
         <button
-          onClick={() => navigate("/patient-dashboard")}
+          onClick={() => navigate("/patient/medical-reports")}
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
         >
           <ArrowLeft size={18} />
