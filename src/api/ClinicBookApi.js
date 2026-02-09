@@ -23,3 +23,7 @@ export const getAllPatientClinicBooks = (patientId) => {
 export const createClinicBook = (patientId,data) => {
   return axiosInstance.post(`/api/v1/cbook/create/${patientId}`,data);
 };
+
+export const editClinicBook = (clinicBookId,data) => {
+  return axiosInstance.put(`/api/v1/cbook/${clinicBookId}`,data);
+};

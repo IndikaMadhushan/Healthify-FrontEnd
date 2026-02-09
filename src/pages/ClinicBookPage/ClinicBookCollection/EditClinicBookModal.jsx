@@ -95,23 +95,279 @@
 // }
 
 
+// import { useState, useEffect } from "react";
+// import { createClinicBook,editClinicBook } from "../../../api/ClinicBookApi";
+
+// export default function EditClinicBookModal({
+//   book,
+//   mode = "edit", // ✅ NEW
+//   onClose,
+//   onSave,
+//   onDelete,
+// }) {
+//   const [reason, setReason] = useState("");
+//   const [access, setAccess] = useState("ALLOW");
+
+//   useEffect(() => {
+//     if (mode === "edit" && book) {
+//       setReason(book.reason);
+//       setAccess(book.access);
+//     }
+
+//     if (mode === "create") {
+//       setReason("");
+//       setAccess("ALLOW");
+//     }
+//   }, [book, mode]);
+
+//    const handleSave = async () => {
+//     if (mode === "create") {
+//       const payload = {
+//         visit_reason: reason,
+//         accessControl: access,
+//       };
+
+//     const res = await createClinicBook(book.patientId, payload);
+
+//     onSave({
+//       id: res.data.id,
+//       doctorName: res.data.doctorFullName,
+//       doctorNo: res.data.licenseNumber,
+//       specialization: res.data.specialization,
+//       medicationPurpose: res.data.visitReason,
+//       access: res.data.accessControl,
+//       lastUpdatedBy: res.data.updatedDoctor,
+//       lastUpdated: res.data.updatedTime,
+//     });
+//   } else {
+//     onSave({
+//       ...book,
+//       medicationPurpose: reason,
+//       access,
+//       lastUpdated: new Date().toISOString(),
+//     });
+//   }
+// };
+
+// const handleEdit = async () => {
+//   if (mode === "edit") {
+//     const payload = {
+//       visit_reason: reason,      // ✅ FIXED
+//       accessControl: access,
+//     };
+
+//     const res = await editClinicBook(book.id, payload);
+
+//     onSave({
+//       ...book,                 // ✅ keep id & other fields
+//       medicationPurpose: res.data.visitReason,
+//       access: res.data.accessControl,
+//       lastUpdatedBy: res.data.updatedDoctor,
+//       lastUpdated: res.data.updatedTime,
+//     });
+//   }
+// };
+
+
+
+//   return (
+//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+//       <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+
+//         <h2 className="text-xl font-bold mb-4">
+//           {mode === "create" ? "Create Clinic Book" : "Edit Clinic Book"}
+//         </h2>
+
+//         {/* Reason */}
+//         <label className="text-sm font-semibold">Reason</label>
+//         <input
+//           value={reason}
+//           onChange={(e) => setReason(e.target.value)}
+//           className="w-full border rounded-lg px-4 py-2 mt-1 mb-4"
+//         />
+
+//         {/* Access */}
+//         <label className="text-sm font-semibold">Doctor Access</label>
+//         <select
+//           value={access}
+//           onChange={(e) => setAccess(e.target.value)}
+//           className="w-full border rounded-lg px-4 py-2 mt-1 mb-6"
+//         >
+//           <option value="ALLOW">DENY</option>
+//           <option value="DENY">ALLOW</option>
+//         </select>
+
+//         <div className="flex justify-between items-center">
+//           {/* ❌ DELETE HIDDEN WHEN CREATE */}
+//           {mode === "edit" && (
+//             <button
+//               onClick={() => onDelete(book.id)}
+//               className="text-red-600 font-semibold"
+//             >
+//               Delete
+//             </button>
+//           )}
+
+//           <div className="ml-auto flex gap-3">
+//             <button onClick={onClose}>Cancel</button>
+//             <button
+//               onClick={mode === "create" ? handleSave : handleEdit}
+//               className="px-4 py-2 bg-[#18AAB0] text-white rounded-lg"
+//             >
+//               {mode === "create" ? "Create" : "Save"}
+//             </button>
+//           </div>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
+// import { useState, useEffect } from "react";
+// import { createClinicBook, editClinicBook } from "../../../api/ClinicBookApi";
+
+// export default function EditClinicBookModal({
+//   book,
+//   mode = "edit", // "edit" | "create"
+//   onClose,
+//   onSave,
+//   onDelete,
+// }) {
+//   const [reason, setReason] = useState("");
+//   const [access, setAccess] = useState("ALLOW");
+
+//   /* -------------------- INIT FORM -------------------- */
+//   useEffect(() => {
+//     if (mode === "edit" && book) {
+//       setReason(book.medicationPurpose || ""); // ✅ FIXED
+//       setAccess(book.access || "ALLOW");
+//     }
+
+//     if (mode === "create") {
+//       setReason("");
+//       setAccess("ALLOW");
+//     }
+//   }, [book, mode]);
+
+//   /* -------------------- CREATE (UNCHANGED) -------------------- */
+//   const handleSave = async () => {
+//     if (mode === "create") {
+//       const payload = {
+//         visit_reason: reason,      // ❗ unchanged as requested
+//         accessControl: access,
+//       };
+
+//       const res = await createClinicBook(book.patientId, payload);
+
+//       onSave({
+//         id: res.data.id,
+//         doctorName: res.data.doctorFullName,
+//         doctorNo: res.data.licenseNumber,
+//         specialization: res.data.specialization,
+//         medicationPurpose: res.data.visitReason,
+//         access: res.data.accessControl,
+//         lastUpdatedBy: res.data.updatedDoctor,
+//         lastUpdated: res.data.updatedTime,
+//       });
+//     }
+//   };
+
+//   /* -------------------- EDIT (CORRECTED) -------------------- */
+//   const handleEdit = async () => {
+//     if (mode === "edit") {
+//       const payload = {
+//         visit_reason: reason,       // ✅ camelCase FIX
+//         accessControl: access,
+//       };
+
+//       const res = await editClinicBook(book.id, payload);
+
+//       onSave({
+//         ...book,                  // ✅ keep id, patientId, etc
+//         medicationPurpose: res.data.visitReason,
+//         access: res.data.accessControl,
+//         lastUpdatedBy: res.data.updatedDoctor,
+//         lastUpdated: res.data.updatedTime,
+//       });
+//     }
+//   };
+
+//   /* -------------------- UI -------------------- */
+//   return (
+//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+//       <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+
+//         <h2 className="text-xl font-bold mb-4">
+//           {mode === "create" ? "Create Clinic Book" : "Edit Clinic Book"}
+//         </h2>
+
+//         {/* Reason */}
+//         <label className="text-sm font-semibold">Reason</label>
+//         <input
+//           value={reason}
+//           onChange={(e) => setReason(e.target.value)}
+//           className="w-full border rounded-lg px-4 py-2 mt-1 mb-4"
+//         />
+
+//         {/* Access */}
+//         <label className="text-sm font-semibold">Doctor Access</label>
+//         <select
+//           value={access}
+//           onChange={(e) => setAccess(e.target.value)}
+//           className="w-full border rounded-lg px-4 py-2 mt-1 mb-6"
+//         >
+//           <option value="ALLOW">Allow</option>
+//           <option value="DENY">Deny</option>
+//         </select>
+
+//         <div className="flex justify-between items-center">
+//           {/* DELETE (EDIT ONLY) */}
+//           {mode === "edit" && (
+//             <button
+//               onClick={() => onDelete(book.id)}
+//               className="text-red-600 font-semibold"
+//             >
+//               Delete
+//             </button>
+//           )}
+
+//           <div className="ml-auto flex gap-3">
+//             <button onClick={onClose}>Cancel</button>
+//             <button
+//               onClick={mode === "create" ? handleSave : handleEdit}
+//               className="px-4 py-2 bg-[#18AAB0] text-white rounded-lg"
+//             >
+//               {mode === "create" ? "Create" : "Save"}
+//             </button>
+//           </div>
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
+
 import { useState, useEffect } from "react";
-import { createClinicBook } from "../../../api/ClinicBookApi";
+import { createClinicBook, editClinicBook } from "../../../api/ClinicBookApi";
 
 export default function EditClinicBookModal({
   book,
-  mode = "edit", // ✅ NEW
+  mode = "edit",
   onClose,
-  onSave,
-  onDelete,
+  onSuccess,
+  onDeleteSuccess,
 }) {
   const [reason, setReason] = useState("");
   const [access, setAccess] = useState("ALLOW");
+  const [error, setError] = useState("");
 
+  /* -------------------- INIT FORM -------------------- */
   useEffect(() => {
     if (mode === "edit" && book) {
-      setReason(book.reason);
-      setAccess(book.access);
+      setReason(book.medicationPurpose || "");
+      setAccess(book.access || "ALLOW");
     }
 
     if (mode === "create") {
@@ -120,36 +376,39 @@ export default function EditClinicBookModal({
     }
   }, [book, mode]);
 
-   const handleSave = async () => {
-  if (mode === "create") {
-    const payload = {
-      visit_reason: reason,
-      accessControl: access,
-    };
+  /* -------------------- CREATE -------------------- */
+  const handleCreate = async () => {
+    try {
+      await createClinicBook(book.patientId, {
+        visit_reason: reason,
+        accessControl: access,
+      });
 
-    const res = await createClinicBook(book.patientId, payload);
+      onSuccess(); // 🔥 refresh parent
+    } catch (err) {
+      setError("Failed to create clinic book.");
+    }
+  };
 
-    onSave({
-      id: res.data.id,
-      doctorName: res.data.doctorFullName,
-      doctorNo: res.data.licenseNumber,
-      specialization: res.data.specialization,
-      medicationPurpose: res.data.visitReason,
-      access: res.data.accessControl,
-      lastUpdatedBy: res.data.updatedDoctor,
-      lastUpdated: res.data.updatedTime,
-    });
-  } else {
-    onSave({
-      ...book,
-      medicationPurpose: reason,
-      access,
-      lastUpdated: new Date().toISOString(),
-    });
-  }
-};
+  /* -------------------- EDIT -------------------- */
+  const handleEdit = async () => {
+    try {
+      await editClinicBook(book.id, {
+        visit_reason: reason,
+        accessControl: access,
+      });
 
+      onSuccess(); // 🔥 refresh parent
+    } catch (err) {
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("You are not allowed to edit this clinic book.");
+      }
+    }
+  };
 
+  /* -------------------- UI -------------------- */
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md">
@@ -158,7 +417,12 @@ export default function EditClinicBookModal({
           {mode === "create" ? "Create Clinic Book" : "Edit Clinic Book"}
         </h2>
 
-        {/* Reason */}
+        {error && (
+          <div className="mb-3 text-sm text-red-600 bg-red-50 p-2 rounded">
+            🚫 {error}
+          </div>
+        )}
+
         <label className="text-sm font-semibold">Reason</label>
         <input
           value={reason}
@@ -166,40 +430,28 @@ export default function EditClinicBookModal({
           className="w-full border rounded-lg px-4 py-2 mt-1 mb-4"
         />
 
-        {/* Access */}
         <label className="text-sm font-semibold">Doctor Access</label>
         <select
           value={access}
           onChange={(e) => setAccess(e.target.value)}
           className="w-full border rounded-lg px-4 py-2 mt-1 mb-6"
         >
-          <option value="ALLOW">DENY</option>
-          <option value="DENY">ALLOW</option>
+          <option value="ALLOW">Allow</option>
+          <option value="DENY">Deny</option>
         </select>
 
-        <div className="flex justify-between items-center">
-          {/* ❌ DELETE HIDDEN WHEN CREATE */}
-          {mode === "edit" && (
-            <button
-              onClick={() => onDelete(book.id)}
-              className="text-red-600 font-semibold"
-            >
-              Delete
-            </button>
-          )}
-
-          <div className="ml-auto flex gap-3">
-            <button onClick={onClose}>Cancel</button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-[#18AAB0] text-white rounded-lg"
-            >
-              {mode === "create" ? "Create" : "Save"}
-            </button>
-          </div>
+        <div className="flex justify-end gap-3">
+          <button onClick={onClose}>Cancel</button>
+          <button
+            onClick={mode === "create" ? handleCreate : handleEdit}
+            className="px-4 py-2 bg-[#18AAB0] text-white rounded-lg"
+          >
+            {mode === "create" ? "Create" : "Save"}
+          </button>
         </div>
 
       </div>
     </div>
   );
 }
+
