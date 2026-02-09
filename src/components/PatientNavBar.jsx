@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function PatientNavBar({
+export function PatinetNavBar({
   patientData,
   // onLogout,
 }) {
