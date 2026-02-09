@@ -168,6 +168,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import DoctorNavBar from "../components/DoctorNavBar";
 import DoctorNavBar2 from "../components/DoctorNavBar2";
 import { getDoctorProfileApi } from "../api/DoctorApi";
+import Footer from "../components/footer";
 
 export default function DoctorLayout() {
   const [doctor, setDoctor] = useState(null);
@@ -232,7 +233,10 @@ export default function DoctorLayout() {
       )}
 
       {/* 🔹 Middle content changes by URL */}
-      <Outlet />
+      <div className="lg:px-14 px-6 ">
+        <Outlet />
+      </div>
+      <Footer/>
     </>
   );
 }

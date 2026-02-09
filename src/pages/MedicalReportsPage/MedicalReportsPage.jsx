@@ -625,14 +625,14 @@ return (
       <h1 className="text-3xl font-bold mb-6">Medical Reports</h1>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((c) => (
-          <div key={c.id} className={`${c.color} p-6 rounded-xl shadow`}>
+          <div key={c.id} className={`${c.color} p-6 h-[240px] relative rounded-xl shadow flex flex-col`}>
             <div className="text-4xl">{c.icon}</div>
             <h3 className="text-xl font-bold mt-2">{c.title}</h3>
             <p className="text-sm text-gray-600">{c.count} files</p>
 
             <button
               onClick={() => goToCategory(c.id)}
-              className="mt-4 w-full bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg"
+              className="mt-4 w-full items-center justify-center bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg mt-[50px]"
             >
               View Files
             </button>
