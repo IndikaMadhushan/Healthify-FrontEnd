@@ -189,7 +189,11 @@ export default function ClinicBookPrescriptionPage() {
 
             {role === "DOCTOR" && (
               <button
-                onClick={() => alert("Create Today Page")}
+                 onClick={() =>
+                    navigate(
+                      `/doctor/${book.patientId}/medical-reports/clinic-book/${clinicBookId}/clinicpage`
+                    )
+                  }
                 className="
                   mt-6 w-full flex items-center justify-center gap-2
                   px-4 py-3 rounded-xl
