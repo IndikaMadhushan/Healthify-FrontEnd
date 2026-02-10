@@ -256,9 +256,10 @@ export default function PrescriptionTemplate({ data }) {
         <p><b>Gender:</b> {data.patientGender}</p>
       </div>
 
-      {data?.createdAt && (
+        <p><b>Date:</b> {data.pagecreatedDate} {data.pagecreatedTime}</p>
+      {/* {data?.createdAt && (
         <p><b>Date:</b> {data.createdAt}</p>
-      )}
+      )} */}
 
       {/* VITALS */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 30 }}>
