@@ -94,17 +94,18 @@ export default function PrescriptionCard({ data, onClick }) {
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#18AAB0]/10 rounded-full blur-2xl" />
 
       {/* Header */}
-      <div className="flex items-start justify-between relative">
+      <div className="flex xs:flex-row flex-col xs:items-start xs:justify-between relative">
         <div className="pl-3">
           <h3 className="text-[17px] font-semibold text-[#0F4F52]">
-            {data.doctor.name}
+            {data.doctorName}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
-            SLMC • {data.doctor.slmc}
+            {data.slmc}
           </p>
         </div>
 
         {/* Tag */}
+        <div>
         <span
           className="
             text-[11px] px-3 py-1 rounded-full
@@ -116,6 +117,7 @@ export default function PrescriptionCard({ data, onClick }) {
         >
           Consultation
         </span>
+        </div>
       </div>
 
       {/* Divider */}
@@ -126,15 +128,13 @@ export default function PrescriptionCard({ data, onClick }) {
         <div className="flex justify-between">
           <span className="text-gray-500">Issued Date</span>
           <span className="font-medium text-gray-800">
-            {data.createdAt}
+            {data.pagecreatedDate} • {data.pagecreatedTime}
           </span>
         </div>
 
-        <div className="flex justify-between gap-2">
-          <span className="text-gray-500">Reason</span>
-          <span className="font-medium text-right text-gray-800">
-            {data.reason}
-          </span>
+        <div className="flex flex-col justify-between gap-2">
+          <p className="text-gray-500">Reason:- <span className="font-medium  text-gray-800">{data.consultReason}</span></p>
+        
         </div>
       </div>
 
