@@ -94,6 +94,8 @@ export default function PrescriptionList() {
   const [showFilters, setShowFilters] = useState(false);
   const [filterDoctor, setFilterDoctor] = useState("all");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [pageType, setPageType] = useState(null);
+
 
   const role = localStorage.getItem("role");
   const { patientId } = useParams(); // used ONLY for doctor
@@ -218,9 +220,12 @@ export default function PrescriptionList() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAndSortedPrescriptions.map((rx) => (
             <PrescriptionCard
-              key={rx.consultId}
+              key={rx.consultId}   // ✅ UNIQUE
               data={rx}
-              onClick={() => setSelected(rx)}
+              onClick={() => {
+                setSelected(rx);
+                setPageType("CONSULT");
+              }}
             />
           ))}
         </div>
@@ -230,6 +235,7 @@ export default function PrescriptionList() {
       {selected && (
         <PrescriptionModal
           data={selected}
+          pageType={pageType}
           onClose={() => setSelected(null)}
         />
       )}

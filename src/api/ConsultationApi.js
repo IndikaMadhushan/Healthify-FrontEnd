@@ -14,3 +14,11 @@ export const getConsultCardByDoctor = (patientId) => {
   );
 };
 
+export const  getConsultPageById = (consultId) => {
+  return axiosInstance.get(
+    `/api/v1/consult/page/${consultId}`
+    
+  );
+};
+
+

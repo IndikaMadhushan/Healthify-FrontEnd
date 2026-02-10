@@ -296,6 +296,8 @@ export default function ClinicPrescriptionList({ clinicBookId }) {
   const [showFilters, setShowFilters] = useState(false);
   const [filterDoctor, setFilterDoctor] = useState("all");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [pageType, setPageType] = useState(null);
+
 
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
@@ -404,18 +406,21 @@ export default function ClinicPrescriptionList({ clinicBookId }) {
 
           {filteredAndSortedPrescriptions.map((rx) => (
             <PrescriptionCard
-              key={rx.clinicPageId}        // ✅ UNIQUE NUMBER
-              data={rx}                   // ✅ FULL OBJECT
-              onClick={() => setSelected(rx)}
+              key={rx.clinicId}   // ✅ FIX
+              data={rx}
+              onClick={() => {
+                setSelected(rx);
+                setPageType("CLINIC");
+              }}
             />
           ))}
 
         </div>
       )}
-
       {selected && (
         <PrescriptionModal
           data={selected}
+          pageType={pageType}
           onClose={() => setSelected(null)}
         />
       )}
