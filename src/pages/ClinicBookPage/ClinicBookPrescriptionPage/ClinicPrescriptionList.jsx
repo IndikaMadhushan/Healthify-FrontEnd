@@ -288,8 +288,8 @@ import PrescriptionCard from "./ClinicPrescriptionCard";
 import PrescriptionModal from "../../Prescriptions/PrescriptionModal";
 import { getClinicPagesByClinicBookId } from "../../../api/ClinicPageApi";
 
-export default function ClinicPrescriptionList() {
-  const { clinicBookId } = useParams(); // 👈 FROM URL
+export default function ClinicPrescriptionList({ clinicBookId }) {
+  // const { clinicBookId } = useParams(); // 👈 FROM URL
 
   const [pages, setPages] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -299,7 +299,10 @@ export default function ClinicPrescriptionList() {
 
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
-    if (!clinicBookId) return;
+    if (!clinicBookId) {
+      console.log("No clinicBookId provided in URL");
+      return;
+    }
 
     getClinicPagesByClinicBookId(clinicBookId)
       .then((res) => {

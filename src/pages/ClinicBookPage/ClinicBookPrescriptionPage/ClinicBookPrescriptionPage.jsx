@@ -213,7 +213,9 @@ export default function ClinicBookPrescriptionPage() {
               Clinic Prescriptions
             </h3>
 
-            <ClinicPrescriptionList clinicBookId={book.id} />
+            {/* <ClinicPrescriptionList clinicBookId={book.id} /> */}
+            <ClinicPrescriptionList clinicBookId={clinicBookId} />
+
           </div>
         </div>
 
