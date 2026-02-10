@@ -1,7 +1,9 @@
 //thathsara
 // src/pages/DoctorNotesPage/AllDoctorNotes.jsx
 // code eke edit krna than comment krnna .
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import {
   FaUserMd,
   FaCalendarAlt,
@@ -9,14 +11,55 @@ import {
   FaChevronUp,
   FaFilter,
 } from "react-icons/fa";
-import { dummyDoctorNotes } from "./dummyDoctorNotes";
+
+import { getDoctorNotePatient,getDoctorNoteDoctor } from "../../api/DoctorNoteApi.js";
 
 export default function AllDoctorNotes() {
-  const [notes] = useState(dummyDoctorNotes);
+   const [notes, setNotes] = useState([]);
   const [expandedNoteId, setExpandedNoteId] = useState(null);
   const [sortOrder, setSortOrder] = useState("recent"); // 'recent' or 'oldest'
   const [filterDoctor, setFilterDoctor] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const { patientId } = useParams();
+
+
+  const rawRole = localStorage.getItem("role");
+  const role = rawRole?.toUpperCase();
+  useEffect(() => {
+  if (role === "DOCTOR") {
+    if (!patientId) return; // safety
+
+    getDoctorNoteDoctor(patientId)
+      .then((res) => {
+        const mappedNotes = res.data.map((item, index) => ({
+          id: `${item.doctorName}-${item.pagecreatedDate}-${item.pagecreatedTime}-${index}`,
+          doctorName: item.doctorName,
+          specialization: item.specialization,
+          visitDate: item.pagecreatedDate,
+          visitTime: item.pagecreatedTime,
+          note: item.doctorNote,
+        }));
+        setNotes(mappedNotes);
+      })
+      .catch((err) => console.error(err));
+  } 
+  else {
+    getDoctorNotePatient()
+      .then((res) => {
+        const mappedNotes = res.data.map((item, index) => ({
+          id: `${item.doctorName}-${item.pagecreatedDate}-${item.pagecreatedTime}-${index}`,
+          doctorName: item.doctorName,
+          specialization: item.specialization,
+          visitDate: item.pagecreatedDate,
+          visitTime: item.pagecreatedTime,
+          note: item.doctorNote,
+        }));
+        setNotes(mappedNotes);
+      })
+      .catch((err) => console.error(err));
+  }
+}, [role, patientId]);
+
 
   // Get unique doctors for filter
   const uniqueDoctors = [...new Set(notes.map((note) => note.doctorName))];
