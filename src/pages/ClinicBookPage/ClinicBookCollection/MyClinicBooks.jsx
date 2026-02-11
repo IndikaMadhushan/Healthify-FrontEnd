@@ -305,7 +305,7 @@
 
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import {getClinicBooksByPatientId,getMyClinicBooks,} from "../../../api/ClinicBookApi";
 import { useParams } from "react-router-dom";
 import ClinicBookCard from "./ClinicBookCard";
 import ClinicBookFlip from "./ClinicBookFlip";
@@ -319,45 +319,76 @@ export default function MyClinicBooks() {
   const [openBook, setOpenBook] = useState(null);
   const [mode, setMode] = useState("edit");
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+
+  //   // DECIDE API BASED ON LOGIN TYPE
+  //   const url = patientId
+  //     ? `http://localhost:8080/api/v1/cbook/patient/${patientId}` // DOCTOR
+  //     : `http://localhost:8080/api/v1/cbook/patient-clinic`;      // PATIENT
+
+  //   axios
+  //     .get(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const mappedBooks = res.data.map((item, index) => ({
+  //         id: index + 1, // temporary
+  //         doctorName: item.doctorFullName,
+  //         doctorNo: item.licenseNumber,
+  //         specialization: item.specialization,
+  //         medicationPurpose: item.visitReason,
+  //         access: item.accessControl,
+  //         lastUpdatedBy: item.updatedDoctor,
+  //         lastUpdated:
+  //           item.updatedTime === "Not updated yet"
+  //             ? new Date()
+  //             : item.updatedTime,
+  //       }));
+
+  //       setClinicBooks(mappedBooks);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to load clinic books", err);
+  //     });
+  // }, [patientId]);
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
+  const fetchClinicBooks = async () => {
+    try {
+      const res = patientId
+        ? await getClinicBooksByPatientId(patientId) // DOCTOR
+        : await getMyClinicBooks();                  // PATIENT
 
-    // 🔥 DECIDE API BASED ON LOGIN TYPE
-    const url = patientId
-      ? `http://localhost:8080/api/v1/cbook/patient/${patientId}` // DOCTOR
-      : `http://localhost:8080/api/v1/cbook/patient-clinic`;      // PATIENT
+      const mappedBooks = res.data.map((item) => ({
+        id: item.clinicBookId ?? item.id, // use real ID if available
+        doctorName: item.doctorFullName,
+        doctorNo: item.licenseNumber,
+        specialization: item.specialization,
+        medicationPurpose: item.visitReason,
+        access: item.accessControl,
+        lastUpdatedBy: item.updatedDoctor,
+        lastUpdated:
+          item.updatedTime === "Not updated yet"
+            ? new Date()
+            : item.updatedTime,
+      }));
 
-    axios
-      .get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const mappedBooks = res.data.map((item, index) => ({
-          id: index + 1, // temporary
-          doctorName: item.doctorFullName,
-          doctorNo: item.licenseNumber,
-          specialization: item.specialization,
-          medicationPurpose: item.visitReason,
-          access: item.accessControl,
-          lastUpdatedBy: item.updatedDoctor,
-          lastUpdated:
-            item.updatedTime === "Not updated yet"
-              ? new Date()
-              : item.updatedTime,
-        }));
+      setClinicBooks(mappedBooks);
+    } catch (err) {
+      console.error("Failed to load clinic books", err);
+    }
+  };
 
-        setClinicBooks(mappedBooks);
-      })
-      .catch((err) => {
-        console.error("Failed to load clinic books", err);
-      });
-  }, [patientId]);
+  fetchClinicBooks();
+}, [patientId]);
+
 
   return (
     <>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
         {clinicBooks.map((book) => (
           <ClinicBookCard
             key={book.id}

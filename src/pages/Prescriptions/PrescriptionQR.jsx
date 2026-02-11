@@ -44,25 +44,68 @@
 //   );
 // }
 
+
+
+// import { QRCodeCanvas } from "qrcode.react";
+
+// export default function PrescriptionQR({ prescription }) {
+//   const verifyUrl = `${window.location.origin}/verify/${prescription.id}`;
+
+//   return (
+//     <div style={{ textAlign: "start", maxWidth: 190 }}>
+//       <QRCodeCanvas
+//         value={verifyUrl}
+//         size={45}          // small professional size
+//         level="H"
+//          includeMargin={false}
+//       />
+
+//       <p style={{ fontSize: 9, color: "#444" }}>
+//         Scan to verify
+//       </p>
+
+//       {/* Verification URL */}
+//       <a
+//         href={verifyUrl}
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         style={{
+//           fontSize: 9,
+//           color: "#18AAB0",
+//           wordBreak: "break-all",
+//           textDecoration: "underline"
+//         }}
+//       >
+//         {verifyUrl}
+//       </a>
+//     </div>
+//   );
+// }
+
 import { QRCodeCanvas } from "qrcode.react";
 
 export default function PrescriptionQR({ prescription }) {
-  const verifyUrl = `${window.location.origin}/verify/${prescription.id}`;
+
+  // ✅ ALWAYS USE clinicPageId
+  const clinicPageId = prescription?.clinicPageId;
+
+  if (!clinicPageId) return null; // safety guard
+
+  const verifyUrl = `${window.location.origin}/verify/${clinicPageId}`;
 
   return (
     <div style={{ textAlign: "start", maxWidth: 190 }}>
       <QRCodeCanvas
         value={verifyUrl}
-        size={45}          // small professional size
+        size={45}
         level="H"
-         includeMargin={false}
+        includeMargin={false}
       />
 
       <p style={{ fontSize: 9, color: "#444" }}>
         Scan to verify
       </p>
 
-      {/* Verification URL */}
       <a
         href={verifyUrl}
         target="_blank"
@@ -71,7 +114,7 @@ export default function PrescriptionQR({ prescription }) {
           fontSize: 9,
           color: "#18AAB0",
           wordBreak: "break-all",
-          textDecoration: "underline"
+          textDecoration: "underline",
         }}
       >
         {verifyUrl}
