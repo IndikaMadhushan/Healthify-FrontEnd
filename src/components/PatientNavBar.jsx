@@ -4,25 +4,19 @@ import AddReviewModal from "./AddReview";
 
 export function PatinetNavBar({
   patientData,
-  onLogout,
+  // onLogout,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const [showReviewPopup, setShowReviewPopup] = useState(false);
   if (!patientData) return null;
 
-  const {
-    fullName,
-    email,
-    patientId,
-    photoUrl,
-  } = patientData;
+  const { fullName, email, patientId, photoUrl } = patientData;
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
-
           {/* LEFT: LOGO */}
           <div className="flex items-center">
             <img
@@ -49,12 +43,8 @@ export function PatinetNavBar({
                 <p className="text-sm font-semibold text-gray-800">
                   {fullName}
                 </p>
-                <p className="text-xs text-gray-600">
-                  {email}
-                </p>
-                <p className="text-[10px] text-gray-500">
-                  {patientId}
-                </p>
+                <p className="text-xs text-gray-600">{email}</p>
+                <p className="text-[10px] text-gray-500">{patientId}</p>
               </div>
 
               <svg
