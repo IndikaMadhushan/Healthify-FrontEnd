@@ -1,27 +1,36 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { PatinetNavBar } from "../../../components/PatientNavBar";
+// import PatientNavBar  from "../../../components/PatientNavBar";
 import MyClinicBooks from "./MyClinicBooks";
 
 
 export default  function ClinicBookPage() {
   const navigate = useNavigate();
+  const rawRole = localStorage.getItem("role");
+  const role = rawRole?.toUpperCase();
+  const handleBackToDashboard = () => {
+  if (role === "PATIENT") {
+    navigate("/patient/medical-reports");
+  } else if (role === "DOCTOR") {
+    navigate("/doctor/4/medical-reports");
+  } 
+};
 
   return (
 <>
-    <PatinetNavBar/>
+    {/* <PatientNavBar/> */}
     <div className="min-h-screen bg-gray-50 p-6">
         
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
         <button
-          onClick={() => navigate("/patient-dashboard")}
-          className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
-        >
-          <ArrowLeft size={18} />
-          Back to Dashboard
-        </button>
+        onClick={handleBackToDashboard}
+        className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
+      >
+        <ArrowLeft size={18} />
+        Back to Dashboard
+      </button>
 
         {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>

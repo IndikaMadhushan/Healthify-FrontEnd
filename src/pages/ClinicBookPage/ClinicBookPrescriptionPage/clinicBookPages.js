@@ -7,6 +7,8 @@ export const prescriptions = [
     id: "RX001",
     clinicBookId: "CB001",
     createdAt: "2026-01-06",
+    updatededAt: "2026-01-14",
+    updatedBy: "Dr. Sarah Johnson",
     reason: "Chest pain",
 
     doctor: {
@@ -42,10 +44,10 @@ export const prescriptions = [
     id: "RX002",
     clinicBookId: "CB001",
     createdAt: "2026-01-08",
-    reason: "Gastric pain",
+    reason: "Gastric paiuyffffffffffffffffn",
 
     doctor: {
-      name: "Dr. Sarah Johnson",
+      name: "Dr. Sarah Johnsonjjjjjjj",
       email: "dr.sarah@hospital.lk",
       slmc: "SLMC-45678",
     },
@@ -111,6 +113,8 @@ export const prescriptions = [
     clinicBookId: "CB001",
     createdAt: "2026-01-15",
     reason: "Abdominal discomfort",
+    updatedAt: "2026-01-18",
+    updatedBy: "Dr. Sarah Johnson",
 
     doctor: {
       name: "Dr. Sarah Johnson",
