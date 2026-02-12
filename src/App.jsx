@@ -48,6 +48,7 @@ import ClinicBookPage from "./pages/ClinicBookPage/ClinicBookCollection/ClinicBo
 import ClinicPrescriptionList from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicPrescriptionList";
 import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicBookPrescriptionPage";
 import RouteTransition from "./components/RouteTransition";
+import ContactUs from "./pages/QuickLinks/ContactUs";
 
 function App() {
   return (
@@ -146,6 +147,8 @@ function App() {
           {/* <Route path="/patient-dashboard" element={<Dashboard />} /> */}
           {/* Quick Links */}
           <Route path="/aboutUs" element={<AboutUs />} />
+                    <Route path="/contactUs" element={<ContactUs />} />
+
           <Route path="/faq" element={<FrequentlyAskedQuestions />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
           <Route path="/termsandConditions" element={<TermsAndConditions />} />

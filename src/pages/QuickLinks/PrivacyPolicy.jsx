@@ -1,205 +1,164 @@
-import React, { useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import React, { useEffect } from "react";
 
 export default function PrivacyPolicyPage() {
-  const [openIndex, setOpenIndex] = useState(null); // First item open by default
-
-  const sections = [
-    {
-      title: "Information We Collect",
-      content: (
-        <div className="space-y-3">
-          <p>We may collect the following data:</p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Personal details (Name, Age, Height, Weight, Gender)</li>
-            <li>Uploaded medical reports & prescriptions</li>
-            <li>
-              Manually entered health statistics (sugar levels, heart rate, BMI
-              inputs, etc.)
-            </li>
-            <li>Account login information (email, password — encrypted)</li>
-            <li>
-              Medicine reminders, activity logs, doctor access permissions
-            </li>
-          </ul>
-        </div>
-      ),
-    },
-    {
-      title: "How We Use Your Data",
-      content: (
-        <div className="space-y-3">
-          <p>Your data may be used to:</p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>
-              Generate health analytics & visualizations (BMI charts, glucose
-              trends)
-            </li>
-            <li>Manage your health records & personal dashboard</li>
-            <li>Send medication reminders & health notifications</li>
-            <li>Share medical reports only with doctors you approve</li>
-            <li>Improve system performance & user experience</li>
-          </ul>
-          <p className="mt-3 font-medium">
-            We do not sell or share personal medical data with third parties
-            without permission.
-          </p>
-        </div>
-      ),
-    },
-    {
-      title: "Data Protection & Security",
-      content: (
-        <div className="space-y-3">
-          <p>We ensure that:</p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Data is encrypted & stored securely in the database</li>
-            <li>Only authenticated users can access medical history</li>
-            <li>Doctor access is controlled by you — the patient</li>
-            <li>Regular backups are maintained for data safety</li>
-          </ul>
-        </div>
-      ),
-    },
-    {
-      title: "User Control & Rights",
-      content: (
-        <div className="space-y-3">
-          <p>You have the right to:</p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>View, update, or delete your personal data</li>
-            <li>Revoke doctor access anytime</li>
-            <li>Request account closure and data removal</li>
-          </ul>
-        </div>
-      ),
-    },
-    {
-      title: "Data Sharing Policy",
-      content: (
-        <div className="space-y-4">
-          <p>We share data only under these conditions:</p>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300 mt-3">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                    Condition
-                  </th>
-                  <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                    Shared With
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">
-                    User grants permission
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    Authorized doctor only
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">
-                    Legal requirements
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    Government or legal authority
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Future Integrations",
-      content: (
-        <p>
-          Future versions may include wearable device data, hospital API
-          connections, and AI analysis — fully privacy-compliant.
-        </p>
-      ),
-    },
-  ];
-
-  const toggleSection = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          {/* <p className="text-teal-600 text-xs sm:text-sm font-medium mb-2 sm:mb-3 uppercase tracking-wide">
-            PRIVACY POLICY
-          </p> */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Privacy Policy
-          </h1>
-          <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed px-4">
-            This Privacy Policy explains how Healthify collects, uses, stores,
-            and protects personal health information of users.
-          </p>
-          {/* <p className="text-xs sm:text-sm text-gray-400 mt-3 sm:mt-4">
-            <strong>Effective Date:</strong> Upon deployment
-          </p> */}
-        </div>
-      </div>
-
-      {/* Policy Sections */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="space-y-3 sm:space-y-4">
-          {sections.map((section, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md"
-            >
-              <button
-                onClick={() => toggleSection(index)}
-                className="w-full flex items-start sm:items-center justify-between p-4 sm:p-6 text-left hover:bg-gray-50 transition-colors"
-              >
-                <span className="text-base sm:text-lg font-semibold text-gray-900 pr-4 leading-snug sm:leading-normal">
-                  {index + 1}. {section.title}
-                </span>
-                <span className="flex-shrink-0 ml-2">
-                  {openIndex === index ? (
-                    <Minus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                  ) : (
-                    <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                  )}
-                </span>
-              </button>
-
-              {openIndex === index && (
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-                  <div className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    {section.content}
-                  </div>
-                </div>
-              )}
+    <div className="min-h-screen bg-[#F9FAFB] pb-20">
+      {/* Hero Section */}
+      <header className="bg-white border-b border-gray-200 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+                Privacy Policy
+              </h1>
             </div>
-          ))}
+            <div className="text-left md:text-right">
+              <p className="text-[11px] text-gray-400">
+                Effective Date: November 12, 2025
+              </p>
+              <p className="text-[11px] text-gray-400">Version: 1.0.0</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Footer CTA Section */}
-      <div className="bg-white border-t mt-8 sm:mt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3">
-            Have concerns about your privacy?
-          </h3>
-          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
-            If you have any questions about this Privacy Policy, please contact
-            our support team.
-          </p>
-          <button className="bg-teal-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:bg-teal-600 transition-colors text-sm sm:text-base font-medium">
-            Contact Support
-          </button>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-10">
+        <main className="bg-white border border-gray-200 rounded-lg p-6 sm:p-10 shadow-sm">
+          {/* Introduction */}
+          <section className="mb-8">
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              This Privacy Policy describes how <strong>Healthify</strong>{" "}
+              collects, uses, and discloses your Personal Information when you
+              visit or use our health monitoring platform. By using this
+              service, you agree to the collection and use of information in
+              accordance with this policy.
+            </p>
+          </section>
+
+          {/* 1. Information Collection */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              1. Information We Collect
+            </h2>
+            <div className="text-[13px] sm:text-sm text-gray-600 space-y-4 leading-relaxed">
+              <p>
+                We collect several different types of information for various
+                purposes to provide and improve our Service to you:
+              </p>
+              <ul className="space-y-3">
+                <li className="flex gap-3">
+                  <span className="text-teal-600 font-bold">•</span>
+                  <span>
+                    <strong>Personal Identification:</strong> Name, age, gender,
+                    and contact details.
+                  </span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-teal-600 font-bold">•</span>
+                  <span>
+                    <strong>Health Data:</strong> Medical reports, vital signs
+                    (BMI, heart rate), and prescriptions.
+                  </span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="text-teal-600 font-bold">•</span>
+                  <span>
+                    <strong>Usage Data:</strong> Log data, IP addresses, and
+                    device information.
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          {/* 2. Data Usage */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              2. How We Use Your Data
+            </h2>
+            <div className="text-[13px] sm:text-sm text-gray-600 space-y-3 leading-relaxed">
+              <p>
+                The collected data is used for the following specific
+                operations:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 py-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <p>Maintaining health dashboards</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <p>Providing clinical analytics</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <p>Sending medical reminders</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <p>Securing doctor-patient portals</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 border-l-4 border-red-500 p-4 mb-4">
+                <p className="text-[12px] sm:text-[13px] text-red-600 font-semibold italic">
+                  Healthify does not trade, sell, or rent user medical data to
+                  any marketing agencies or third-party insurers.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* 3. Data Protection */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              3. Data Protection & Security
+            </h2>
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              The security of your data is important to us. We use
+              administrative and technical measures including AES-256 encryption
+              and Secure Socket Layer (SSL) technology to protect your personal
+              information. However, no method of transmission over the Internet
+              is 100% secure.
+            </p>
+          </section>
+
+          {/* 4. Data Sharing Table */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              4. Third-Party Disclosure
+            </h2>
+            <div className="overflow-hidden border border-gray-200 rounded-md mt-4">
+              <table className="w-full text-left text-[12px] sm:text-[13px] border-collapse">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="p-3 font-semibold text-gray-700">Entity</th>
+                    <th className="p-3 font-semibold text-gray-700">
+                      Reason for Sharing
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-600">
+                  <tr>
+                    <td className="p-3 font-medium">Approved Doctors</td>
+                    <td className="p-3">
+                      Only via patient-initiated access grants.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-medium">Legal Authorities</td>
+                    <td className="p-3">
+                      Only when required by Sri Lankan law.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
   );

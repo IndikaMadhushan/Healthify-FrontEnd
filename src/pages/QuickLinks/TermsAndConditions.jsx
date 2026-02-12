@@ -1,166 +1,179 @@
-import React, { useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import React, { useEffect } from "react";
 
 export default function TermsConditionsPage() {
-  const [openIndex, setOpenIndex] = useState(null);
-
-  const sections = [
-    {
-      title: "Acceptance of Terms",
-      content: (
-        <p>
-          By creating an account in Healthify, you agree to follow these Terms &
-          Conditions.
-        </p>
-      ),
-    },
-    {
-      title: "User Responsibilities",
-      content: (
-        <ul className="list-disc pl-5 space-y-2">
-          <li>Provide accurate health information for reliable analytics</li>
-          <li>Keep login credentials secure</li>
-          <li>Use the platform ethically and legally</li>
-          <li>Not misuse or attempt to hack the system</li>
-        </ul>
-      ),
-    },
-    {
-      title: "System Purpose & Limitations",
-      content: (
-        <p>
-          Healthify is designed for health tracking and data organization only.
-          It does not replace professional medical diagnosis or emergency care.
-        </p>
-      ),
-    },
-    {
-      title: "Medical Content Disclaimer",
-      content: (
-        <p>
-          Charts, analytics, and summaries generated are informational. All
-          treatment decisions should be made by certified medical professionals.
-        </p>
-      ),
-    },
-    {
-      title: "Doctor Access & Permissions",
-      content: (
-        <ul className="list-disc pl-5 space-y-2">
-          <li>Doctors can view patient data only after patient approval.</li>
-          <li>Patients may revoke access at any time.</li>
-        </ul>
-      ),
-    },
-    {
-      title: "Data Usage & Copyright",
-      content: (
-        <ul className="list-disc pl-5 space-y-2">
-          <li>
-            All system content, design & analytics models are property of the
-            Healthify development team.
-          </li>
-          <li>
-            Users cannot reproduce, sell, or distribute system assets without
-            permission.
-          </li>
-        </ul>
-      ),
-    },
-    {
-      title: "Account Suspension & Misuse",
-      content: (
-        <ul className="list-disc pl-5 space-y-2">
-          <li>
-            We reserve the right to suspend accounts that violate data policies.
-          </li>
-          <li>Attempt unauthorized access.</li>
-          <li>Upload fraudulent or harmful content.</li>
-        </ul>
-      ),
-    },
-    {
-      title: "Modification of Terms",
-      content: (
-        <p>
-          Healthify may update these terms as the system evolves. Continued
-          usage means you accept the updated policies.
-        </p>
-      ),
-    },
-  ];
-
-  const toggleSection = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          {/* <p className="text-teal-600 text-xs sm:text-sm font-medium mb-2 sm:mb-3 uppercase tracking-wide">
-            TERMS & CONDITIONS
-          </p> */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Terms & Conditions
-          </h1>
-          <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed px-4">
-            Please read these Terms & Conditions carefully before using
-            Healthify. Your use of the platform indicates your agreement.
-          </p>
-        </div>
-      </div>
-
-      {/* Terms Sections */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="space-y-3 sm:space-y-4">
-          {sections.map((section, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md"
-            >
-              <button
-                onClick={() => toggleSection(index)}
-                className="w-full flex items-start sm:items-center justify-between p-4 sm:p-6 text-left hover:bg-gray-50 transition-colors"
-              >
-                <span className="text-base sm:text-lg font-semibold text-gray-900 pr-4 leading-snug sm:leading-normal">
-                  {index + 1}. {section.title}
-                </span>
-                <span className="flex-shrink-0 ml-2">
-                  {openIndex === index ? (
-                    <Minus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                  ) : (
-                    <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-                  )}
-                </span>
-              </button>
-
-              {openIndex === index && (
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-                  <div className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    {section.content}
-                  </div>
-                </div>
-              )}
+    <div className="min-h-screen bg-[#F9FAFB] pb-20">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+                Terms & Conditions
+              </h1>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Footer CTA Section */}
-      <div className="bg-white border-t mt-8 sm:mt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3">
-            Have questions about these terms?
-          </h3>
-          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
-            If you have any concerns, please contact our support team.
-          </p>
-          <button className="bg-teal-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:bg-teal-600 transition-colors text-sm sm:text-base font-medium">
-            Contact Support
-          </button>
+            <div className="text-left md:text-right">
+              <p className="text-[11px] text-gray-400">
+                Last Revised: October 2023
+              </p>
+              <p className="text-[11px] text-gray-400">
+                Effective: Upon Deployment
+              </p>
+              <p className="text-[11px] text-gray-400">Version: 1.0.0</p>
+            </div>
+          </div>
         </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-10">
+        <main className="bg-white border border-gray-200 rounded-lg p-6 sm:p-10 shadow-sm">
+          {/* Introduction */}
+          <section className="mb-8">
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              Welcome to Healthify. These Terms & Conditions govern your use of
+              our website and personal health monitoring services. By accessing
+              or using Healthify, you acknowledge that you have read,
+              understood, and agree to be bound by these terms. If you do not
+              agree, please discontinue use of the platform immediately.
+            </p>
+          </section>
+
+          {/* 1. User Responsibilities */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              1. User Responsibilities
+            </h2>
+
+            <div className="text-[13px] sm:text-sm text-gray-600 space-y-4">
+              <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+                As a user of Healthify, you agree to provide accurate and
+                complete personal and medical information to ensure reliable
+                health insights. You are responsible for maintaining the
+                confidentiality of your account credentials and must promptly
+                report any suspected unauthorized access. Additionally, users
+                are expected to use the platform responsibly and only for lawful
+                purposes, avoiding any activity that may disrupt system
+                functionality or compromise platform security.
+              </p>
+            </div>
+          </section>
+
+          {/* 2. Medical Disclaimer */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              2. Medical Content Disclaimer
+            </h2>
+
+            <div className="bg-gray-50 border-l-4 border-red-500 p-4 mb-4">
+              <p className="text-[12px] sm:text-[13px] text-red-600 font-semibold italic">
+                Important: Healthify is a data management tool, not a medical
+                provider.
+              </p>
+            </div>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              All charts, health stats, and summaries provided by the system are
+              for informational purposes only. Our platform is not a substitute
+              for professional medical advice, diagnosis, or treatment. Always
+              seek the advice of your physician or other qualified health
+              provider with any questions regarding a medical condition.
+            </p>
+          </section>
+
+          {/* 3. Doctor Access */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              3. Doctor Access & Permissions
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              Healthify facilitates data sharing between users and medical
+              professionals.
+              <strong> You maintain full control</strong> over who can view your
+              medical history. Doctors can only access your records after you
+              explicitly grant permission through the platform, and you may
+              revoke this access at any time.
+            </p>
+          </section>
+
+          {/* 4. Proprietary Rights */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              4. Proprietary Rights
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              The Healthify platform, including its design, source code,
+              analytical models, and trademarks, is the exclusive property of
+              the Group 2 development team at the University of Ruhuna. You may
+              not reproduce, distribute, or modify any part of the system
+              without prior written consent.
+            </p>
+          </section>
+
+          {/* 5. Limitation of Liability */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              5. Limitation of Liability
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              To the maximum extent permitted by law, Healthify shall not be
+              liable for any indirect, incidental, or consequential damages
+              resulting from the use of the service. This includes reliance on
+              health analytics, data loss, or medical outcomes based on
+              information managed within the platform.
+            </p>
+          </section>
+
+          {/* 6. Indemnification */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              6. Indemnification
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              You agree to indemnify and hold harmless Healthify and its
+              developers from any claims, damages, or legal fees arising from
+              your violation of these Terms, your misuse of the platform, or any
+              fraudulent activity conducted through your account.
+            </p>
+          </section>
+
+          {/* 7. Service Availability */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              7. Service Availability
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              We do not guarantee 100% uninterrupted access to the platform.
+              Healthify is not responsible for service failures caused by
+              factors beyond our control, including internet outages, server
+              maintenance, or external cyber-attacks.
+            </p>
+          </section>
+
+          {/* 8. Governing Law */}
+          <section className="mb-8 pt-6 border-t border-gray-100">
+            <h2 className="text-sm sm:text-base font-bold text-gray-800 mb-4 uppercase tracking-wide">
+              8. Governing Law
+            </h2>
+
+            <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">
+              These Terms shall be governed by and construed in accordance with
+              the laws of
+              <strong> Sri Lanka</strong>. Any disputes arising from these terms
+              shall be subject to the exclusive jurisdiction of the courts of
+              Sri Lanka.
+            </p>
+          </section>
+        </main>
       </div>
     </div>
   );
