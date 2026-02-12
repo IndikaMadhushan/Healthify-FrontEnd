@@ -288,18 +288,23 @@ import PrescriptionCard from "./ClinicPrescriptionCard";
 import PrescriptionModal from "../../Prescriptions/PrescriptionModal";
 import { getClinicPagesByClinicBookId } from "../../../api/ClinicPageApi";
 
-export default function ClinicPrescriptionList() {
-  const { clinicBookId } = useParams(); // 👈 FROM URL
+export default function ClinicPrescriptionList({ clinicBookId }) {
+  // const { clinicBookId } = useParams(); // 👈 FROM URL
 
   const [pages, setPages] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [filterDoctor, setFilterDoctor] = useState("all");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [pageType, setPageType] = useState(null);
+
 
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
-    if (!clinicBookId) return;
+    if (!clinicBookId) {
+      console.log("No clinicBookId provided in URL");
+      return;
+    }
 
     getClinicPagesByClinicBookId(clinicBookId)
       .then((res) => {
@@ -401,18 +406,21 @@ export default function ClinicPrescriptionList() {
 
           {filteredAndSortedPrescriptions.map((rx) => (
             <PrescriptionCard
-              key={rx.clinicPageId}        // ✅ UNIQUE NUMBER
-              data={rx}                   // ✅ FULL OBJECT
-              onClick={() => setSelected(rx)}
+              key={rx.clinicId}   // ✅ FIX
+              data={rx}
+              onClick={() => {
+                setSelected(rx);
+                setPageType("CLINIC");
+              }}
             />
           ))}
 
         </div>
       )}
-
       {selected && (
         <PrescriptionModal
           data={selected}
+          pageType={pageType}
           onClose={() => setSelected(null)}
         />
       )}

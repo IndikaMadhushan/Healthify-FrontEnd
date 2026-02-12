@@ -162,13 +162,13 @@ function App() {
             {/* <Route path="profile" element={<DoctorProfile />} /> */}
             <Route path=":patientId/doctorViewform" element={<PatientFormDoctorView />} />
             
+            
             <Route path=":patientId/profile" element={<MyProfile />} />
             <Route path=":patientId/medical-reports" element={<MedicalReportsPage />} >
                 <Route path="prescriptions" element={<PrescriptionPage />} />
-                <Route path="clinic-book" element={<ClinicBookPage />} >
-                  <Route path=":clinicBookId/pages" element={<ClinicBookPrescriptionPage />} />
-                  <Route path=":clinicBookId/createnew" element={<DoctorClinicBookPage />} />
-                </Route>
+                <Route path="clinic-book" element={<ClinicBookPage />} />
+                <Route path="clinic-book/:clinicBookId/clinicpage" element={<DoctorClinicBookPage/>} />
+                <Route path="clinic-book/:clinicBookId/pages" element={<ClinicBookPrescriptionPage />} />
                 <Route path="surgeries" element={<SurgeryPage />} >
                   <Route path=":surgeryId" element={<InsideSurgeryFolder />} />
                 </Route>

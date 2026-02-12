@@ -198,21 +198,198 @@
 // }
 
 
+// import { useEffect, useState } from "react";
+// import { getClinicPageById } from "../../api/ClinicPageApi";
+// import PrescriptionTemplate from "./PrescriptionTemplate";
+
+// export default function PrescriptionModal({ data, onClose }) {
+//   const [prescription, setPrescription] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     if (!data?.id) return; // ✅ PREVENT undefined call
+
+//     const loadPrescription = async () => {
+//       try {
+//         const res = await getClinicPageById(data.id); // ✅ FIX
+//         setPrescription(res.data.data);
+//       } catch (err) {
+//         console.error("Failed to load prescription", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     loadPrescription();
+//   }, [data]);
+
+//   return (
+//     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+//       <div className="bg-white rounded-xl w-full max-w-4xl">
+
+//         <div className="flex justify-between p-4 border-b">
+//           <h2 className="font-semibold">Prescription</h2>
+//           <button onClick={onClose}>✕</button>
+//         </div>
+
+//         <div className="p-6">
+//           {loading && <p>Loading...</p>}
+
+//           {!loading && prescription && (
+//             <PrescriptionTemplate data={prescription} />
+//           )}
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
+
+// import { useEffect, useState } from "react";
+// import { getClinicPageById } from "../../api/ClinicPageApi";
+// import { getConsultPageById } from "../../api/ConsultationApi";
+// import PrescriptionTemplate from "./PrescriptionTemplate";
+
+// export default function PrescriptionModal({ data, pageType, onClose }) {
+//   const [prescription, setPrescription] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   // useEffect(() => {
+//   //   if (!data) return;
+
+//   //   const loadPrescription = async () => {
+//   //     try {
+//   //       setLoading(true);
+
+//   //       let res;
+
+//   //       if (pageType === "CLINIC") {
+//   //         res = await getClinicPageById(data.id); // clinicPageId
+//   //       }
+
+//   //       if (pageType === "CONSULT") {
+//   //         res = await getConsultPageById(data.consultId); // consultId
+//   //       }
+
+//   //       setPrescription(res.data.data);
+//   //     } catch (err) {
+//   //       console.error("Failed to load prescription", err);
+//   //     } finally {
+//   //       setLoading(false);
+//   //     }
+//   //   };
+
+//   //   loadPrescription();
+//   // }, [data, pageType]);
+
+//   useEffect(() => {
+//   if (!data || !pageType) return;
+
+//   const loadPrescription = async () => {
+//     try {
+//       setLoading(true);
+//       let res;
+
+//       if (pageType === "CLINIC" && data.id) {
+//         res = await getClinicPageById(data.id);
+//       }
+
+//       if (pageType === "CONSULT" && data.consultId) {
+//         res = await getConsultPageById(data.consultId);
+//       }
+
+//       if (!res) return; // ✅ PREVENT undefined access
+
+//       setPrescription(res.data.data);
+//     } catch (err) {
+//       console.error("Failed to load prescription", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   loadPrescription();
+// }, [data, pageType]);
+
+
+//   return (
+//     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+//       <div className="bg-white rounded-xl w-full max-w-4xl">
+
+//         <div className="flex justify-between p-4 border-b">
+//           <h2 className="font-semibold">Prescription</h2>
+//           <button onClick={onClose}>✕</button>
+//         </div>
+
+//         <div className="p-6">
+//           {loading && <p>Loading...</p>}
+//           {!loading && prescription && (
+//             <PrescriptionTemplate data={prescription} />
+//           )}
+//         </div>
+
+//       </div>
+//     </div>
+//   );
+// }
+
+
 import { useEffect, useState } from "react";
 import { getClinicPageById } from "../../api/ClinicPageApi";
+import { getConsultPageById } from "../../api/ConsultationApi";
 import PrescriptionTemplate from "./PrescriptionTemplate";
 
-export default function PrescriptionModal({ data, onClose }) {
+export default function PrescriptionModal({ data, pageType, onClose }) {
   const [prescription, setPrescription] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!data?.id) return; // ✅ PREVENT undefined call
+    if (!data || !pageType) return;
 
     const loadPrescription = async () => {
       try {
-        const res = await getClinicPageById(data.id); // ✅ FIX
-        setPrescription(res.data.data);
+        setLoading(true);
+        let res;
+
+        // ---------- CLINIC ----------
+        if (pageType === "CLINIC" && data.id) {
+          res = await getClinicPageById(data.id);
+          setPrescription(res.data.data); // clinic already matches template
+        }
+
+        // ---------- CONSULT ----------
+        if (pageType === "CONSULT" && data.consultId) {
+          res = await getConsultPageById(data.consultId);
+
+          const raw = res.data.data;
+
+          // 🔁 NORMALIZE CONSULT → TEMPLATE STRUCTURE
+          setPrescription({
+            ...raw,
+
+            // doctor
+            createdDoctor: raw.doctorName,
+            slmc: raw.slmc,
+
+            // patient
+            patientName: raw.patientName,
+            patientAge: raw.patientAge,
+            patientGender: raw.patientGender,
+
+            // dates
+            pagecreatedDate: raw.createdDate,
+            pagecreatedTime: raw.createdTime,
+
+            // medications (VERY IMPORTANT)
+            medication: raw.medications || [],
+
+            // vitals (VERY IMPORTANT)
+            healthMetricRequestSetDTO: {
+              metrics: raw.healthMetrics || {}
+            }
+          });
+        }
       } catch (err) {
         console.error("Failed to load prescription", err);
       } finally {
@@ -221,7 +398,7 @@ export default function PrescriptionModal({ data, onClose }) {
     };
 
     loadPrescription();
-  }, [data]);
+  }, [data, pageType]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
@@ -234,7 +411,6 @@ export default function PrescriptionModal({ data, onClose }) {
 
         <div className="p-6">
           {loading && <p>Loading...</p>}
-
           {!loading && prescription && (
             <PrescriptionTemplate data={prescription} />
           )}
