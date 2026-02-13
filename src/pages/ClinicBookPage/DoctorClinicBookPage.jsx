@@ -10,7 +10,6 @@ import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNote
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
-import { pastClinicPagesDummy } from "./pastClinicPages";
 
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
@@ -25,38 +24,11 @@ export default function DoctorClinicBookPage() {
     medicationPurpose: "Treat Gastritis",
   };
 
-  //👇when remove dummy file uncomment this//////////////////////////////////////////////
-  // const [pastPages, setPastPages] = useState(() => {
-  //   const saved = localStorage.getItem("pastClinicPages");
-  //   return saved ? JSON.parse(saved) : [];
-  // });
-
   //comment when remove dummy data()//////////////////////////////////
   const [pastPages, setPastPages] = useState(() => {
     const saved = localStorage.getItem("pastClinicPages");
-
-    if (saved) {
-      const parsed = JSON.parse(saved);
-
-      // 👇 THIS IS THE KEY FIX
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-
-    // If empty or not found → load dummy
-    localStorage.setItem(
-      "pastClinicPages",
-      JSON.stringify(pastClinicPagesDummy),
-    );
-
-    return pastClinicPagesDummy;
+    return saved ? JSON.parse(saved) : [];
   });
-
-  useEffect(() => {
-    console.log("PAST PAGES STATE:", pastPages);
-  }, [pastPages]);
-  //this ////////////////////////////////////////////////////////////////
 
   // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
@@ -71,7 +43,7 @@ export default function DoctorClinicBookPage() {
     suggestedTests: "",
     doctorNote: "",
     nextClinicDate: "",
-    medication: "",
+    medication: [], // Changed to array for structured medication data
   });
 
   const [errors, setErrors] = useState({});
@@ -82,6 +54,7 @@ export default function DoctorClinicBookPage() {
   // ==================== NEW: VIEWING STATE ====================
   const [viewingPage, setViewingPage] = useState(null); // Currently viewing page
   const [isViewMode, setIsViewMode] = useState(false); // Are we in view mode?
+  const [medicationKey, setMedicationKey] = useState(0); // Key to force MedicationCard remount
 
   //  WORKFLOW STATE
   const [pageStatus, setPageStatus] = useState("DRAFT");
@@ -194,7 +167,7 @@ export default function DoctorClinicBookPage() {
       temperature: "",
       weight: "",
       respiratoryRate: "",
-      medication: "",
+      medication: [], // Changed to array
       suggestedTests: "",
       doctorNote: "",
       nextClinicDate: "",
@@ -232,14 +205,14 @@ export default function DoctorClinicBookPage() {
   };
 
   //  HANDLERS
-  // const handleNavigate = (path) => {
-  //   navigate(path);
-  // };
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
 
-  // const handleLogout = () => {
-  //   sessionStorage.clear();
-  //   navigate("/login");
-  // };
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate("/login");
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -326,9 +299,9 @@ export default function DoctorClinicBookPage() {
       setViewingPage(newPastPage);
       setIsViewMode(true);
 
-      alert(
-        `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nYou have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
-      );
+      // alert(
+      //   `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nYou have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
+      // );
 
       setIsCompleting(false);
     }, 1500);
@@ -463,9 +436,9 @@ export default function DoctorClinicBookPage() {
 
     console.log("🗑️ Consultation deleted from patient folder:", deleteRecord);
 
-    alert(
-      `🗑️ Consultation deleted!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nThe consultation has been removed from the patient's Consult folder.`,
-    );
+    // alert(
+    //   `🗑️ Consultation deleted!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nThe consultation has been removed from the patient's Consult folder.`,
+    // );
 
     setShowDeleteConfirm(false);
     setPastPages((prev) => {
@@ -475,6 +448,9 @@ export default function DoctorClinicBookPage() {
     });
 
     handleCreateNewPage();
+
+    // Force MedicationCard to remount
+    setMedicationKey((prev) => prev + 1);
   };
 
   const cancelDelete = () => {
@@ -484,8 +460,7 @@ export default function DoctorClinicBookPage() {
   // ==================== RENDER ====================
   return (
     <>
-      {/* Navigation Bar previous one*/}
-      {/* <DoctorNavBar
+      <DoctorNavBar
         patientData={patientInfo}
         doctorData={{
           fullName: "Dr. Samantha Silva",
@@ -493,23 +468,7 @@ export default function DoctorClinicBookPage() {
         }}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
-      /> */}
-
-      <DoctorNavBar
-        doctor={{
-          doctorId: "DR123",
-          fullName: "Dr. Samantha Silva",
-          email: "doctor@hospital.com",
-          photoUrl: null,
-        }}
-        patient={{
-          patientId: patientInfo.patientId,
-          fullName: patientInfo.fullName,
-          email: patientInfo.email,
-          profilePic: "/profilePic.png",
-        }}
       />
-
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-2xl font-bold text-mainblack mb-6">
@@ -613,7 +572,13 @@ export default function DoctorClinicBookPage() {
 
               <VitalSignsCard formData={formData} onChange={handleChange} />
 
-              <MedicationCard formData={formData} onChange={handleChange} />
+              <MedicationCard
+                key={medicationKey}
+                formData={formData}
+                onChange={handleChange}
+                isViewMode={isViewMode}
+                canEdit={canEdit}
+              />
 
               {/* ==================== ACTION BUTTONS ==================== */}
               <div className="flex justify-between items-center mt-6">
