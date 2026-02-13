@@ -470,7 +470,7 @@ export default function DoctorClinicBookPage() {
         onLogout={handleLogout}
       />
 
-      <DoctorNavBar
+      {/* <DoctorNavBar
         doctor={{
           doctorId: "DR123",
           fullName: "Dr. Samantha Silva",
@@ -483,7 +483,7 @@ export default function DoctorClinicBookPage() {
           email: patientInfo.email,
           profilePic: "/profilePic.png",
         }}
-      />
+      /> */}
 
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
@@ -588,7 +588,12 @@ export default function DoctorClinicBookPage() {
 
               <VitalSignsCard formData={formData} onChange={handleChange} />
 
-              <MedicationCard
+              
+            </div>
+            
+          </div>
+          <div className="pt-5">
+          <MedicationCard
                 key={medicationKey}
                 formData={formData}
                 onChange={handleChange}
@@ -665,7 +670,6 @@ export default function DoctorClinicBookPage() {
                   </p>
                 </div>
               )}
-            </div>
           </div>
         </div>
       </div>
