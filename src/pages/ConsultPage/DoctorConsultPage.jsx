@@ -44,6 +44,7 @@ export default function DoctorConsultPage() {
   const [isCompleting, setIsCompleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isViewMode, _setIsViewMode] = useState(false);
 
   // ==================== TIME-BASED EDITING STATE ====================
   const [isCompleted, setIsCompleted] = useState(false); // Has doctor completed the page?
@@ -268,9 +269,9 @@ export default function DoctorConsultPage() {
 
     console.log("🗑️ Consultation deleted from patient folder:", deleteRecord);
 
-    alert(
-      `🗑️ Consultation deleted!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nThe consultation has been removed from the patient's Consult folder.`,
-    );
+    // alert(
+    //   `🗑️ Consultation deleted!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nThe consultation has been removed from the patient's Consult folder.`,
+    // );
 
     setShowDeleteConfirm(false);
     navigate("/patient-dashboard");
@@ -373,7 +374,12 @@ export default function DoctorConsultPage() {
           </div>
 
           <div className="mt-6">
-            <MedicationCard formData={formData} onChange={handleChange} />
+            <MedicationCard
+              formData={formData} // Main form data object
+              onChange={handleChange} // Update handler
+              isViewMode={isViewMode} // Boolean - viewing existing page?
+              canEdit={canEdit} // Boolean - within 10-min window?
+            />
           </div>
 
           {/* ========== ACTION BUTTONS ========== */}

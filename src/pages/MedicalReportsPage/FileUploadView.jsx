@@ -1,7 +1,7 @@
 // src/pages/MedicalReportsPage/FileUploadView.jsx
 // Reusable file upload and management view
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   saveToStorage,
   loadFromStorage,
@@ -25,16 +25,17 @@ export default function FileUploadView({
   const [uploading, setUploading] = useState(false);
 
   const fileInputRef = useRef(null);
+  //from- set React Hook useEffect has a missing dependency 'loadFiles'. Either include it or remove the dependency array. You can also do a functional update 'setFiles(f => ...)' if you only need 'files' in the 'loadFiles' function. (react-hooks/exhaustive-deps)  error is ignored because loadFiles is defined with useCallback and has the correct dependencies.
+  const loadFiles = useCallback(async () => {
+    if (!userId) return;
+    const data = await loadFromStorage(userId, category);
+    setFiles(data);
+  }, [userId, category]);
 
   useEffect(() => {
     loadFiles();
-  }, [userId, category]);
-
-  const loadFiles = async () => {
-    const data = await loadFromStorage(userId, category);
-    setFiles(data);
-  };
-
+  }, [loadFiles]);
+  //to here.....
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
