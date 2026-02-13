@@ -267,10 +267,13 @@ export default function LoginPage() {
       const decode = jwtDecode(data.token);
       const role = decode.role;
 
+      //parindya
+      localStorage.setItem("role", role);
+
       toast.success("Login successful");
 
       if (role === "PATIENT") {
-        navigate("/patient/dashboard");
+        navigate("/patient/medical-reports");
       } else if (role === "DOCTOR") {
         navigate("/doctor/dashboard");
       } else if (role === "ADMIN") {

@@ -469,6 +469,22 @@ export default function DoctorClinicBookPage() {
         onNavigate={handleNavigate}
         onLogout={handleLogout}
       />
+
+      <DoctorNavBar
+        doctor={{
+          doctorId: "DR123",
+          fullName: "Dr. Samantha Silva",
+          email: "doctor@hospital.com",
+          photoUrl: null,
+        }}
+        patient={{
+          patientId: patientInfo.patientId,
+          fullName: patientInfo.fullName,
+          email: patientInfo.email,
+          profilePic: "/profilePic.png",
+        }}
+      />
+
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-2xl font-bold text-mainblack mb-6">

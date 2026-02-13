@@ -71,3 +71,7 @@ export const getPatientMetricGraphApi = (patientId, metricType) =>
         { params: { metricType } }
     );
 
+    
+//list all patients
+export const getAllPatients = () =>
+    axiosInstance.get(`/api/patients/all`);

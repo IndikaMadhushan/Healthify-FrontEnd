@@ -233,15 +233,28 @@
 //   );
 // }
 
-
+// change edit button with role
 import { useState } from "react";
 import { BookOpen, Clock, User, Edit2, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 
-export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
+export default function ClinicBookCard({ book, onEdit, onView }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
+  const { patientId } = useParams();
 
+  
+
+  const rawRole = localStorage.getItem("role");
+   const role = rawRole?.toUpperCase();
+  const handleGoInside = () => {
+  if (role === "PATIENT") {
+    navigate(`/patient/medical-reports/clinic-book/${book.id}/pages`);
+  } else if (role === "DOCTOR") {
+    navigate(`/doctor/${patientId}/medical-reports/clinic-book/${book.id}/pages`);
+  }
+};
+const canEdit = role === "DOCTOR";
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -304,14 +317,15 @@ export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
       </div>
 
       {/* META */}
-      <div className="flex gap-4 text-xs text-slate-400 mb-6">
-        <div className="flex items-center gap-1">
+      <div className="flex gap-9 text-xs text-slate-400 mb-6">
+        <div className="flex items-center gap-1 flex-col items-start">
           <Clock size={14} className="text-[#86c443]" />
-          {new Date(book.lastUpdated).toLocaleDateString()}
+         <p>Last Updated:</p> {new Date(book.lastUpdated).toLocaleDateString()}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-col items-start">
           <User size={14} className="text-[#86c443]" />
-          Dr. {book.lastUpdatedBy}
+            <p>last updated by </p>
+           <p> Dr. {book.lastUpdatedBy}</p>
         </div>
       </div>
 
@@ -328,9 +342,9 @@ export default function ClinicBookCard({ book, onEdit, onView, canEdit }) {
 
         <button
           className="flex-1 px-4 py-2 rounded-xl
-                     bg-gradient-to-r from-[#86c443] to-[#18AAB0]
-                     text-white flex items-center justify-center gap-2"
-          onClick={() => navigate(`/clinic-book/${book.id}/pages`)}
+                    bg-gradient-to-r from-[#86c443] to-[#18AAB0]
+                    text-white flex items-center justify-center gap-2"
+          onClick={handleGoInside}
         >
           Go Inside
           <ArrowRight size={16} />

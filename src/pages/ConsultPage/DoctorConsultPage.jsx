@@ -294,7 +294,7 @@ export default function DoctorConsultPage() {
         onNavigate={handleNavigate}
         onLogout={handleLogout}
       /> */}
-      <DoctorNavBar
+      {/* <DoctorNavBar
         doctor={{
           doctorId: "DR123",
           fullName: "Dr. Samantha Silva",
@@ -307,7 +307,7 @@ export default function DoctorConsultPage() {
           email: patientInfo.email,
           profilePic: "/profilePic.png",
         }}
-      />
+      /> */}
 
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-6xl mx-auto px-4">

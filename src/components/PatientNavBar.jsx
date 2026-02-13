@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AddReviewModal from "./AddReview";
 
 export function PatinetNavBar({
   patientData,
@@ -7,7 +8,7 @@ export function PatinetNavBar({
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
   if (!patientData) return null;
 
   const { fullName, email, patientId, photoUrl } = patientData;
@@ -35,7 +36,7 @@ export function PatinetNavBar({
               <img
                 src={photoUrl || "/profilePic.png"}
                 alt={fullName}
-                className="w-10 h-10 rounded-full border-2 border-primary object-cover"
+                className="w-10 h-10 rounded-full object-cover"
               />
 
               <div className="hidden sm:block text-left">
@@ -63,6 +64,16 @@ export function PatinetNavBar({
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                <button
+                  onClick={() => setShowReviewPopup(true)}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                >
+                  ⭐ Write a Review
+                </button>
+                <AddReviewModal
+                  isOpen={showReviewPopup}
+                  onClose={() => setShowReviewPopup(false)}
+                />
                 <button
                   onClick={() => {
                     localStorage.clear();

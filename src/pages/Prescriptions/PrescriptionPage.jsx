@@ -30,19 +30,39 @@ import { PatinetNavBar } from "../../components/PatientNavBar";
 function PrescriptionPage() {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    const role = localStorage.getItem("role")?.toUpperCase();
+    const patientId = localStorage.getItem("selectedPatientId");
+
+    if (role === "DOCTOR") {
+      if (!patientId) {
+        alert("No patient selected");
+        navigate("/doctor/dashboard");
+        return;
+      }
+      navigate(`/doctor/${patientId}/medical-reports`);
+    } 
+    else if (role === "PATIENT") {
+      navigate("/patient/medical-reports");
+    } 
+    else {
+      navigate("/");
+    }
+  };
+
   return (
 <>
     <PatinetNavBar/>
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 md:p-6 ">
         
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
         <button
-          onClick={() => navigate("/patient-dashboard")}
+          onClick={handleBack}
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
         >
           <ArrowLeft size={18} />
-          Back to Dashboard
+          Back
         </button>
 
         {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
