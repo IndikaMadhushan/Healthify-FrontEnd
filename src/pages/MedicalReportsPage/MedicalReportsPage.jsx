@@ -1,6 +1,6 @@
 //last edit by thathsara
 // MedicalReportsPage.jsx (COMPLETE CODE)
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 
 const CATEGORIES = {
@@ -16,14 +16,14 @@ export default function MedicalReportsPage() {
   const navigate = useNavigate();
   const { patientId } = useParams(); // 👈 IMPORTANT
 
-  const role = localStorage.getItem("role"); // "DOCTOR" | "PATIENT"
+  const _role = localStorage.getItem("role"); // "DOCTOR" | "PATIENT"
   const userId = "user_123"; // replace later with auth user id
 
   const [loading, setLoading] = useState(true);
 
   const [labReports, setLabReports] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
-  const [vaccines, setVaccines] = useState([]);
+  const [_vaccines, setVaccines] = useState([]);
   const [clinicBook, setClinicBook] = useState([]);
   const [surgeries, setSurgeries] = useState([]);
   const [customFolders, setCustomFolders] = useState([]);
