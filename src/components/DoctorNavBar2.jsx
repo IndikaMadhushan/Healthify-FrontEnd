@@ -438,18 +438,21 @@
 
 
 //parindya
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function DoctorNavBar({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const { patientId } = useParams();
 
     const goToProfile = () => {
     navigate("/doctor/doctor-profile", {
       state: { fromNav: "NAV2" },
     });
   };
+
+
 
 
   if (!doctor) return null;

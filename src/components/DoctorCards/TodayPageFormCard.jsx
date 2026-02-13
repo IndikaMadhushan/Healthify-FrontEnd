@@ -3,7 +3,7 @@ export function TodayPageFormCard({ formData, onChange, errors = {} }) {
   const cardBox = "border border-gray-300 rounded-xl bg-white shadow-sm p-4";
   const labelCss = "text-[15px] font-semibold text-gray-700 mb-1 block";
   const inputBase =
-    "w-full h-10 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition";
+    "w-full h-8 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition";
 
   return (
     <div className={cardBox}>

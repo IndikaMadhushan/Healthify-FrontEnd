@@ -567,10 +567,7 @@ export default function DoctorClinicBookPage() {
                 ➕ Create New Page
               </button>
 
-              <AdditionalNotesCard
-                formData={formData}
-                onChange={handleChange}
-              />
+             
             </div>
 
             {/* RIGHT COLUMN */}
@@ -589,17 +586,22 @@ export default function DoctorClinicBookPage() {
               <VitalSignsCard formData={formData} onChange={handleChange} />
 
               
+              
             </div>
             
           </div>
-          <div className="pt-5">
-          <MedicationCard
-                key={medicationKey}
+          <div className="pt-5 gap-5 flex flex-col">
+            <AdditionalNotesCard
                 formData={formData}
                 onChange={handleChange}
-                isViewMode={isViewMode}
-                canEdit={canEdit}
               />
+              <MedicationCard
+                    key={medicationKey}
+                    formData={formData}
+                    onChange={handleChange}
+                    isViewMode={isViewMode}
+                    canEdit={canEdit}
+                  />
 
               {/* ==================== ACTION BUTTONS ==================== */}
               <div className="flex justify-between items-center mt-6">
