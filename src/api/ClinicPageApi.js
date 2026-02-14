@@ -12,3 +12,7 @@ export const getClinicPageById = (Id) => {
     `/api/v1/cpage/${Id}`
   );
 };
+
+export const createClinicPageById = (id, data) => {
+  return axiosInstance.post(`/api/v1/cpage/${id}`, data);
+};
