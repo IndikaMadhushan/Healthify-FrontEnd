@@ -21,10 +21,10 @@ export function MedicationCard({
     ) {
       return formData.medication;
     }
-    return [
-      { medicine: "", dose: "", frequency: "", timing: "", duration: "" },
-      { medicine: "", dose: "", frequency: "", duration: "" },
-    ];
+   return [
+  { medicine: "", dose: "", frequency: "", timing: "", duration: "" },
+  { medicine: "", dose: "", frequency: "", timing: "", duration: "" },
+];
   };
 
   const [medications, setMedications] = useState(getInitialMedications);
@@ -33,14 +33,15 @@ export function MedicationCard({
   const updateParent = (newMedications) => {
     setMedications(newMedications);
     // Filter out completely empty rows before saving
-    const nonEmptyMedications = newMedications.filter(
-      (med) =>
-        med.medicine.trim() !== "" ||
-        med.dose.trim() !== "" ||
-        med.frequency.trim() !== "" ||
-        med.timing.trim() !== "" ||
-        med.duration.trim() !== "",
-    );
+    const nonEmptyMedications = newMedications.filter((med) => {
+  return (
+    (med.medicine || "").trim() !== "" ||
+    (med.dose || "").trim() !== "" ||
+    (med.frequency || "").trim() !== "" ||
+    (med.timing || "").trim() !== "" ||
+    (med.duration || "").trim() !== ""
+  );
+});
     onChange("medication", nonEmptyMedications);
   };
   const frequencyOptions = [
