@@ -4,7 +4,7 @@ export function TodayPageFormCard({ formData, onChange, errors = {} }) {
   const labelCss = "text-[15px] font-semibold text-gray-700 mb-1 block";
   const inputBase =
     "w-full h-8 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition";
-
+  const today = new Date().toISOString().slice(0, 10);
   return (
     <div className={cardBox}>
       <h2 className="text-lg font-bold text-gray-800 mb-4">Today Page</h2>
@@ -13,7 +13,7 @@ export function TodayPageFormCard({ formData, onChange, errors = {} }) {
         <label className={labelCss}>Date</label>
         <input
           type="date"
-          value={formData.date}
+          value={formData.date || today}
           className={inputBase + " bg-gray-200 cursor-not-allowed"}
           disabled
         />

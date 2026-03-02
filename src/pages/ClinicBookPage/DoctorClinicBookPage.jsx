@@ -795,20 +795,14 @@ import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
 import { createClinicPageById } from "../../api/ClinicPageApi";
-
+import { getPatientDataByClinicBookId } from "../../api/ClinicBookApi";
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
   const { clinicBookId } = useParams();
+  const [patientInfo, setPatientInfo] = useState(null);
   
 
-  const patientInfo = {
-    patientId: "UR5678",
-    fullName: "Parindya Hewage",
-    email: "parindya@gmail.com",
-    age: 23,
-    gender: "Female",
-    medicationPurpose: "Treat Gastritis",
-  };
+
 
   const [pastPages, setPastPages] = useState([]);
 
@@ -942,6 +936,25 @@ if (formData.mediMessure?.BP) {
     setIsCompleting(false);
   }
 };
+
+useEffect(() => {
+  if (!clinicBookId) return;
+
+  getPatientDataByClinicBookId(clinicBookId)
+    .then((res) => {
+      const data = res.data;
+
+      setPatientInfo({
+        patientId: data.patinetId,   // yes your backend spelling                // not returned
+        age: data.age,
+        gender: data.gender,
+        medicationPurpose: data.visit_reason,
+      });
+    })
+    .catch((err) => {
+      console.error("Failed to load patient data", err);
+    });
+}, [clinicBookId]);
 
   // ================= RENDER =================
   return (
