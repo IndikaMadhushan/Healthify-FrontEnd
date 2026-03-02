@@ -21,9 +21,9 @@ export function MedicationCard({
     ) {
       return formData.medication;
     }
-   return [
-  { medicine: "", dose: "", frequency: "", timing: "", duration: "" },
-  { medicine: "", dose: "", frequency: "", timing: "", duration: "" },
+ return [
+  { medicine: "", dose: "", frequency: "", duration: "", timing: "" },
+  { medicine: "", dose: "", frequency: "", duration: "", timing: "" }
 ];
   };
 
@@ -87,7 +87,7 @@ export function MedicationCard({
 
     const newMedications = [
       ...medications,
-      { medicine: "", dose: "", frequency: "", duration: "" },
+      { medicine: "", dose: "", frequency: "", duration: "", timing: "" },
     ];
     updateParent(newMedications);
   };

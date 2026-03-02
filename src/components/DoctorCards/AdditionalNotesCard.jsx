@@ -17,8 +17,8 @@ export function AdditionalNotesCard({ formData, onChange }) {
         <div>
           <label className={labelCss}>Suggested Tests</label>
           <textarea
-            value={formData.suggestedTests}
-            onChange={(e) => onChange("suggestedTests", e.target.value)}
+            value={formData.clinicSuggestTest}
+onChange={(e) => onChange("clinicSuggestTest", e.target.value)}
             placeholder="List any tests you recommend (e.g., Blood test, X-ray, ECG)..."
             className={textAreaBase}
           />
@@ -26,8 +26,8 @@ export function AdditionalNotesCard({ formData, onChange }) {
         <div>
           <label className={labelCss}>Doctor Note</label>
           <textarea
-            value={formData.doctorNote}
-            onChange={(e) => onChange("doctorNote", e.target.value)}
+            value={formData.clinicDoctorNote}
+onChange={(e) => onChange("clinicDoctorNote", e.target.value)}
             placeholder="Any additional notes or instructions for the patient..."
             className={textAreaBase}
           />
@@ -37,8 +37,8 @@ export function AdditionalNotesCard({ formData, onChange }) {
           <label className={labelCss}>Next Consultation Date</label>
           <input
             type="date"
-            value={formData.nextClinicDate}
-            onChange={(e) => onChange("nextClinicDate", e.target.value)}
+            value={formData.nextClinic}
+onChange={(e) => onChange("nextClinic", e.target.value)}
             className={inputBase}
           />
         </div>

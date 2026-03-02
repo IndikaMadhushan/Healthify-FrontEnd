@@ -14,17 +14,24 @@ export function VitalSignsCard({ formData, onChange }) {
 
       <div className="grid sm:grid-cols-3 gap-4">
         <div>
-          <label className={labelCss}>Blood Pressure</label>
-          <input
-            type="text"
-            value={formData.bloodPressure}
-            onChange={(e) => onChange("bloodPressure", e.target.value)}
-            placeholder="e.g., 120/80"
-            className={inputBase}
-          />
+          <label className={labelCss}>Blood Pressure(mmHg)</label>
+         <input
+          type="text"
+          value={formData.mediMessure?.BP || ""}
+          onChange={(e) => {
+            const value = e.target.value;
+
+            // Allow only numbers and one slash
+            if (/^\d*\/?\d*$/.test(value)) {
+              onChange("BP", value);
+            }
+          }}
+          placeholder="e.g., 120/80"
+          className={inputBase}
+        />
         </div>
         <div>
-          <label className={labelCss}>Pulse</label>
+          <label className={labelCss}>Heart Rate(bpm)</label>
           <input
             type="text"
             value={formData.pulse}
@@ -35,7 +42,7 @@ export function VitalSignsCard({ formData, onChange }) {
         </div>
 
         <div>
-          <label className={labelCss}>Temperature</label>
+          <label className={labelCss}>Temperature(°F)</label>
           <input
             type="text"
             value={formData.temperature}
@@ -45,7 +52,7 @@ export function VitalSignsCard({ formData, onChange }) {
           />
         </div>
         <div>
-          <label className={labelCss}>Weight</label>
+          <label className={labelCss}>Weight(kg)</label>
           <input
             type="text"
             value={formData.weight}
@@ -56,12 +63,22 @@ export function VitalSignsCard({ formData, onChange }) {
         </div>
 
         <div>
-          <label className={labelCss}>Respiratory Rate</label>
+          <label className={labelCss}>Blood Sugar(mg/dL)</label>
           <input
             type="text"
-            value={formData.respiratoryRate}
-            onChange={(e) => onChange("respiratoryRate", e.target.value)}
-            placeholder="e.g., 16/min"
+            value={formData.bloodSugar}
+            onChange={(e) => onChange("bloodSugar", e.target.value)}
+            placeholder="e.g., 90 mg/dL"
+            className={inputBase}
+          />
+        </div>
+        <div>
+          <label className={labelCss}>Cholesterol(mg/dL)</label>
+          <input
+            type="text"
+            value={formData.cholesterol}
+            onChange={(e) => onChange("cholesterol", e.target.value)}
+            placeholder="e.g., 90 mg/dL"
             className={inputBase}
           />
         </div>
