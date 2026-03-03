@@ -32,22 +32,22 @@ export function VitalSignsCard({ formData, onChange }) {
         </div>
         <div>
           <label className={labelCss}>Heart Rate(bpm)</label>
+          {/* Heart Rate */}
           <input
             type="text"
-            value={formData.pulse}
+            value={formData.mediMessure?.pulse || ""}
             onChange={(e) => onChange("pulse", e.target.value)}
-            placeholder="e.g., 72 bpm"
             className={inputBase}
           />
+
         </div>
 
         <div>
           <label className={labelCss}>Temperature(°F)</label>
           <input
             type="text"
-            value={formData.temperature}
+            value={formData.mediMessure?.temperature || ""}
             onChange={(e) => onChange("temperature", e.target.value)}
-            placeholder="e.g., 98.6°F"
             className={inputBase}
           />
         </div>
@@ -55,9 +55,8 @@ export function VitalSignsCard({ formData, onChange }) {
           <label className={labelCss}>Weight(kg)</label>
           <input
             type="text"
-            value={formData.weight}
+            value={formData.mediMessure?.weight || ""}
             onChange={(e) => onChange("weight", e.target.value)}
-            placeholder="e.g., 65 kg"
             className={inputBase}
           />
         </div>
@@ -66,9 +65,8 @@ export function VitalSignsCard({ formData, onChange }) {
           <label className={labelCss}>Blood Sugar(mg/dL)</label>
           <input
             type="text"
-            value={formData.bloodSugar}
+            value={formData.mediMessure?.bloodSugar || ""}
             onChange={(e) => onChange("bloodSugar", e.target.value)}
-            placeholder="e.g., 90 mg/dL"
             className={inputBase}
           />
         </div>
@@ -76,7 +74,7 @@ export function VitalSignsCard({ formData, onChange }) {
           <label className={labelCss}>Cholesterol(mg/dL)</label>
           <input
             type="text"
-            value={formData.cholesterol}
+            value={formData.mediMessure?.cholesterol || ""}
             onChange={(e) => onChange("cholesterol", e.target.value)}
             placeholder="e.g., 90 mg/dL"
             className={inputBase}

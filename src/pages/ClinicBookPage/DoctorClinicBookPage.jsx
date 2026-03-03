@@ -1049,6 +1049,7 @@ import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPage
 import { createClinicPageById } from "../../api/ClinicPageApi";
 import { getPatientDataByClinicBookId } from "../../api/ClinicBookApi";
 import { getClinicPagesByClinicBookId } from "../../api/ClinicPageApi";
+import { getClinicPageById } from "../../api/ClinicPageApi";
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
   const { clinicBookId } = useParams();
@@ -1122,10 +1123,67 @@ export default function DoctorClinicBookPage() {
     fetchPages();
   }, [clinicBookId]);
 
-  const handleViewPage = (page) => {
-    console.log("View page:", page);
-    // navigate or modal open karanna puluwan
-  };
+const handleViewPage = async (page) => {
+  try {
+    const response = await getClinicPageById(page.id);
+    const data = response.data.data;
+
+    // ================= MAP BASIC FIELDS =================
+    const updatedForm = {
+      subReason: data.subReason || "",
+      clinicExaming: data.clinicExaming || "",
+      clinicSuggestTest: data.clinicSuggestTest || "",
+      clinicDoctorNote: data.clinicDoctorNote || "",
+      nextClinic: data.nextClinic
+        ? data.nextClinic.split("T")[0]
+        : "",
+
+      // ================= MAP MEDICATION =================
+      medication:
+        data.medication?.map((med) => ({
+          medicine: med.drugName,
+          dose: med.dosage,
+          frequency: med.frequency,
+          duration: med.duration,
+          timing: med.instruction,
+        })) || [],
+
+      // ================= MAP VITAL SIGNS =================
+      mediMessure: {
+        BP:
+          data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_SYSTOLIC &&
+          data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_DIASTOLIC
+            ? `${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_SYSTOLIC}/${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_DIASTOLIC}`
+            : "",
+
+        pulse:
+          data.healthMetricRequestSetDTO?.metrics?.HEART_RATE || "",
+
+        temperature:
+          data.healthMetricRequestSetDTO?.metrics?.TEMPERATURE || "",
+
+        weight:
+          data.healthMetricRequestSetDTO?.metrics?.WEIGHT || "",
+
+        bloodSugar:
+          data.healthMetricRequestSetDTO?.metrics?.BLOOD_SUGAR || "",
+
+        cholesterol:
+          data.healthMetricRequestSetDTO?.metrics?.CHOLESTEROL || "",
+      },
+    };
+
+    setFormData(updatedForm);
+
+    // Optional: scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } catch (error) {
+    console.error("Error loading clinic page:", error);
+    alert("❌ Failed to load clinic page");
+  }
+};
+
   useEffect(() => {
     if (!isCompleted || !completionTime) return;
 

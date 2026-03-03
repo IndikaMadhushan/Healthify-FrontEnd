@@ -1,5 +1,5 @@
 //thathsara
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { FaTrash } from "react-icons/fa";
 
 
@@ -27,7 +27,11 @@ export function MedicationCard({
 ];
   };
 
-  const [medications, setMedications] = useState(getInitialMedications);
+ const [medications, setMedications] = useState(getInitialMedications());
+
+useEffect(() => {
+  setMedications(getInitialMedications());
+}, [formData.medication]);
 
   // Update parent formData whenever medications change
   const updateParent = (newMedications) => {
