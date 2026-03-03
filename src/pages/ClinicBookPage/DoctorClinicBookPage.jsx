@@ -1033,6 +1033,488 @@
 //   );
 // }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// thahsara
+// import { useState, useEffect } from "react";
+// import { useNavigate, useParams } from "react-router-dom";
+
+// import DoctorNavBar from "../../components/DoctorNavBar2";
+// import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
+// import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
+// import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
+// import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
+// import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
+// import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
+// import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
+
+// import { createClinicPageById } from "../../api/ClinicPageApi";
+// import { getPatientDataByClinicBookId } from "../../api/ClinicBookApi";
+// import { getClinicPagesByClinicBookId } from "../../api/ClinicPageApi";
+// import { getClinicPageById } from "../../api/ClinicPageApi";
+// export default function DoctorClinicBookPage() {
+//   const navigate = useNavigate();
+//   const { clinicBookId } = useParams();
+  
+//   const [patientInfo, setPatientInfo] = useState(null);
+//   const [pastPages, setPastPages] = useState([]);
+
+//   const [formData, setFormData] = useState({
+//     subReason: "",
+//     clinicExaming: "",
+//     clinicSuggestTest: "",
+//     clinicDoctorNote: "",
+//     nextClinic: "",
+//     medication: [],
+//     mediMessure: {
+//       BP: "",
+//       pulse: "",
+//       temperature: "",
+//       weight: "",
+//       bloodSugar: "",
+//       cholesterol: "",
+//     },
+//   });
+
+//   const [errors, setErrors] = useState({});
+//   const [isCompleting, setIsCompleting] = useState(false);
+
+//   // ✅ NEW STATES FOR COMPLETION LOGIC
+//   const [isCompleted, setIsCompleted] = useState(false);
+//   const [completionTime, setCompletionTime] = useState(null);
+//   const [remainingTime, setRemainingTime] = useState(null);
+//   const [canEdit, setCanEdit] = useState(false);
+//   const [showSuccessModal, setShowSuccessModal] = useState(false);
+//   const [isViewingOldPage, setIsViewingOldPage] = useState(false);
+//   const [selectedPageId, setSelectedPageId] = useState(null);
+  
+//   const EDIT_WINDOW_MINUTES = 10;
+//   const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60;
+
+//   // ================= LOAD PATIENT DATA =================
+//   useEffect(() => {
+//     if (!clinicBookId) return;
+
+//     getPatientDataByClinicBookId(clinicBookId)
+//       .then((res) => {
+//         const data = res.data;
+
+//         setPatientInfo({
+//           patientId: data.patinetId,
+//           age: data.age,
+//           gender: data.gender,
+//           medicationPurpose: data.visit_reason,
+//         });
+//       })
+//       .catch((err) => {
+//         console.error("Failed to load patient data", err);
+//       });
+//   }, [clinicBookId]);
+
+//   // ================= COUNTDOWN EFFECT =================
+//    useEffect(() => {
+//     if (!clinicBookId) return;
+
+//     const fetchPages = async () => {
+//       try {
+//         const response = await getClinicPagesByClinicBookId(clinicBookId);
+//         setPastPages(response.data);
+//       } catch (error) {
+//         console.error("Error fetching clinic pages:", error);
+//       }
+//     };
+
+//     fetchPages();
+//   }, [clinicBookId]);
+
+// const handleViewPage = async (page) => {
+//   try {
+//     const response = await getClinicPageById(page.id);
+//     const data = response.data.data;
+
+
+//   setFormData(updatedForm);
+
+//   // 🔥 important
+//   setIsViewingOldPage(true);
+//   setSelectedPageId(page.id);
+//   setIsCompleted(true);
+
+//     // ================= MAP BASIC FIELDS =================
+//     const updatedForm = {
+//       subReason: data.subReason || "",
+//       clinicExaming: data.clinicExaming || "",
+//       clinicSuggestTest: data.clinicSuggestTest || "",
+//       clinicDoctorNote: data.clinicDoctorNote || "",
+//       nextClinic: data.nextClinic
+//         ? data.nextClinic.split("T")[0]
+//         : "",
+
+//       // ================= MAP MEDICATION =================
+//       medication:
+//         data.medication?.map((med) => ({
+//           medicine: med.drugName,
+//           dose: med.dosage,
+//           frequency: med.frequency,
+//           duration: med.duration,
+//           timing: med.instruction,
+//         })) || [],
+
+//       // ================= MAP VITAL SIGNS =================
+//       mediMessure: {
+//         BP:
+//           data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_SYSTOLIC &&
+//           data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_DIASTOLIC
+//             ? `${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_SYSTOLIC}/${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_DIASTOLIC}`
+//             : "",
+
+//         pulse:
+//           data.healthMetricRequestSetDTO?.metrics?.HEART_RATE || "",
+
+//         temperature:
+//           data.healthMetricRequestSetDTO?.metrics?.TEMPERATURE || "",
+
+//         weight:
+//           data.healthMetricRequestSetDTO?.metrics?.WEIGHT || "",
+
+//         bloodSugar:
+//           data.healthMetricRequestSetDTO?.metrics?.BLOOD_SUGAR || "",
+
+//         cholesterol:
+//           data.healthMetricRequestSetDTO?.metrics?.CHOLESTEROL || "",
+//       },
+//     };
+
+//     setFormData(updatedForm);
+
+//     // Optional: scroll to top
+//     window.scrollTo({ top: 0, behavior: "smooth" });
+
+//   } catch (error) {
+//     console.error("Error loading clinic page:", error);
+//     alert("❌ Failed to load clinic page");
+//   }
+// };
+
+//   useEffect(() => {
+//     if (!isCompleted || !completionTime) return;
+
+//     const timer = setInterval(() => {
+//       const now = Date.now();
+//       const elapsed = Math.floor((now - completionTime) / 1000);
+//       const remaining = EDIT_WINDOW_SECONDS - elapsed;
+
+//       if (remaining <= 0) {
+//         setRemainingTime(0);
+//         setCanEdit(false);
+//         clearInterval(timer);
+//       } else {
+//         setRemainingTime(remaining);
+//         setCanEdit(true);
+//       }
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+//   }, [isCompleted, completionTime]);
+
+//   // ================= HELPERS =================
+//   const formatTime = (seconds) => {
+//     if (!seconds || seconds <= 0) return "00:00";
+//     const mins = Math.floor(seconds / 60);
+//     const secs = seconds % 60;
+//     return `${mins.toString().padStart(2, "0")}:${secs
+//       .toString()
+//       .padStart(2, "0")}`;
+//   };
+
+//   const handleChange = (field, value) => {
+//     setFormData((prev) => ({
+//       ...prev,
+//       [field]: value,
+//     }));
+//   };
+
+//   const validate = () => {
+//     const newErrors = {};
+//     if (!formData.subReason.trim()) {
+//       newErrors.subReason = "Reason for visit is required";
+//     }
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   // ================= COMPLETE HANDLER =================
+//   const handleComplete = async () => {
+//     if (!validate()) {
+//       alert("Please fill required fields");
+//       return;
+//     }
+
+//     try {
+//       setIsCompleting(true);
+
+//       const requestBody = {
+//         subReason: formData.subReason,
+//         clinicExaming: formData.clinicExaming,
+//         clinicSuggestTest: formData.clinicSuggestTest,
+//         clinicDoctorNote: formData.clinicDoctorNote,
+//         nextClinic: formData.nextClinic,
+//         medication: [],
+//       };
+
+//       if (formData.medication?.length > 0) {
+//         requestBody.medication = formData.medication.map((med) => ({
+//           drugName: med.medicine,
+//           dosage: med.dose,
+//           frequency:
+//             med.frequency === "OTHER"
+//               ? med.customFrequency
+//               : med.frequency,
+//           duration: med.duration,
+//           instruction: med.timing,
+//         }));
+//       }
+
+//       const metrics = {};
+
+//       if (formData.mediMessure?.BP) {
+//         const bpValue = formData.mediMessure.BP;
+
+//         if (!/^\d+\/\d+$/.test(bpValue)) {
+//           alert("Blood Pressure must be in format 120/80");
+//           setIsCompleting(false);
+//           return;
+//         }
+
+//         const [sys, dia] = bpValue.split("/");
+//         const systolic = Number(sys);
+//         const diastolic = Number(dia);
+
+//         if (systolic <= 0 || diastolic <= 0) {
+//           alert("Blood Pressure values must be positive numbers");
+//           setIsCompleting(false);
+//           return;
+//         }
+
+//         metrics["BLOOD_PRESSURE_SYSTOLIC"] = systolic;
+//         metrics["BLOOD_PRESSURE_DIASTOLIC"] = diastolic;
+//       }
+
+//       if (formData.mediMessure?.pulse)
+//         metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
+
+//       if (formData.mediMessure?.temperature)
+//         metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
+
+//       if (formData.mediMessure?.weight)
+//         metrics["WEIGHT"] = Number(formData.mediMessure.weight);
+
+//       if (formData.mediMessure?.bloodSugar)
+//         metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
+
+//       if (formData.mediMessure?.cholesterol)
+//         metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
+
+//       if (Object.keys(metrics).length > 0) {
+//         requestBody.healthMetricRequestSetDTO = { metrics };
+//       }
+
+//       await createClinicPageById(clinicBookId, requestBody);
+
+//       // ✅ START COMPLETION MODE
+//       const now = Date.now();
+//       setCompletionTime(now);
+//       setIsCompleted(true);
+//       setRemainingTime(EDIT_WINDOW_SECONDS);
+//       setCanEdit(true);
+//       setShowSuccessModal(true);
+
+//     } catch (error) {
+//       console.error(error);
+//       alert("❌ Error saving clinic page");
+//     } finally {
+//       setIsCompleting(false);
+//     }
+//   };
+
+//   const handleCreateNewPage = () => {
+//   setFormData({
+//     subReason: "",
+//     clinicExaming: "",
+//     clinicSuggestTest: "",
+//     clinicDoctorNote: "",
+//     nextClinic: "",
+//     medication: [],
+//     mediMessure: {
+//       BP: "",
+//       pulse: "",
+//       temperature: "",
+//       weight: "",
+//       bloodSugar: "",
+//       cholesterol: "",
+//     },
+//   });
+
+//   setErrors({});
+//   setIsCompleted(false);
+//   setCompletionTime(null);
+//   setRemainingTime(null);
+//   setCanEdit(false);
+
+//   window.scrollTo({ top: 0, behavior: "smooth" });
+
+//   setIsViewingOldPage(false);
+// setSelectedPageId(null);
+// setIsCompleted(false);
+// };
+
+//   // ================= RENDER =================
+//   return (
+//     <>
+//       <DoctorNavBar
+//         patientData={patientInfo}
+//         doctorData={{
+//           fullName: "Dr. Samantha Silva",
+//           email: "doctor@hospital.com",
+//         }}
+//       />
+
+//       <div className="min-h-screen bg-gray-50 py-6">
+//         <div className="max-w-7xl mx-auto px-4">
+//           <h1 className="text-2xl font-bold text-mainblack mb-6">
+//             Clinic Book Page
+//           </h1>
+
+//           <div className="grid lg:grid-cols-3 gap-6">
+//             <div className="space-y-6">
+//               <PatientDetailsCard patientInfo={patientInfo} />
+//               <PastClinicPagesCard
+//                 pastPages={pastPages}
+//                 onViewPage={handleViewPage}
+//               />
+//               <div className="flex justify-between items-center mb-6">
+                
+
+//                 <button
+//                   onClick={handleCreateNewPage}
+//                   className="px-4 py-2 w-full bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+//                 >
+//                   ➕ Create New Page
+//                 </button>
+//               </div>
+//             </div>
+
+//             <div className="lg:col-span-2 space-y-6">
+//               <TodayPageFormCard
+//                 formData={formData}
+//                 onChange={handleChange}
+//                 errors={errors}
+//               />
+
+//               <ExaminationAndTestsCard
+//                 formData={formData}
+//                 onChange={handleChange}
+//               />
+
+//               <VitalSignsCard
+//                 formData={formData}
+//                 onChange={(field, value) =>
+//                   setFormData((prev) => ({
+//                     ...prev,
+//                     mediMessure: {
+//                       ...prev.mediMessure,
+//                       [field]: value,
+//                     },
+//                   }))
+//                 }
+//               />
+//             </div>
+//           </div>
+
+//           <div className="pt-5 gap-5 flex flex-col">
+//             <AdditionalNotesCard
+//               formData={formData}
+//               onChange={handleChange}
+//             />
+
+//             <MedicationCard
+//               formData={formData}
+//               onChange={handleChange}
+//             />
+
+//             {/* BUTTON SECTION */}
+//             <div className="flex justify-between items-center mt-6">
+
+//               {isCompleted && (
+//                 <div className="px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg">
+//                   ⏰ Edit Window: {formatTime(remainingTime)}
+//                 </div>
+//               )}
+
+//               {isCompleted && canEdit && (
+//                 <div className="flex gap-3">
+//                   <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+//                     ✏️ Update
+//                   </button>
+
+//                   <button className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
+//                     🗑️ Delete
+//                   </button>
+//                 </div>
+//               )}
+
+//               {!isCompleted && (
+//                 <button
+//                   onClick={handleComplete}
+//                   disabled={isCompleting}
+//                   className="ml-auto px-8 py-3 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+//                 >
+//                   {isCompleting ? "Completing..." : "✅ Complete"}
+//                 </button>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* SUCCESS MODAL */}
+//       {showSuccessModal && (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+//           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
+//             <h2 className="text-xl font-bold text-green-600 mb-3">
+//               ✅ Clinic Page Saved
+//             </h2>
+//             <p className="text-gray-600 mb-6">
+//               You can edit this page for {EDIT_WINDOW_MINUTES} minutes.
+//             </p>
+
+//             <button
+//               onClick={() => setShowSuccessModal(false)}
+//               className="px-6 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90"
+//             >
+//               OK
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );
+// }
+
 // thahsara
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -1048,12 +1530,15 @@ import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPage
 
 import { createClinicPageById } from "../../api/ClinicPageApi";
 import { getPatientDataByClinicBookId } from "../../api/ClinicBookApi";
-import { getClinicPagesByClinicBookId } from "../../api/ClinicPageApi";
-import { getClinicPageById } from "../../api/ClinicPageApi";
+import {
+  getClinicPagesByClinicBookId,
+  getClinicPageById,
+} from "../../api/ClinicPageApi";
+
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
   const { clinicBookId } = useParams();
-  
+
   const [patientInfo, setPatientInfo] = useState(null);
   const [pastPages, setPastPages] = useState([]);
 
@@ -1077,24 +1562,25 @@ export default function DoctorClinicBookPage() {
   const [errors, setErrors] = useState({});
   const [isCompleting, setIsCompleting] = useState(false);
 
-  // ✅ NEW STATES FOR COMPLETION LOGIC
   const [isCompleted, setIsCompleted] = useState(false);
   const [completionTime, setCompletionTime] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [canEdit, setCanEdit] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  
+
+  const [isViewingOldPage, setIsViewingOldPage] = useState(false);
+  const [selectedPageId, setSelectedPageId] = useState(null);
+
   const EDIT_WINDOW_MINUTES = 10;
   const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60;
 
-  // ================= LOAD PATIENT DATA =================
+  // ================= LOAD PATIENT =================
   useEffect(() => {
     if (!clinicBookId) return;
 
     getPatientDataByClinicBookId(clinicBookId)
       .then((res) => {
         const data = res.data;
-
         setPatientInfo({
           patientId: data.patinetId,
           age: data.age,
@@ -1102,138 +1588,104 @@ export default function DoctorClinicBookPage() {
           medicationPurpose: data.visit_reason,
         });
       })
-      .catch((err) => {
-        console.error("Failed to load patient data", err);
-      });
+      .catch((err) => console.error(err));
   }, [clinicBookId]);
 
-  // ================= COUNTDOWN EFFECT =================
-   useEffect(() => {
+  // ================= LOAD PAST PAGES =================
+  useEffect(() => {
     if (!clinicBookId) return;
 
-    const fetchPages = async () => {
-      try {
-        const response = await getClinicPagesByClinicBookId(clinicBookId);
-        setPastPages(response.data);
-      } catch (error) {
-        console.error("Error fetching clinic pages:", error);
-      }
-    };
-
-    fetchPages();
+    getClinicPagesByClinicBookId(clinicBookId)
+      .then((res) => setPastPages(res.data))
+      .catch((err) => console.error(err));
   }, [clinicBookId]);
 
-const handleViewPage = async (page) => {
-  try {
-    const response = await getClinicPageById(page.id);
-    const data = response.data.data;
+  // ================= VIEW OLD PAGE =================
+  const handleViewPage = async (page) => {
+    try {
+      const response = await getClinicPageById(page.id);
+      const data = response.data.data;
 
-    // ================= MAP BASIC FIELDS =================
-    const updatedForm = {
-      subReason: data.subReason || "",
-      clinicExaming: data.clinicExaming || "",
-      clinicSuggestTest: data.clinicSuggestTest || "",
-      clinicDoctorNote: data.clinicDoctorNote || "",
-      nextClinic: data.nextClinic
-        ? data.nextClinic.split("T")[0]
-        : "",
+      const metrics = data.healthMetricRequestSetDTO?.metrics || {};
 
-      // ================= MAP MEDICATION =================
-      medication:
-        data.medication?.map((med) => ({
-          medicine: med.drugName,
-          dose: med.dosage,
-          frequency: med.frequency,
-          duration: med.duration,
-          timing: med.instruction,
-        })) || [],
+      const updatedForm = {
+        subReason: data.subReason || "",
+        clinicExaming: data.clinicExaming || "",
+        clinicSuggestTest: data.clinicSuggestTest || "",
+        clinicDoctorNote: data.clinicDoctorNote || "",
+        nextClinic: data.nextClinic
+          ? data.nextClinic.split("T")[0]
+          : "",
+        medication:
+          data.medication?.map((med) => ({
+            medicine: med.drugName || "",
+            dose: med.dosage || "",
+            frequency: med.frequency || "",
+            duration: med.duration || "",
+            timing: med.instruction || "",
+          })) || [],
+        mediMessure: {
+          BP:
+            metrics.BLOOD_PRESSURE_SYSTOLIC &&
+            metrics.BLOOD_PRESSURE_DIASTOLIC
+              ? `${metrics.BLOOD_PRESSURE_SYSTOLIC}/${metrics.BLOOD_PRESSURE_DIASTOLIC}`
+              : "",
+          pulse: metrics.HEART_RATE ?? "",
+          temperature: metrics.TEMPERATURE ?? "",
+          weight: metrics.WEIGHT ?? "",
+          bloodSugar: metrics.BLOOD_SUGAR ?? "",
+          cholesterol: metrics.CHOLESTEROL ?? "",
+        },
+      };
 
-      // ================= MAP VITAL SIGNS =================
-      mediMessure: {
-        BP:
-          data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_SYSTOLIC &&
-          data.healthMetricRequestSetDTO?.metrics?.BLOOD_PRESSURE_DIASTOLIC
-            ? `${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_SYSTOLIC}/${data.healthMetricRequestSetDTO.metrics.BLOOD_PRESSURE_DIASTOLIC}`
-            : "",
+      setFormData(updatedForm);
 
-        pulse:
-          data.healthMetricRequestSetDTO?.metrics?.HEART_RATE || "",
+      // 🔥 IMPORTANT
+      setIsViewingOldPage(true);
+      setSelectedPageId(page.id);
+      setIsCompleted(true);
+      setCanEdit(true);
 
-        temperature:
-          data.healthMetricRequestSetDTO?.metrics?.TEMPERATURE || "",
-
-        weight:
-          data.healthMetricRequestSetDTO?.metrics?.WEIGHT || "",
-
-        bloodSugar:
-          data.healthMetricRequestSetDTO?.metrics?.BLOOD_SUGAR || "",
-
-        cholesterol:
-          data.healthMetricRequestSetDTO?.metrics?.CHOLESTEROL || "",
-      },
-    };
-
-    setFormData(updatedForm);
-
-    // Optional: scroll to top
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-  } catch (error) {
-    console.error("Error loading clinic page:", error);
-    alert("❌ Failed to load clinic page");
-  }
-};
-
-  useEffect(() => {
-    if (!isCompleted || !completionTime) return;
-
-    const timer = setInterval(() => {
-      const now = Date.now();
-      const elapsed = Math.floor((now - completionTime) / 1000);
-      const remaining = EDIT_WINDOW_SECONDS - elapsed;
-
-      if (remaining <= 0) {
-        setRemainingTime(0);
-        setCanEdit(false);
-        clearInterval(timer);
-      } else {
-        setRemainingTime(remaining);
-        setCanEdit(true);
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isCompleted, completionTime]);
-
-  // ================= HELPERS =================
-  const formatTime = (seconds) => {
-    if (!seconds || seconds <= 0) return "00:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.subReason.trim()) {
-      newErrors.subReason = "Reason for visit is required";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error(error);
+      alert("❌ Failed to load clinic page");
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  // ================= COMPLETE HANDLER =================
+  // ================= CREATE NEW =================
+  const handleCreateNewPage = () => {
+    setFormData({
+      subReason: "",
+      clinicExaming: "",
+      clinicSuggestTest: "",
+      clinicDoctorNote: "",
+      nextClinic: "",
+      medication: [],
+      mediMessure: {
+        BP: "",
+        pulse: "",
+        temperature: "",
+        weight: "",
+        bloodSugar: "",
+        cholesterol: "",
+      },
+    });
+
+    setErrors({});
+    setIsViewingOldPage(false);
+    setSelectedPageId(null);
+    setIsCompleted(false);
+    setCanEdit(false);
+    setCompletionTime(null);
+    setRemainingTime(null);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // ================= COMPLETE =================
   const handleComplete = async () => {
-    if (!validate()) {
+    if (!formData.subReason.trim()) {
       alert("Please fill required fields");
       return;
     }
@@ -1247,76 +1699,23 @@ const handleViewPage = async (page) => {
         clinicSuggestTest: formData.clinicSuggestTest,
         clinicDoctorNote: formData.clinicDoctorNote,
         nextClinic: formData.nextClinic,
-        medication: [],
-      };
-
-      if (formData.medication?.length > 0) {
-        requestBody.medication = formData.medication.map((med) => ({
+        medication: formData.medication.map((med) => ({
           drugName: med.medicine,
           dosage: med.dose,
-          frequency:
-            med.frequency === "OTHER"
-              ? med.customFrequency
-              : med.frequency,
+          frequency: med.frequency,
           duration: med.duration,
           instruction: med.timing,
-        }));
-      }
-
-      const metrics = {};
-
-      if (formData.mediMessure?.BP) {
-        const bpValue = formData.mediMessure.BP;
-
-        if (!/^\d+\/\d+$/.test(bpValue)) {
-          alert("Blood Pressure must be in format 120/80");
-          setIsCompleting(false);
-          return;
-        }
-
-        const [sys, dia] = bpValue.split("/");
-        const systolic = Number(sys);
-        const diastolic = Number(dia);
-
-        if (systolic <= 0 || diastolic <= 0) {
-          alert("Blood Pressure values must be positive numbers");
-          setIsCompleting(false);
-          return;
-        }
-
-        metrics["BLOOD_PRESSURE_SYSTOLIC"] = systolic;
-        metrics["BLOOD_PRESSURE_DIASTOLIC"] = diastolic;
-      }
-
-      if (formData.mediMessure?.pulse)
-        metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
-
-      if (formData.mediMessure?.temperature)
-        metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
-
-      if (formData.mediMessure?.weight)
-        metrics["WEIGHT"] = Number(formData.mediMessure.weight);
-
-      if (formData.mediMessure?.bloodSugar)
-        metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
-
-      if (formData.mediMessure?.cholesterol)
-        metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
-
-      if (Object.keys(metrics).length > 0) {
-        requestBody.healthMetricRequestSetDTO = { metrics };
-      }
+        })),
+      };
 
       await createClinicPageById(clinicBookId, requestBody);
 
-      // ✅ START COMPLETION MODE
       const now = Date.now();
       setCompletionTime(now);
       setIsCompleted(true);
       setRemainingTime(EDIT_WINDOW_SECONDS);
       setCanEdit(true);
       setShowSuccessModal(true);
-
     } catch (error) {
       console.error(error);
       alert("❌ Error saving clinic page");
@@ -1325,43 +1724,10 @@ const handleViewPage = async (page) => {
     }
   };
 
-  const handleCreateNewPage = () => {
-  setFormData({
-    subReason: "",
-    clinicExaming: "",
-    clinicSuggestTest: "",
-    clinicDoctorNote: "",
-    nextClinic: "",
-    medication: [],
-    mediMessure: {
-      BP: "",
-      pulse: "",
-      temperature: "",
-      weight: "",
-      bloodSugar: "",
-      cholesterol: "",
-    },
-  });
-
-  setErrors({});
-  setIsCompleted(false);
-  setCompletionTime(null);
-  setRemainingTime(null);
-  setCanEdit(false);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
   // ================= RENDER =================
   return (
     <>
-      <DoctorNavBar
-        patientData={patientInfo}
-        doctorData={{
-          fullName: "Dr. Samantha Silva",
-          email: "doctor@hospital.com",
-        }}
-      />
+      <DoctorNavBar patientData={patientInfo} />
 
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
@@ -1376,9 +1742,8 @@ const handleViewPage = async (page) => {
                 pastPages={pastPages}
                 onViewPage={handleViewPage}
               />
-              <div className="flex justify-between items-center mb-6">
-                
 
+              <div className="flex justify-between items-center mb-6">
                 <button
                   onClick={handleCreateNewPage}
                   className="px-4 py-2 w-full bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
@@ -1391,13 +1756,17 @@ const handleViewPage = async (page) => {
             <div className="lg:col-span-2 space-y-6">
               <TodayPageFormCard
                 formData={formData}
-                onChange={handleChange}
+                onChange={(field, value) =>
+                  setFormData((prev) => ({ ...prev, [field]: value }))
+                }
                 errors={errors}
               />
 
               <ExaminationAndTestsCard
                 formData={formData}
-                onChange={handleChange}
+                onChange={(field, value) =>
+                  setFormData((prev) => ({ ...prev, [field]: value }))
+                }
               />
 
               <VitalSignsCard
@@ -1418,36 +1787,29 @@ const handleViewPage = async (page) => {
           <div className="pt-5 gap-5 flex flex-col">
             <AdditionalNotesCard
               formData={formData}
-              onChange={handleChange}
+              onChange={(field, value) =>
+                setFormData((prev) => ({ ...prev, [field]: value }))
+              }
             />
 
             <MedicationCard
               formData={formData}
-              onChange={handleChange}
+              onChange={(field, value) =>
+                setFormData((prev) => ({ ...prev, [field]: value }))
+              }
             />
 
-            {/* BUTTON SECTION */}
             <div className="flex justify-between items-center mt-6">
-
-              {isCompleted && (
-                <div className="px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg">
-                  ⏰ Edit Window: {formatTime(remainingTime)}
-                </div>
-              )}
-
-              {isCompleted && canEdit && (
-                <div className="flex gap-3">
+              {isViewingOldPage ? (
+                <div className="ml-auto flex gap-3">
                   <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
                     ✏️ Update
                   </button>
-
                   <button className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">
                     🗑️ Delete
                   </button>
                 </div>
-              )}
-
-              {!isCompleted && (
+              ) : (
                 <button
                   onClick={handleComplete}
                   disabled={isCompleting}
@@ -1461,20 +1823,15 @@ const handleViewPage = async (page) => {
         </div>
       </div>
 
-      {/* SUCCESS MODAL */}
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
             <h2 className="text-xl font-bold text-green-600 mb-3">
               ✅ Clinic Page Saved
             </h2>
-            <p className="text-gray-600 mb-6">
-              You can edit this page for {EDIT_WINDOW_MINUTES} minutes.
-            </p>
-
             <button
               onClick={() => setShowSuccessModal(false)}
-              className="px-6 py-2 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90"
+              className="px-6 py-2 bg-secondary text-white rounded-lg font-semibold"
             >
               OK
             </button>
