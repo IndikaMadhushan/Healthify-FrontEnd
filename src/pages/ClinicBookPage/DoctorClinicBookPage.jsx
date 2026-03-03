@@ -1083,7 +1083,7 @@ export default function DoctorClinicBookPage() {
   const [remainingTime, setRemainingTime] = useState(null);
   const [canEdit, setCanEdit] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  
   const EDIT_WINDOW_MINUTES = 10;
   const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60;
 
@@ -1325,6 +1325,33 @@ const handleViewPage = async (page) => {
     }
   };
 
+  const handleCreateNewPage = () => {
+  setFormData({
+    subReason: "",
+    clinicExaming: "",
+    clinicSuggestTest: "",
+    clinicDoctorNote: "",
+    nextClinic: "",
+    medication: [],
+    mediMessure: {
+      BP: "",
+      pulse: "",
+      temperature: "",
+      weight: "",
+      bloodSugar: "",
+      cholesterol: "",
+    },
+  });
+
+  setErrors({});
+  setIsCompleted(false);
+  setCompletionTime(null);
+  setRemainingTime(null);
+  setCanEdit(false);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
   // ================= RENDER =================
   return (
     <>
@@ -1346,9 +1373,19 @@ const handleViewPage = async (page) => {
             <div className="space-y-6">
               <PatientDetailsCard patientInfo={patientInfo} />
               <PastClinicPagesCard
-      pastPages={pastPages}
-      onViewPage={handleViewPage}
-    />
+                pastPages={pastPages}
+                onViewPage={handleViewPage}
+              />
+              <div className="flex justify-between items-center mb-6">
+                
+
+                <button
+                  onClick={handleCreateNewPage}
+                  className="px-4 py-2 w-full bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+                >
+                  ➕ Create New Page
+                </button>
+              </div>
             </div>
 
             <div className="lg:col-span-2 space-y-6">

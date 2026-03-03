@@ -40,7 +40,7 @@
 //thathsara
 export function PastClinicPagesCard({ pastPages = [], onViewPage }) {
   const cardBox =
-    "border border-gray-300 rounded-xl h-[435px] bg-white shadow-sm p-4";
+    "border border-gray-300 rounded-xl h-[370px] bg-white shadow-sm p-4";
 
   return (
     <div className={cardBox}>
@@ -51,7 +51,7 @@ export function PastClinicPagesCard({ pastPages = [], onViewPage }) {
       {pastPages.length === 0 ? (
         <p className="text-sm text-gray-500">No previous pages</p>
       ) : (
-        <div className="space-y-2 max-h-90 overflow-y-auto">
+        <div className="space-y-2 max-h-75 overflow-y-auto">
           {pastPages.map((page) => (
             <div
               key={page.id}
