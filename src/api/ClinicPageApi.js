@@ -22,10 +22,10 @@ export const requestEditApproval = (clinicPageId) => {
   return axiosInstance.post(`/api/v1/cpage/request-edit/${clinicPageId}`);
 };
 
-export const updateClinicPageById = (id, body) => {
+export const updateClinicPage= (id, body) => {
   return axiosInstance.put(`/api/v1/cpage/${id}`, body);
 };
 
-export const deleteClinicPageById = (id) => {
+export const deleteClinicPage = (id) => {
   return axiosInstance.delete(`/api/v1/cpage/${id}`);
 };
