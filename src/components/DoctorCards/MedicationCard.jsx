@@ -30,7 +30,12 @@ export function MedicationCard({
  const [medications, setMedications] = useState(getInitialMedications());
 
 useEffect(() => {
-  setMedications(getInitialMedications());
+  if (
+    formData.medication &&
+    JSON.stringify(formData.medication) !== JSON.stringify(medications)
+  ) {
+    setMedications(formData.medication);
+  }
 }, [formData.medication]);
 
   // Update parent formData whenever medications change
@@ -82,19 +87,21 @@ useEffect(() => {
     updateParent(updatedMedications);
   };
 
-  // Add new medication row
-  const handleAddRow = () => {
-    if (!canEdit && isViewMode) {
-      alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
-      return;
-    }
 
-    const newMedications = [
-      ...medications,
-      { medicine: "", dose: "", frequency: "", duration: "", timing: "" },
-    ];
-    updateParent(newMedications);
-  };
+  const handleAddRow = () => {
+
+  if (!canEdit && isViewMode) {
+    alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
+    return;
+  }
+
+  const newMedications = [
+    ...medications,
+    { medicine: "", dose: "", frequency: "", duration: "", timing: "", customFrequency: "" },
+  ];
+
+  setMedications(newMedications);
+};
 
   // Remove medication row
   const handleRemoveRow = (index) => {

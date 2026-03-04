@@ -1515,6 +1515,12 @@
 //   );
 // }
 
+
+
+
+//full correct code with all view button send data get data all proper
+
+
 // thahsara
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -1684,46 +1690,153 @@ export default function DoctorClinicBookPage() {
   };
 
   // ================= COMPLETE =================
-  const handleComplete = async () => {
-    if (!formData.subReason.trim()) {
-      alert("Please fill required fields");
-      return;
+//   const handleComplete = async () => {
+//   if (!formData.subReason.trim()) {
+//     alert("Please fill required fields");
+//     return;
+//   }
+
+//   try {
+//     setIsCompleting(true);
+
+//     const requestBody = {
+//       subReason: formData.subReason,
+//       clinicExaming: formData.clinicExaming,
+//       clinicSuggestTest: formData.clinicSuggestTest,
+//       clinicDoctorNote: formData.clinicDoctorNote,
+//       nextClinic: formData.nextClinic,
+//       medication: formData.medication.map((med) => ({
+//         drugName: med.medicine,
+//         dosage: med.dose,
+//         frequency: med.frequency,
+//         duration: med.duration,
+//         instruction: med.timing,
+//       })),
+//     };
+
+//     // ================= METRICS =================
+//     const metrics = {};
+
+//     if (formData.mediMessure?.pulse)
+//       metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
+
+//     if (formData.mediMessure?.temperature)
+//       metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
+
+//     if (formData.mediMessure?.weight)
+//       metrics["WEIGHT"] = Number(formData.mediMessure.weight);
+
+//     if (formData.mediMessure?.bloodSugar)
+//       metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
+
+//     if (formData.mediMessure?.cholesterol)
+//       metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
+
+//     if (formData.mediMessure?.BP) {
+//       const [sys, dia] = formData.mediMessure.BP.split("/");
+//       metrics["BLOOD_PRESSURE_SYSTOLIC"] = Number(sys);
+//       metrics["BLOOD_PRESSURE_DIASTOLIC"] = Number(dia);
+//     }
+
+//     if (Object.keys(metrics).length > 0) {
+//       requestBody.healthMetricRequestSetDTO = { metrics };
+//     }
+
+//     // ================= API CALL =================
+//     await createClinicPageById(clinicBookId, requestBody);
+
+//     const now = Date.now();
+//     setCompletionTime(now);
+//     setIsCompleted(true);
+//     setRemainingTime(EDIT_WINDOW_SECONDS);
+//     setCanEdit(true);
+//     setShowSuccessModal(true);
+
+//   } catch (error) {
+//     console.error(error);
+//     alert("❌ Error saving clinic page");
+//   } finally {
+//     setIsCompleting(false);
+//   }
+// };
+
+
+const handleComplete = async () => {
+  if (!formData.subReason.trim()) {
+    alert("Please fill required fields");
+    return;
+  }
+
+  try {
+    setIsCompleting(true);
+
+    const requestBody = {
+      subReason: formData.subReason,
+      clinicExaming: formData.clinicExaming,
+      clinicSuggestTest: formData.clinicSuggestTest,
+      clinicDoctorNote: formData.clinicDoctorNote,
+      nextClinic: formData.nextClinic,
+      medication: formData.medication.map((med) => ({
+        drugName: med.medicine,
+        dosage: med.dose,
+        frequency: med.frequency,
+        duration: med.duration,
+        instruction: med.timing,
+      })),
+    };
+
+    // ================= METRICS =================
+    const metrics = {};
+
+    if (formData.mediMessure?.pulse)
+      metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
+
+    if (formData.mediMessure?.temperature)
+      metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
+
+    if (formData.mediMessure?.weight)
+      metrics["WEIGHT"] = Number(formData.mediMessure.weight);
+
+    if (formData.mediMessure?.bloodSugar)
+      metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
+
+    if (formData.mediMessure?.cholesterol)
+      metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
+
+    if (formData.mediMessure?.BP) {
+      const [sys, dia] = formData.mediMessure.BP.split("/");
+      metrics["BLOOD_PRESSURE_SYSTOLIC"] = Number(sys);
+      metrics["BLOOD_PRESSURE_DIASTOLIC"] = Number(dia);
     }
 
-    try {
-      setIsCompleting(true);
-
-      const requestBody = {
-        subReason: formData.subReason,
-        clinicExaming: formData.clinicExaming,
-        clinicSuggestTest: formData.clinicSuggestTest,
-        clinicDoctorNote: formData.clinicDoctorNote,
-        nextClinic: formData.nextClinic,
-        medication: formData.medication.map((med) => ({
-          drugName: med.medicine,
-          dosage: med.dose,
-          frequency: med.frequency,
-          duration: med.duration,
-          instruction: med.timing,
-        })),
-      };
-
-      await createClinicPageById(clinicBookId, requestBody);
-
-      const now = Date.now();
-      setCompletionTime(now);
-      setIsCompleted(true);
-      setRemainingTime(EDIT_WINDOW_SECONDS);
-      setCanEdit(true);
-      setShowSuccessModal(true);
-    } catch (error) {
-      console.error(error);
-      alert("❌ Error saving clinic page");
-    } finally {
-      setIsCompleting(false);
+    if (Object.keys(metrics).length > 0) {
+      requestBody.healthMetricRequestSetDTO = { metrics };
     }
-  };
 
+    // ================= API CALL =================
+    const response = await createClinicPageById(clinicBookId, requestBody);
+
+    // 🔥 IMPORTANT: switch to VIEW MODE
+    const newPageId = response?.data?.data?.clinicPageId;
+
+    setIsViewingOldPage(true);
+    setSelectedPageId(newPageId);
+
+    const now = Date.now();
+    setCompletionTime(now);
+    setIsCompleted(true);
+    setRemainingTime(EDIT_WINDOW_SECONDS);
+    setCanEdit(true);
+
+    setShowSuccessModal(true);
+
+  } catch (error) {
+    console.error(error);
+    alert("❌ Error saving clinic page");
+  } finally {
+    setIsCompleting(false);
+  }
+};
   // ================= RENDER =================
   return (
     <>
@@ -1841,4 +1954,3 @@ export default function DoctorClinicBookPage() {
     </>
   );
 }
-
