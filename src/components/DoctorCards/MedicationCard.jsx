@@ -1,5 +1,7 @@
 //thathsara
-import { useState } from "react";
+import { useState, useEffect  } from "react";
+import { FaTrash } from "react-icons/fa";
+
 
 export function MedicationCard({
   formData,
@@ -19,34 +21,48 @@ export function MedicationCard({
     ) {
       return formData.medication;
     }
-    return [
-      { medicine: "", dose: "", frequency: "", duration: "" },
-      { medicine: "", dose: "", frequency: "", duration: "" },
-    ];
+ return [
+  { medicine: "", dose: "", frequency: "", duration: "", timing: "" },
+  { medicine: "", dose: "", frequency: "", duration: "", timing: "" }
+];
   };
 
-  const [medications, setMedications] = useState(getInitialMedications);
+ const [medications, setMedications] = useState(getInitialMedications());
+
+useEffect(() => {
+  if (
+    formData.medication &&
+    JSON.stringify(formData.medication) !== JSON.stringify(medications)
+  ) {
+    setMedications(formData.medication);
+  }
+}, [formData.medication]);
 
   // Update parent formData whenever medications change
   const updateParent = (newMedications) => {
     setMedications(newMedications);
     // Filter out completely empty rows before saving
-    const nonEmptyMedications = newMedications.filter(
-      (med) =>
-        med.medicine.trim() !== "" ||
-        med.dose.trim() !== "" ||
-        med.frequency.trim() !== "" ||
-        med.duration.trim() !== "",
-    );
+    const nonEmptyMedications = newMedications.filter((med) => {
+  return (
+    (med.medicine || "").trim() !== "" ||
+    (med.dose || "").trim() !== "" ||
+    (med.frequency || "").trim() !== "" ||
+    (med.timing || "").trim() !== "" ||
+    (med.duration || "").trim() !== ""
+  );
+});
     onChange("medication", nonEmptyMedications);
   };
   const frequencyOptions = [
     { value: "", label: "Select..." },
-    { value: "M-A-N", label: "M-A-N (Morning-Afternoon-Night)" },
-    { value: "M-N", label: "M-N (Morning-Night)" },
-    { value: "M", label: "M (Morning only)" },
-    { value: "A", label: "A (Afternoon only)" },
-    { value: "N", label: "N (Night only)" },
+    { value: "1-0-0", label: "1-0-0(Morning-Afternoon-Night)" },
+    { value: "1-1-0", label: "1-1-0(Morning-Afternoon-Night)" },
+    { value: "1-0-1", label: "1-0-1(Morning-Afternoon-Night)" },
+    { value: "1-1-1", label: "1-1-1(Morning-Afternoon-Night)" },
+    { value: "2-0-0", label: "2-0-0(Morning-Afternoon-Night)" },
+    { value: "2-2-0", label: "2-2-0(Morning-Afternoon-Night)" },
+    { value: "2-0-2", label: "2-0-2(Morning-Afternoon-Night)" },
+    { value: "2-2-2", label: "2-2-2(Morning-Afternoon-Night)" },
     { value: "Once daily", label: "Once daily" },
     { value: "Twice daily", label: "Twice daily" },
     { value: "Three times daily", label: "Three times daily" },
@@ -54,8 +70,16 @@ export function MedicationCard({
     { value: "Every 6 hours", label: "Every 6 hours" },
     { value: "Every 8 hours", label: "Every 8 hours" },
     { value: "As needed", label: "As needed" },
+    { value: "OTHER", label: "Other (type manually)" }
   ];
 
+  const timingOptions= [
+    { value: "", label: "Select..." },
+    { value: "Before meals", label: "Before meals" },
+    { value: "After meals", label: "After meals" },
+    { value: "At bedtime", label: "At bedtime" },
+  ];
+    
   // Handle input change for a specific row and field
   const handleInputChange = (index, field, value) => {
     const updatedMedications = [...medications];
@@ -63,19 +87,21 @@ export function MedicationCard({
     updateParent(updatedMedications);
   };
 
-  // Add new medication row
-  const handleAddRow = () => {
-    if (!canEdit && isViewMode) {
-      alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
-      return;
-    }
 
-    const newMedications = [
-      ...medications,
-      { medicine: "", dose: "", frequency: "", duration: "" },
-    ];
-    updateParent(newMedications);
-  };
+  const handleAddRow = () => {
+
+  if (!canEdit && isViewMode) {
+    alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
+    return;
+  }
+
+  const newMedications = [
+    ...medications,
+    { medicine: "", dose: "", frequency: "", duration: "", timing: "", customFrequency: "" },
+  ];
+
+  setMedications(newMedications);
+};
 
   // Remove medication row
   const handleRemoveRow = (index) => {
@@ -123,7 +149,8 @@ export function MedicationCard({
               <th className={tableHeaderCss}>Dose</th>
               <th className={tableHeaderCss}>Frequency</th>
               <th className={tableHeaderCss}>Duration</th>
-              <th className={tableHeaderCss + " rounded-tr-lg w-20"}>Action</th>
+               <th className={tableHeaderCss}>Timing</th>
+              <th className={tableHeaderCss + " rounded-tr-lg w-20"}></th>
             </tr>
           </thead>
           <tbody>
@@ -167,20 +194,38 @@ export function MedicationCard({
 
                   {/* Frequency */}
                   <td className={tableCellCss}>
-                    <select
-                      value={med.frequency}
-                      onChange={(e) =>
-                        handleInputChange(index, "frequency", e.target.value)
-                      }
-                      className={selectCss}
-                    >
-                      {frequencyOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+  {med.frequency === "OTHER" ? (
+    <input
+      type="text"
+      value={med.customFrequency || ""}
+      onChange={(e) =>
+        handleInputChange(index, "customFrequency", e.target.value)
+      }
+      onBlur={() => {
+        if (!med.customFrequency) {
+          handleInputChange(index, "frequency", "");
+        }
+      }}
+      placeholder="Type frequency..."
+      className={inputCss}
+    />
+  ) : (
+    <select
+      value={med.frequency}
+      onChange={(e) =>
+        handleInputChange(index, "frequency", e.target.value)
+      }
+      className={selectCss}
+    >
+      {frequencyOptions.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  )}
+</td>
+
 
                   {/* Duration */}
                   <td className={tableCellCss}>
@@ -194,15 +239,30 @@ export function MedicationCard({
                       className={inputCss}
                     />
                   </td>
+                  <td className={tableCellCss}>
+                    <select
+                      value={med.timing}
+                      onChange={(e) =>
+                        handleInputChange(index, "timing", e.target.value)
+                      }
+                      className={selectCss}
+                    >
+                      {timingOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
 
                   {/* Remove Button */}
                   <td className={tableCellCss + " text-center"}>
                     <button
                       onClick={() => handleRemoveRow(index)}
-                      className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition"
-                      title="Remove this medication"
+                      className="p-2 text-red-600 hover:bg-red-100 rounded-full transition"
+                      title="Remove medication"
                     >
-                      Remove
+                      <FaTrash size={14} />
                     </button>
                   </td>
                 </tr>

@@ -18,7 +18,7 @@ export function PatientDetailsCard({
     <div className={cardBox}>
       <div className="flex items-center gap-3 mb-4">
         <div className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl">
-          {patient.fullName.charAt(0)}
+          {(patient.fullName || "").charAt(0)}
         </div>
         <div>
           <h2 className="text-lg font-bold text-gray-800">

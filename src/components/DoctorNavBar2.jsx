@@ -2,7 +2,6 @@
 // from 1st doctor nav bar code that i have created .latest doctor nav bar
 // Doctor Navigation Bar Component in doctor consultation and clinic book pages
 
-
 // import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 
@@ -216,9 +215,6 @@
 //   );
 // }
 
-
-
-
 // //parindya
 // import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -404,7 +400,7 @@
 //             )}
 //           </div>
 //         </div>
-          
+
 //         {/* MOBILE PATIENT INFO */}
 //         {safePatient && (
 //           <div className="md:hidden flex gap-2 pb-3 px-2 bg-secondary/5 rounded-lg mb-2">
@@ -422,7 +418,7 @@
 //           </div>
 //         )}
 //       </div>
-      
+
 //       {/* BACKDROP */}
 //       {dropdownOpen && (
 //         <div
@@ -435,22 +431,20 @@
 //   );
 // }
 
-
-
 //parindya
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function DoctorNavBar({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const { patientId } = useParams();
 
-    const goToProfile = () => {
+  const goToProfile = () => {
     navigate("/doctor/doctor-profile", {
       state: { fromNav: "NAV2" },
     });
   };
-
 
   if (!doctor) return null;
   const safePatient = patient || null;
@@ -470,10 +464,8 @@ export default function DoctorNavBar({ doctor, patient }) {
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-16">
-
         {/* TOP BAR */}
         <div className="flex items-center justify-between h-20 gap-3">
-
           {/* LOGO */}
           <img
             src="/logo.png"
@@ -484,7 +476,6 @@ export default function DoctorNavBar({ doctor, patient }) {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-3 sm:gap-4">
-
             {/* PATIENT INFO (desktop & tablet only) */}
             {safePatient && (
               <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-lg">
@@ -549,53 +540,61 @@ export default function DoctorNavBar({ doctor, patient }) {
               </button>
 
               {/* DROPDOWN MENU */}
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                {/* HOME */}
-                <button
-                  onClick={() => handleNavigation("/")}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                >
-                  🏠 Home
-                </button>
-                <hr className="my-2 border-gray-200" />
-                {/* PATIENT SECTION */}
-                {safePatient && (
-                  <>
-                    <div className="px-4 py-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        Patient
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => handleNavigation(`/doctor/${safePatient.id}/profile`)}
-                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                    >
-                      👤 Profile
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleNavigation(`/doctor/${safePatient.id}/medical-reports`)
-                      }
-                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                    >
-                      📊 Dashboard
-                    </button>
-                    <button
-                      onClick={() => handleNavigation(`/doctor/${safePatient.id}/doctorViewform`)}
-                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                    >
-                      📝 Medical Info
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleNavigation(`/doctor/${safePatient.id}/consult`)
-                      }
-                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                    >
-                      📋 Consultation
-                    </button>
-                    {/* <button
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                  {/* HOME */}
+                  <button
+                    onClick={() => handleNavigation("/")}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    🏠 Home
+                  </button>
+                  <hr className="my-2 border-gray-200" />
+                  {/* PATIENT SECTION */}
+                  {safePatient && (
+                    <>
+                      <div className="px-4 py-2">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                          Patient
+                        </p>
+                      </div>
+                      <button
+                        onClick={() =>
+                          handleNavigation(`/doctor/${safePatient.id}/profile`)
+                        }
+                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        👤 Profile
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleNavigation(
+                            `/doctor/${safePatient.id}/medical-reports`,
+                          )
+                        }
+                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        📊 Dashboard
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleNavigation(
+                            `/doctor/${safePatient.id}/doctorViewform`,
+                          )
+                        }
+                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        📝 Medical Info
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleNavigation(`/doctor/${safePatient.id}/consult`)
+                        }
+                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        📋 Consultation
+                      </button>
+                      {/* <button
                       onClick={() =>
                         handleNavigation(
                           "/doctor-clinic-book/:patientId/:bookId",
@@ -605,37 +604,35 @@ export default function DoctorNavBar({ doctor, patient }) {
                     >
                       🩺 Clinic Books
                     </button> */}
-                  </>
-                )}
+                    </>
+                  )}
 
-                {/* DOCTOR SECTION */}
-                <hr className="my-2 border-gray-200" />
-                <button
-                  onClick={goToProfile}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                >
-                  👨‍⚕️ My Profile
-                </button>
-                <button
-                  onClick={() => handleNavigation("/doctor/dashboard")}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                >
-                  📈 My Dashboard
-                </button>
+                  {/* DOCTOR SECTION */}
+                  <hr className="my-2 border-gray-200" />
+                  <button
+                    onClick={goToProfile}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    👨‍⚕️ My Profile
+                  </button>
+                  <button
+                    onClick={() => handleNavigation("/doctor/dashboard")}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    📈 My Dashboard
+                  </button>
 
-                <hr className="my-2 border-gray-200" />
+                  <hr className="my-2 border-gray-200" />
 
-                {/* LOGOUT */}
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            )}
-
-
+                  {/* LOGOUT */}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
+                  >
+                    🚪 Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

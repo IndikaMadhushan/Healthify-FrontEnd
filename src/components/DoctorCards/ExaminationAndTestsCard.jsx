@@ -12,8 +12,8 @@ export function ExaminationAndTestsCard({ formData, onChange }) {
       </h2>
 
       <textarea
-        value={formData.examinationNotes}
-        onChange={(e) => onChange("examinationNotes", e.target.value)}
+        value={formData.clinicExaming}
+onChange={(e) => onChange("clinicExaming", e.target.value)}
         placeholder="Enter examination findings and test results..."
         className={textAreaBase}
       />

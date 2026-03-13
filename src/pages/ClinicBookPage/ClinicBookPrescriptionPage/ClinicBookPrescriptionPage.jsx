@@ -120,10 +120,10 @@ export default function ClinicBookPrescriptionPage() {
   const navigate = useNavigate();
   const { clinicBookId } = useParams();
   const [book, setBook] = useState(null);
+  const { patientId } = useParams();
 
-
-    const rawRole = localStorage.getItem("role");
-   const role = rawRole?.toUpperCase();
+  const rawRole = localStorage.getItem("role");
+  const role = rawRole?.toUpperCase();
    
 
   useEffect(() => {
@@ -191,7 +191,7 @@ export default function ClinicBookPrescriptionPage() {
               <button
                  onClick={() =>
                     navigate(
-                      `/doctor/${book.patientId}/medical-reports/clinic-book/${clinicBookId}/clinicpage`
+                      `/doctor/${patientId}/medical-reports/clinic-book/${clinicBookId}/clinicpage`
                     )
                   }
                 className="

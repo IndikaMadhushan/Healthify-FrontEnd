@@ -90,6 +90,9 @@ export default function Footer() {
             <Link to="/termsandConditions" className="hover:text-secondary/75">
               Terms & Conditions
             </Link>
+            <Link to="/test" className="hover:text-secondary/75">
+              Test
+            </Link>
           </div>
         </div>
       </div>

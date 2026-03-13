@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import {
-  Heart,
   Users,
   Shield,
   Target,
-  Lightbulb,
-  CheckCircle,
   Activity,
   FileText,
   BarChart3,
   Bell,
   Share2,
-  Lock,
 } from "lucide-react";
 
 export default function AboutUs() {

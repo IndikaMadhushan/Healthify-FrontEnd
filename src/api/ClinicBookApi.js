@@ -27,3 +27,7 @@ export const createClinicBook = (patientId,data) => {
 export const editClinicBook = (clinicBookId,data) => {
   return axiosInstance.put(`/api/v1/cbook/${clinicBookId}`,data);
 };
+
+export const getPatientDataByClinicBookId = (clinicBookId) =>{
+  return axiosInstance.get(`/api/v1/cbook/patientData/${clinicBookId}`);
+};
