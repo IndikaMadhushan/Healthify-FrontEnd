@@ -460,34 +460,34 @@ export default function MyClinicBooks() {
   const [mode, setMode] = useState("edit");
 
   /* -------------------- FETCH FROM BACKEND -------------------- */
-  const fetchClinicBooks = useCallback(async () => {
-    try {
-      const res = patientId
-        ? await getClinicBooksByPatientId(patientId) // DOCTOR
-        : await getMyClinicBooks();                  // PATIENT
+  const fetchClinicBooks = async () => {
+  try {
+    const res = patientId
+      ? await getClinicBooksByPatientId(patientId)
+      : await getMyClinicBooks();
 
-      const mapped = res.data.map((item) => ({
-        id: item.id,
-        patientId,
-        doctorName: item.doctorFullName,
-        doctorNo: item.licenseNumber,
-        specialization: item.specialization,
-        medicationPurpose: item.visitReason,
-        access: item.accessControl,
-        lastUpdatedBy: item.updatedDoctor,
-        lastUpdated: item.updatedTime,
-      }));
+    const mapped = res.data.map((item) => ({
+      id: item.id,
+      patientId,
+      doctorName: item.doctorFullName,
+      doctorNo: item.licenseNumber,
+      specialization: item.specialization,
+      medicationPurpose: item.visitReason,
+      access: item.accessControl,
+      lastUpdatedBy: item.updatedDoctor,
+      lastUpdated: item.updatedTime,
+    }));
 
-      setClinicBooks(mapped);
-    } catch (err) {
-      console.error("Failed to load clinic books", err);
-    }
-  }, [patientId]);
+    setClinicBooks(mapped);
+  } catch (err) {
+    console.error("Failed to load clinic books", err);
+  }
+};
 
-  /* -------------------- INITIAL LOAD -------------------- */
-  useEffect(() => {
-    fetchClinicBooks();
-  }, [fetchClinicBooks]);
+useEffect(() => {
+  fetchClinicBooks();
+}, [patientId]);
+
 
   /* -------------------- UI -------------------- */
   return (

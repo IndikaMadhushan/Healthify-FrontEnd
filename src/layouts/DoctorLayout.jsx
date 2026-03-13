@@ -169,42 +169,37 @@ import DoctorNavBar from "../components/DoctorNavBar";
 import DoctorNavBar2 from "../components/DoctorNavBar2";
 import { getDoctorProfileApi } from "../api/DoctorApi";
 import Footer from "../components/footer";
+import { useParams } from "react-router-dom";
+
 
 export default function DoctorLayout() {
   const [doctor, setDoctor] = useState(null);
   const [patient, setPatient] = useState(null);
+  const { patientId } = useParams();
+
 
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const loadDoctor = async () => {
-      try {
-        // ✅ Load doctor from backend
-        const res = await getDoctorProfileApi();
-        setDoctor(res.data);
+  const loadDoctor = async () => {
+    try {
+      const res = await getDoctorProfileApi();
+      setDoctor(res.data);
 
-        // ✅ TEMP HARD-CODED PATIENT (until backend is ready)
-        const hardCodedPatient = {
-          id: 1,
-          fullName: "Test Patient",
-          email: "patient@test.com",
-          profilePic: "/profilePic.png",
-        };
-
-        setPatient(hardCodedPatient);
-        localStorage.setItem(
-          "selectedPatient",
-          JSON.stringify(hardCodedPatient)
-        );
-      } catch (err) {
-        console.error("Failed to load doctor profile", err);
-        navigate("/login");
+      if (patientId) {
+        setPatient({ id: patientId });
       }
-    };
 
-    loadDoctor();
-  }, [navigate]);
+    } catch (err) {
+      console.error("Failed to load doctor profile", err);
+      navigate("/login");
+    }
+  };
+
+  loadDoctor();
+}, [navigate, patientId]);
+
 
   // 🔹 ONLY dashboard gets NavBar 1
   const isDashboard =
