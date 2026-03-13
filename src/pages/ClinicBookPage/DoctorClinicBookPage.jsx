@@ -1768,7 +1768,7 @@ const closeModal = () => {
 
 const handleComplete = async () => {
   if (!formData.subReason.trim()) {
-    alert("Please fill required fields");
+     showMessage("Please fill required feilds");
     return;
   }
 
@@ -1835,57 +1835,84 @@ const handleComplete = async () => {
 
     setShowSuccessModal(true);
 
-  } catch (error) {
+  }catch (error) {
     console.error(error);
-    alert("❌ Error saving clinic page");
+
+    if (error.response?.data?.error) {
+      showMessage(error.response.data.error);
+    } else {
+      showMessage("Error saving clinic page");
+    }
+
   } finally {
     setIsCompleting(false);
   }
 };
 
+
+
 // const handleUpdate = async () => {
-//   try {
 
-//     const requestBody = {
-//       subReason: formData.subReason,
-//       clinicExaming: formData.clinicExaming,
-//       clinicSuggestTest: formData.clinicSuggestTest,
-//       clinicDoctorNote: formData.clinicDoctorNote,
-//       nextClinic: formData.nextClinic,
-//       medication: formData.medication.map((med) => ({
-//         drugName: med.medicine,
-//         dosage: med.dose,
-//         frequency: med.frequency,
-//         duration: med.duration,
-//         instruction: med.timing,
-//       })),
-//     };
+//   if (approvalRequestedPageId === selectedPageId) {
+//     showMessage("Patient approval is pending for this page.");
+//     return;
+//   }
 
-//     await updateClinicPage(selectedPageId, requestBody);
+//   showConfirm(
+//     "Do you want to update this clinic page?",
+//     async () => {
 
-//     alert("✅ Updated successfully");
+//       try {
 
-//   } catch (error) {
+//         const requestBody = {
+//           subReason: formData.subReason,
+//           clinicExaming: formData.clinicExaming,
+//           clinicSuggestTest: formData.clinicSuggestTest,
+//           clinicDoctorNote: formData.clinicDoctorNote,
+//           nextClinic: formData.nextClinic,
+//           medication: formData.medication.map((med) => ({
+//             drugName: med.medicine,
+//             dosage: med.dose,
+//             frequency: med.frequency,
+//             duration: med.duration,
+//             instruction: med.timing,
+//           })),
+//         };
 
-//     if (
-//       error.response?.status === 403 &&
-//       error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
-//     ) {
+//         await updateClinicPage(selectedPageId, requestBody);
 
-//       const confirmRequest = window.confirm(
-//         "You cannot update now. Request approval from patient?"
-//       );
+//         showMessage("Clinic page updated successfully");
 
-//       if (confirmRequest) {
-//         await requestEditApproval(selectedPageId);
-//         alert("Approval request sent to patient email");
+//       } catch (error) {
+
+//         if (
+//           error.response?.status === 403 &&
+//           error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
+//         ) {
+
+//           showConfirm(
+//             "Edit time expired. Do you want to request approval from the patient?",
+//             async () => {
+
+//               await requestEditApproval(selectedPageId);
+
+//               setApprovalRequestedPageId(selectedPageId);
+
+//               showMessage("Approval request sent to patient");
+
+//             }
+//           );
+
+//         } else {
+
+//           showMessage("Update failed");
+
+//         }
+
 //       }
 
-//     } else {
-//       alert("Update failed");
 //     }
-
-//   }
+//   );
 // };
 
 const handleUpdate = async () => {
@@ -1915,6 +1942,52 @@ const handleUpdate = async () => {
             instruction: med.timing,
           })),
         };
+
+        // ================= METRICS =================
+        const metrics = {};
+
+        const pulse = Number(formData.mediMessure?.pulse);
+        if (!isNaN(pulse) && pulse > 0) {
+          metrics["HEART_RATE"] = pulse;
+        }
+
+        const temperature = Number(formData.mediMessure?.temperature);
+        if (!isNaN(temperature) && temperature > 0) {
+          metrics["TEMPERATURE"] = temperature;
+        }
+
+        const weight = Number(formData.mediMessure?.weight);
+        if (!isNaN(weight) && weight > 0) {
+          metrics["WEIGHT"] = weight;
+        }
+
+        const bloodSugar = Number(formData.mediMessure?.bloodSugar);
+        if (!isNaN(bloodSugar) && bloodSugar > 0) {
+          metrics["BLOOD_SUGAR"] = bloodSugar;
+        }
+
+        const cholesterol = Number(formData.mediMessure?.cholesterol);
+        if (!isNaN(cholesterol) && cholesterol > 0) {
+          metrics["CHOLESTEROL"] = cholesterol;
+        }
+
+        const bp = formData.mediMessure?.BP;
+
+        if (bp && bp.includes("/")) {
+          const [sys, dia] = bp.split("/");
+
+          const sysVal = Number(sys);
+          const diaVal = Number(dia);
+
+          if (!isNaN(sysVal) && !isNaN(diaVal)) {
+            metrics["BLOOD_PRESSURE_SYSTOLIC"] = sysVal;
+            metrics["BLOOD_PRESSURE_DIASTOLIC"] = diaVal;
+          }
+        }
+
+        if (Object.keys(metrics).length > 0) {
+          requestBody.healthMetricRequestSetDTO = { metrics };
+        }
 
         await updateClinicPage(selectedPageId, requestBody);
 
@@ -1950,7 +2023,8 @@ const handleUpdate = async () => {
 
     }
   );
-};
+};                                         
+
 
 // const handleDelete = async () => {
 //   try {
