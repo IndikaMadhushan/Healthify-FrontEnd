@@ -197,6 +197,7 @@ function App() {
               {/* <Route path="reports" element={<ReportsPage />} /> */}
             </Route>
           </Route>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
 
           {/* Doctor Consult Page */}
           {/* <Route
@@ -217,7 +218,7 @@ function App() {
           <Route path="/surgery/:id" element={<InsideSurgeryFolder />} />
           {/* Doctor Notes Page */}
           {/* <Route path="/doctor-notes" element={<AllDoctorNotes />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          
           <Route path="/medical-reports/surgeries" element={<SurgeryPage />} /> */}
           {/* <Route
             path="/medical-reports/prescriptions"
