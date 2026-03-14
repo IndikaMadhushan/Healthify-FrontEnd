@@ -93,7 +93,7 @@ export default function VerifyOtpPage() {
         navigate('/login', { replace: true });
       } else {
         toast.success('Verification successful!');
-        navigate('/patient-dashboard', { replace: true });
+        navigate('/patient/medical-reports', { replace: true });
       }
     } catch (err) {
       const message =
