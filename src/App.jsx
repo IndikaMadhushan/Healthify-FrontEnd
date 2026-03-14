@@ -16,7 +16,7 @@ import DoctorDashBoardPage from "./pages/DoctorDashBoardPage/DoctorDashBoardPage
 import DoctorConsultPage from "./pages/ConsultPage/DoctorConsultPage";
 import DoctorClinicBookPage from "./pages/ClinicBookPage/DoctorClinicBookPage";
 import Dashboard from "./pages/PatientMainUI/Sidebar";
-import PatientFormDoctorView from "./pages/PatientFormPage/patientFormDoctorView";
+import PatientFormDoctorView from "./pages/PatientFormPage/PatientFormDoctorView";
 import PatientFirstFillForm from "./pages/PatientFormPage/PatientFirstFillForm";
 import RemindersPage from "./pages/Reminders/RemindersPage";
 import MedicalReportsPage from "./pages/MedicalReportsPage/MedicalReportsPage";
