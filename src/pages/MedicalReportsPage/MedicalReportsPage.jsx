@@ -2,6 +2,7 @@
 // MedicalReportsPage.jsx (COMPLETE CODE)
 import { useNavigate, useParams, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
 
 const CATEGORIES = {
   LAB_REPORTS: "lab-reports",
@@ -89,7 +90,7 @@ export default function MedicalReportsPage() {
     const role = rawRole?.toUpperCase();
     if (role === "DOCTOR") {
       if (!patientId) {
-        alert("Patient not selected");
+        toast.error("Patient not selected");
         return;
       }
       navigate(`/doctor/${patientId}/medical-reports/${categoryId}`);

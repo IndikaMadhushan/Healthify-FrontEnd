@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOtpApi, resendOtpApi } from '../../api/authApi';
+import toast from 'react-hot-toast';
 
 export default function VerifyOtpPage() {
   const navigate = useNavigate();
@@ -88,10 +89,10 @@ export default function VerifyOtpPage() {
       await verifyOtpApi(userEmail, otpValue);
 
       if (userType === 'doctor') {
-        alert('✅ Verification successful! Await admin approval.');
+        toast.success('Verification successful! Await admin approval.');
         navigate('/login', { replace: true });
       } else {
-        alert('✅ Verification successful!');
+        toast.success('Verification successful!');
         navigate('/patient-dashboard', { replace: true });
       }
     } catch (err) {
@@ -121,7 +122,7 @@ export default function VerifyOtpPage() {
       setCanResend(false);
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
-      alert('📧 New OTP sent!');
+      toast.success('New OTP sent!');
     } catch (err) {
       const message =
         typeof err?.response?.data?.message === 'string'

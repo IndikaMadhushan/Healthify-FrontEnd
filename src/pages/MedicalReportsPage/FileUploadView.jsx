@@ -10,6 +10,7 @@ import {
   formatDate,
 } from "../../utils/medicalStorage";
 import FileViewerModal from "../../components/MedicalReports/FileViewerModal";
+import toast from "react-hot-toast";
 
 export default function FileUploadView({
   userId,
@@ -42,7 +43,7 @@ export default function FileUploadView({
 
     const validation = validateFile(file);
     if (!validation.valid) {
-      alert(validation.error);
+      toast.error(validation.error);
       e.target.value = null;
       return;
     }
@@ -79,7 +80,7 @@ export default function FileUploadView({
       setShowTitleModal(false);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload file. Please try again.");
+      toast.error("Failed to upload file. Please try again.");
     } finally {
       setUploading(false);
     }

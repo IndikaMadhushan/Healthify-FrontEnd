@@ -1488,6 +1488,7 @@
 // thahsara
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import DoctorNavBar from "../../components/DoctorNavBar2";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
@@ -1660,7 +1661,7 @@ const closeModal = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to load clinic page");
+      toast.error("Failed to load clinic page");
     }
   };
 
@@ -1768,7 +1769,7 @@ const closeModal = () => {
 
 const handleComplete = async () => {
   if (!formData.subReason.trim()) {
-    alert("Please fill required fields");
+    toast.error("Please fill required fields");
     return;
   }
 
@@ -1837,7 +1838,7 @@ const handleComplete = async () => {
 
   } catch (error) {
     console.error(error);
-    alert("❌ Error saving clinic page");
+    toast.error("Error saving clinic page");
   } finally {
     setIsCompleting(false);
   }

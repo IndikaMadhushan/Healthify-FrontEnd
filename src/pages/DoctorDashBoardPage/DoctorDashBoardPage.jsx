@@ -6,7 +6,6 @@ import DoctorInfoCard from "./DoctorInfoCard";
 import SearchPatientsCard from "./SearchPatientsCard";
 import LatestPatientsCard from "./LatestPatientsCard";
 import { getDoctorProfileApi } from "../../api/DoctorApi";
-import {  dummyPatients } from "./dummyData";
 import { getAllPatients } from "../../api/PatientApi";
 
 export default function DoctorProfilePage() {

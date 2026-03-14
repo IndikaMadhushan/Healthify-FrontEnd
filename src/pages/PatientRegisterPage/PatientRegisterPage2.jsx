@@ -4,6 +4,7 @@ import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerPatientApi } from "../../api/authApi";
+import toast from "react-hot-toast";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
@@ -102,15 +103,37 @@ export default function PatientRegisterPage2() {
     });
 
   } catch (error) {
-    const message =
-      error.response?.data?.message || "Patient registration failed!";
-    alert(message);
+    const message = getApiErrorMessage(
+      error,
+      "Patient registration failed!"
+    );
+    toast.error(message);
     console.error(error);
 
   } finally {
     setLoading(false);
   }
 };
+
+  const getApiErrorMessage = (error, fallbackMessage) => {
+    const data = error?.response?.data;
+
+    if (typeof data === "string") return data;
+    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.error === "string") return data.error;
+
+    if (Array.isArray(data?.errors)) {
+      const messages = data.errors
+        .map((item) => (typeof item === "string" ? item : item?.message))
+        .filter(Boolean);
+
+      if (messages.length) return messages.join(", ");
+    }
+
+    if (typeof error?.message === "string") return error.message;
+
+    return fallbackMessage;
+  };
 
   return (
     <RegistrationLayout image={pRegImage2} imageAlt="Patient Registration">

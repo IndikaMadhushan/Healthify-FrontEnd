@@ -1,6 +1,7 @@
 // thathsara
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import DoctorNavBar from "../../components/DoctorNavBar2"; //patientge details ekka pennanna nav bar eka
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
@@ -134,7 +135,7 @@ export default function DoctorConsultPage() {
    */
   const handleComplete = async () => {
     if (!validate()) {
-      alert("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -173,8 +174,8 @@ export default function DoctorConsultPage() {
       setCanEdit(true);
       setRemainingTime(EDIT_WINDOW_SECONDS);
 
-      alert(
-        `✅ Consultation completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\n✏️ You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.\n\nThis consultation is now saved in the patient's Consult folder.`,
+      toast.success(
+        `Consultation completed and saved! Patient: ${patientInfo.fullName}, Date: ${formData.date}. You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
       );
 
       setIsCompleting(false);
@@ -194,14 +195,14 @@ export default function DoctorConsultPage() {
    */
   const handleUpdate = async () => {
     if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer update this consultation.",
+      toast.error(
+        "Edit window has expired. You can no longer update this consultation."
       );
       return;
     }
 
     if (!validate()) {
-      alert("Please fill in required fields before updating");
+      toast.error("Please fill in required fields before updating");
       return;
     }
 
@@ -230,8 +231,8 @@ export default function DoctorConsultPage() {
       );
       console.log(`📧 Email sent to: ${patientInfo.email}`);
 
-      alert(
-        `📧 Update request sent!\n\nPatient: ${patientInfo.fullName}\nEmail: ${patientInfo.email}\n\n⏳ Waiting for patient approval...\n\nThe patient will receive an email to accept these changes.\nOnce approved, the updated consultation will be saved to their Consult folder.`,
+      toast.success(
+        `Update request sent to ${patientInfo.fullName}. Waiting for patient approval.`,
       );
 
       setIsUpdating(false);
@@ -250,8 +251,8 @@ export default function DoctorConsultPage() {
    */
   const handleDelete = () => {
     if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer delete this consultation.",
+      toast.error(
+        "Edit window has expired. You can no longer delete this consultation."
       );
       return;
     }
