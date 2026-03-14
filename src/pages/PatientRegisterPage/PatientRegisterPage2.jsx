@@ -9,6 +9,10 @@ import toast from "react-hot-toast";
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -75,45 +79,42 @@ export default function PatientRegisterPage2() {
   };
 
   const handleFinish = async () => {
-  if (!validate()) return;
+    if (!validate()) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  const step1Data = JSON.parse(
-    sessionStorage.getItem("patientRegStep1") || "{}"
-  );
-
-  const payload = {
-    ...step1Data,
-    password: formData.password,
-  };
-
-  try {
-    await registerPatientApi(payload);
-
-    console.log("Patient registered successfully. Redirecting to OTP page...");
-
-    // Clean step1 data
-    sessionStorage.removeItem("patientRegStep1");
-
-    // Redirect to OTP page with email in navigation state
-    navigate("/verify-otp", { 
-      replace: true,
-      state: { email: payload.email }  // ← ADD THIS LINE
-    });
-
-  } catch (error) {
-    const message = getApiErrorMessage(
-      error,
-      "Patient registration failed!"
+    const step1Data = JSON.parse(
+      sessionStorage.getItem("patientRegStep1") || "{}",
     );
-    toast.error(message);
-    console.error(error);
 
-  } finally {
-    setLoading(false);
-  }
-};
+    const payload = {
+      ...step1Data,
+      password: formData.password,
+    };
+
+    try {
+      await registerPatientApi(payload);
+
+      console.log(
+        "Patient registered successfully. Redirecting to OTP page...",
+      );
+
+      // Clean step1 data
+      sessionStorage.removeItem("patientRegStep1");
+
+      // Redirect to OTP page with email in navigation state
+      navigate("/verify-otp", {
+        replace: true,
+        state: { email: payload.email }, // ← ADD THIS LINE
+      });
+    } catch (error) {
+      const message = getApiErrorMessage(error, "Patient registration failed!");
+      toast.error(message);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getApiErrorMessage = (error, fallbackMessage) => {
     const data = error?.response?.data;
@@ -194,9 +195,7 @@ export default function PatientRegisterPage2() {
             </span>
           </label>
           {errors.agreedToTerms && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.agreedToTerms}
-            </p>
+            <p className="text-xs text-red-500 mt-1">{errors.agreedToTerms}</p>
           )}
         </div>
 
