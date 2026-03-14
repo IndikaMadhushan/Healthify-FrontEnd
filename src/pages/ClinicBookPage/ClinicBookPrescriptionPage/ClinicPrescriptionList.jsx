@@ -283,7 +283,6 @@
 
 import { useEffect, useState } from "react";
 import { FaFilter } from "react-icons/fa";
-import { useParams } from "react-router-dom";
 import PrescriptionCard from "./ClinicPrescriptionCard";
 import PrescriptionModal from "../../Prescriptions/PrescriptionModal";
 import { getClinicPagesByClinicBookId } from "../../../api/ClinicPageApi";

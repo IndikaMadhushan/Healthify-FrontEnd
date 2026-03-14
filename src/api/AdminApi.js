@@ -1,9 +1,7 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
 
-const API_BASE_URL = "http://13.61.163.102:8083/api/admin";
 const FILE_BASE_URL = axiosInstance.defaults.baseURL || "";
 
 export const buildAdminFileUrl = (url) => {

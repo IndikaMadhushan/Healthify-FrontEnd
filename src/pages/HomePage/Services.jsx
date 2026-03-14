@@ -1,4 +1,3 @@
-import React from "react";
 import ServiceCard from "./ServiceCard";
 import { MdUploadFile } from "react-icons/md";
 import { motion } from "framer-motion";
