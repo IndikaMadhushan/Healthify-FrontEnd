@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import RegistrationLayout from "../../components/RegistrationLayout";
@@ -9,13 +9,22 @@ import pRegImage1 from "../../assets/p-reg-image1.png";
 export default function PatientRegisterPage1() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    dateOfBirth: "",
-    gender: "",
-    nic: "",
-    email: "",
-    phone: "",
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const [formData, setFormData] = useState(() => {
+    const savedData = sessionStorage.getItem("patientRegStep1");
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          fullName: "",
+          dateOfBirth: "",
+          gender: "",
+          nic: "",
+          email: "",
+          phone: "",
+        };
   });
 
   const [errors, setErrors] = useState({});
@@ -54,11 +63,8 @@ export default function PatientRegisterPage1() {
 
     if (!formData.nic.trim()) {
       newErrors.nic = "NIC number is required";
-    } else if (
-      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())
-    ) {
-      newErrors.nic =
-        "Invalid NIC format (e.g., 123456789V or 123456789012)";
+    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())) {
+      newErrors.nic = "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
     if (!formData.email.trim()) {

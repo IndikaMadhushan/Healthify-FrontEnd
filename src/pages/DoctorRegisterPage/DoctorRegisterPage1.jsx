@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
@@ -8,15 +8,24 @@ import dRegImage1 from "../../assets/d-reg-image1.png";
 export default function DoctorRegisterPage1() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    gender: "",
-    email: "",
-    nic: "",
-    dateOfBirth: "",
-    specialization: "",
-    hospital: "",
-    licenseNumber: "",
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const [formData, setFormData] = useState(() => {
+    const savedData = sessionStorage.getItem("doctorRegStep1");
+    return savedData
+      ? JSON.parse(savedData)
+      : {
+          fullName: "",
+          gender: "",
+          email: "",
+          nic: "",
+          dateOfBirth: "",
+          specialization: "",
+          hospital: "",
+          licenseNumber: "",
+        };
   });
 
   const [errors, setErrors] = useState({});
@@ -49,9 +58,11 @@ export default function DoctorRegisterPage1() {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.nic.trim()) newErrors.nic = "NIC is required";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth required";
-    if (!formData.specialization) newErrors.specialization = "Specialization required";
+    if (!formData.specialization)
+      newErrors.specialization = "Specialization required";
     if (!formData.hospital.trim()) newErrors.hospital = "Hospital required";
-    if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "SLMC number required";
+    if (!formData.licenseNumber.trim())
+      newErrors.licenseNumber = "SLMC number required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -61,10 +72,7 @@ export default function DoctorRegisterPage1() {
     e.preventDefault();
     if (!validate()) return;
 
-    sessionStorage.setItem(
-      "doctorRegStep1",
-      JSON.stringify(formData)
-    );
+    sessionStorage.setItem("doctorRegStep1", JSON.stringify(formData));
 
     navigate("/doctor-register-2");
   };
@@ -132,9 +140,13 @@ export default function DoctorRegisterPage1() {
             onChange={handleChange("specialization")}
             className="w-full px-4 py-3 rounded-lg border border-gray-300"
           >
-            <option value="" disabled>Select specialization</option>
+            <option value="" disabled>
+              Select specialization
+            </option>
             {SPECIALIZATIONS.map((spec) => (
-              <option key={spec} value={spec}>{spec}</option>
+              <option key={spec} value={spec}>
+                {spec}
+              </option>
             ))}
           </select>
           {errors.specialization && (
