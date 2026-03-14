@@ -307,7 +307,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md">
 
               <h1 className="text-3xl font-bold text-center text-[#18AAB0] mb-2">
-                Welcome Book
+                Welcome Back
               </h1>
               <p className="text-center text-gray-500 mb-6">
                 Login to your account
