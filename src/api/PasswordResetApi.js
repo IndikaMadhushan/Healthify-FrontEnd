@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://13.61.163.102:8083/api";
 
 /**
  * Request password reset OTP
