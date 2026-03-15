@@ -71,6 +71,14 @@ export const getPatientMetricGraphApi = (patientId, metricType) =>
         { params: { metricType } }
     );
 
+// Add health metric
+export const addPatientMetricApi = (patientId, metricType, value) =>
+    axiosInstance.post(
+        `/api/metrics/${patientId}`,
+        null,
+        { params: { metricType, value } }
+    );
+
     
 //list all patients
 export const getAllPatients = () =>

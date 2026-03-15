@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import {
   LineChart,
   Line,
@@ -12,7 +13,8 @@ import {
 import {
   getPatientProfileApi,
   getPatientBmiApi,
-  getPatientMetricGraphApi
+  getPatientMetricGraphApi,
+  addPatientMetricApi
 } from "../../api/PatientApi";
 
 import {
@@ -42,6 +44,7 @@ export default function SummaryPage() {
     cholesterol: ""
   });
   const [entryError, setEntryError] = useState("");
+  const [isSavingEntry, setIsSavingEntry] = useState(false);
 
   const [reminders, setReminders] = useState({
     medicines: [],
@@ -166,6 +169,35 @@ export default function SummaryPage() {
     loadSummary();
   }, []);
 
+  const METRIC_TYPES = {
+    weight: "WEIGHT",
+    height: "HEIGHT",
+    sugar: "BLOOD_SUGAR",
+    cholesterol: "CHOLESTEROL"
+  };
+
+  const METRIC_KEYS_BY_TYPE = {
+    WEIGHT: "weight",
+    HEIGHT: "height",
+    BLOOD_SUGAR: "sugar",
+    CHOLESTEROL: "cholesterol"
+  };
+
+  const refreshMetricGraphs = async (patientId, metricTypes) => {
+    const results = await Promise.all(
+      metricTypes.map((type) => getPatientMetricGraphApi(patientId, type))
+    );
+
+    setMetrics((prev) => {
+      const next = { ...prev };
+      metricTypes.forEach((type, index) => {
+        const key = METRIC_KEYS_BY_TYPE[type];
+        next[key] = formatMetricData(results[index].data);
+      });
+      return next;
+    });
+  };
+
   const handleEntryChange = (field) => (e) => {
     setEntry((prev) => ({
       ...prev,
@@ -225,7 +257,7 @@ export default function SummaryPage() {
     }
   };
 
-  const handleEntrySubmit = (e) => {
+  const handleEntrySubmit = async (e) => {
     e.preventDefault();
 
     const hasAny = Object.values(entry).some((val) => val.trim());
@@ -234,19 +266,54 @@ export default function SummaryPage() {
       return;
     }
 
-    appendMetricPoint(entry.weight, "weight");
-    appendMetricPoint(entry.height, "height");
-    appendMetricPoint(entry.sugar, "sugar");
-    appendMetricPoint(entry.cholesterol, "cholesterol");
+    if (!patient?.id) {
+      setEntryError("Patient details not loaded yet.");
+      return;
+    }
 
-    updateBmiFromEntry(entry.weight, entry.height);
+    const metricInputs = Object.entries(entry)
+      .filter(([, value]) => value.trim())
+      .map(([key, value]) => ({
+        type: METRIC_TYPES[key],
+        value: Number(value)
+      }))
+      .filter((item) => Number.isFinite(item.value) && item.value > 0);
 
-    setEntry({
-      weight: "",
-      height: "",
-      sugar: "",
-      cholesterol: ""
-    });
+    if (metricInputs.length === 0) {
+      setEntryError("Please enter valid numeric values.");
+      return;
+    }
+
+    setIsSavingEntry(true);
+
+    try {
+      await Promise.all(
+        metricInputs.map((item) =>
+          addPatientMetricApi(patient.id, item.type, item.value)
+        )
+      );
+
+      await refreshMetricGraphs(
+        patient.id,
+        metricInputs.map((item) => item.type)
+      );
+
+      updateBmiFromEntry(entry.weight, entry.height);
+
+      setEntry({
+        weight: "",
+        height: "",
+        sugar: "",
+        cholesterol: ""
+      });
+
+      toast.success("Metrics saved. Charts updated.");
+    } catch (err) {
+      console.error("Failed to save metrics", err);
+      toast.error("Failed to save metrics. Please try again.");
+    } finally {
+      setIsSavingEntry(false);
+    }
   };
 
   if (!patient) {
@@ -390,9 +457,10 @@ export default function SummaryPage() {
             <div className="flex justify-end">
               <button
                 type="submit"
+                disabled={isSavingEntry}
                 className="px-6 py-2 rounded-full bg-secondary text-white text-sm font-semibold hover:bg-secondary/90 transition"
               >
-                Add to Charts
+                {isSavingEntry ? "Saving..." : "Add to Charts"}
               </button>
             </div>
           </form>
