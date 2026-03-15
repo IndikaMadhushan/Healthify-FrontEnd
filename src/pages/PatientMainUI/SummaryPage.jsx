@@ -35,6 +35,14 @@ export default function SummaryPage() {
     cholesterol: []
   });
 
+  const [entry, setEntry] = useState({
+    weight: "",
+    height: "",
+    sugar: "",
+    cholesterol: ""
+  });
+  const [entryError, setEntryError] = useState("");
+
   const [reminders, setReminders] = useState({
     medicines: [],
     appointments: [],
@@ -158,6 +166,89 @@ export default function SummaryPage() {
     loadSummary();
   }, []);
 
+  const handleEntryChange = (field) => (e) => {
+    setEntry((prev) => ({
+      ...prev,
+      [field]: e.target.value
+    }));
+    if (entryError) setEntryError("");
+  };
+
+  const appendMetricPoint = (value, unitKey) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) return;
+
+    const dateLabel = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    });
+
+    setMetrics((prev) => ({
+      ...prev,
+      [unitKey]: [...prev[unitKey], { date: dateLabel, value: numeric }]
+    }));
+  };
+
+  const updateBmiFromEntry = (weightValue, heightValue) => {
+    const weightKg = Number(weightValue);
+    const heightCm = Number(heightValue);
+
+    if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) return;
+    if (weightKg <= 0 || heightCm <= 0) return;
+
+    const heightM = heightCm / 100;
+    const bmi = weightKg / (heightM * heightM);
+
+    let category = "";
+    if (bmi >= 18.5 && bmi <= 24.9) category = "Healthy";
+    else if (bmi < 18.5) category = "Underweight";
+    else category = "Overweight";
+
+    setBmiInfo({ bmi, category });
+
+    if (bmi >= 18.5 && bmi <= 24.9) {
+      setHealthStatus({
+        message: "🎉 Excellent! Your BMI is in the healthy range.",
+        color: "bg-green-50 border-green-200 text-green-800"
+      });
+    } else if (bmi < 18.5) {
+      setHealthStatus({
+        message: "⚠️ You are underweight. Consider consulting a doctor.",
+        color: "bg-yellow-50 border-yellow-200 text-yellow-800"
+      });
+    } else {
+      setHealthStatus({
+        message:
+          "⚠️ Your BMI indicates overweight. Lifestyle changes are recommended.",
+        color: "bg-red-50 border-red-200 text-red-800"
+      });
+    }
+  };
+
+  const handleEntrySubmit = (e) => {
+    e.preventDefault();
+
+    const hasAny = Object.values(entry).some((val) => val.trim());
+    if (!hasAny) {
+      setEntryError("Enter at least one value to update the graphs.");
+      return;
+    }
+
+    appendMetricPoint(entry.weight, "weight");
+    appendMetricPoint(entry.height, "height");
+    appendMetricPoint(entry.sugar, "sugar");
+    appendMetricPoint(entry.cholesterol, "cholesterol");
+
+    updateBmiFromEntry(entry.weight, entry.height);
+
+    setEntry({
+      weight: "",
+      height: "",
+      sugar: "",
+      cholesterol: ""
+    });
+  };
+
   if (!patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -224,6 +315,87 @@ export default function SummaryPage() {
             data={metrics.cholesterol}
             unit="mg/dL"
           />
+        </div>
+
+        {/* Add Current Measurements */}
+        <div className="bg-white rounded-3xl shadow-sm p-6 lg:p-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">🧾 Add Current Metrics</h2>
+            <span className="text-xs text-gray-500">Updates charts above</span>
+          </div>
+
+          <form onSubmit={handleEntrySubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Weight (kg)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.weight}
+                  onChange={handleEntryChange("weight")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 62.5"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Height (cm)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.height}
+                  onChange={handleEntryChange("height")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 170"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Sugar (mg/dL)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.sugar}
+                  onChange={handleEntryChange("sugar")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 98"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Cholesterol (mg/dL)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.cholesterol}
+                  onChange={handleEntryChange("cholesterol")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 180"
+                />
+              </div>
+            </div>
+
+            {entryError && (
+              <p className="text-sm text-red-600">{entryError}</p>
+            )}
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="px-6 py-2 rounded-full bg-secondary text-white text-sm font-semibold hover:bg-secondary/90 transition"
+              >
+                Add to Charts
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Reminders */}
