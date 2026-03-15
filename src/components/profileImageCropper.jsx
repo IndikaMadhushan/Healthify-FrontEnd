@@ -1,6 +1,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
 
 /* ================= HELPERS ================= */
 
@@ -84,11 +85,11 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
     if (!f) return;
 
     if (!ACCEPTED.includes(f.type)) {
-      alert("Only JPG, PNG, WEBP allowed");
+      toast.error("Only JPG, PNG, WEBP allowed");
       return;
     }
     if (f.size > MAX_BYTES) {
-      alert("Maximum file size is 5MB");
+      toast.error("Maximum file size is 5MB");
       return;
     }
 

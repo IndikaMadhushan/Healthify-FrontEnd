@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
@@ -74,6 +75,9 @@ export default function PatientRegisterPage1() {
     }
 
     setErrors(newErrors);
+    if (newErrors.phone) {
+      toast.error(newErrors.phone);
+    }
     return Object.keys(newErrors).length === 0;
   };
 

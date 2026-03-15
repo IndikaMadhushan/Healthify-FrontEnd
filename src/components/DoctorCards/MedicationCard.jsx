@@ -1,6 +1,7 @@
 //thathsara
 import { useState, useEffect  } from "react";
 import { FaTrash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 
 export function MedicationCard({
@@ -91,7 +92,7 @@ useEffect(() => {
   const handleAddRow = () => {
 
   if (!canEdit && isViewMode) {
-    alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
+    toast.error("Edit window expired. Click 'Request Update' to make changes.");
     return;
   }
 
@@ -106,12 +107,12 @@ useEffect(() => {
   // Remove medication row
   const handleRemoveRow = (index) => {
     if (!canEdit && isViewMode) {
-      alert("⏰ Edit window expired. Click 'Request Update' to make changes.");
+      toast.error("Edit window expired. Click 'Request Update' to make changes.");
       return;
     }
 
     if (medications.length === 1) {
-      alert("At least one row must remain");
+      toast.error("At least one row must remain");
       return;
     }
 

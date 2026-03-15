@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
+import toast from "react-hot-toast";
 
 const initialEmergency = {
   primary: {
@@ -111,7 +112,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
     if (!validate()) return;
 
     console.log("Emergency contacts:", form);
-    alert("Emergency contact details saved (check console)");
+    toast.success("Emergency contact details saved (check console)");
   };
 
   /** --------------------

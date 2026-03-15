@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import BasicInfoForm from "./FormComponent/basicInfoForm";
 import EmergencyContactForm from "./FormComponent/Emergency";
 import { updatePatientProfileApi } from "../../api/PatientApi";
+import toast from "react-hot-toast";
 
 export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
   const basicRef = useRef();
@@ -52,7 +53,7 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
       onClose();
     } catch (err) {
       console.error("Profile update failed", err);
-      alert("Failed to update profile");
+      toast.error("Failed to update profile");
     }
   };
 
