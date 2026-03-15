@@ -855,6 +855,12 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
               >
                 {isEnabled ? 'Disable Account' : 'Activate Account'}
               </button>
+              <button
+                onClick={onClose}
+                className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 border-2 border-gray-200 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+              >
+                ✕ Cancel
+              </button>
             </div>
           </div>
         ) : (
