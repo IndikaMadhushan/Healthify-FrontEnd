@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import PrescriptionList from "./PrescriptionList";
 import { ArrowLeft } from "lucide-react";
 import { PatinetNavBar } from "../../components/PatientNavBar";
+import toast from "react-hot-toast";
 
 function PrescriptionPage() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function PrescriptionPage() {
 
     if (role === "DOCTOR") {
       if (!patientId) {
-        alert("No patient selected");
+        toast.error("No patient selected");
         navigate("/doctor/dashboard");
         return;
       }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import {
   LineChart,
   Line,
@@ -12,7 +13,8 @@ import {
 import {
   getPatientProfileApi,
   getPatientBmiApi,
-  getPatientMetricGraphApi
+  getPatientMetricGraphApi,
+  addPatientMetricApi
 } from "../../api/PatientApi";
 
 import {
@@ -34,6 +36,15 @@ export default function SummaryPage() {
     sugar: [],
     cholesterol: []
   });
+
+  const [entry, setEntry] = useState({
+    weight: "",
+    height: "",
+    sugar: "",
+    cholesterol: ""
+  });
+  const [entryError, setEntryError] = useState("");
+  const [isSavingEntry, setIsSavingEntry] = useState(false);
 
   const [reminders, setReminders] = useState({
     medicines: [],
@@ -158,6 +169,184 @@ export default function SummaryPage() {
     loadSummary();
   }, []);
 
+  const METRIC_TYPES = {
+    weight: "WEIGHT",
+    height: "HEIGHT",
+    sugar: "BLOOD_SUGAR",
+    cholesterol: "CHOLESTEROL"
+  };
+
+  const METRIC_KEYS_BY_TYPE = {
+    WEIGHT: "weight",
+    HEIGHT: "height",
+    BLOOD_SUGAR: "sugar",
+    CHOLESTEROL: "cholesterol"
+  };
+
+  const refreshMetricGraphs = async (patientId, metricTypes) => {
+    const results = await Promise.all(
+      metricTypes.map((type) => getPatientMetricGraphApi(patientId, type))
+    );
+
+    setMetrics((prev) => {
+      const next = { ...prev };
+      metricTypes.forEach((type, index) => {
+        const key = METRIC_KEYS_BY_TYPE[type];
+        next[key] = formatMetricData(results[index].data);
+      });
+      return next;
+    });
+  };
+
+  const handleEntryChange = (field) => (e) => {
+    setEntry((prev) => ({
+      ...prev,
+      [field]: e.target.value
+    }));
+    if (entryError) setEntryError("");
+  };
+
+  const appendMetricPoint = (value, unitKey) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) return;
+
+    const dateLabel = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    });
+
+    setMetrics((prev) => ({
+      ...prev,
+      [unitKey]: [...prev[unitKey], { date: dateLabel, value: numeric }]
+    }));
+  };
+
+  const updateBmiFromEntry = (weightValue, heightValue) => {
+    const weightKg = Number(weightValue);
+    const heightCm = Number(heightValue);
+
+    if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm)) return;
+    if (weightKg <= 0 || heightCm <= 0) return;
+
+    const heightM = heightCm / 100;
+    const bmi = weightKg / (heightM * heightM);
+
+    let category = "";
+    if (bmi >= 18.5 && bmi <= 24.9) category = "Healthy";
+    else if (bmi < 18.5) category = "Underweight";
+    else category = "Overweight";
+
+    setBmiInfo({ bmi, category });
+
+    if (bmi >= 18.5 && bmi <= 24.9) {
+      setHealthStatus({
+        message: "🎉 Excellent! Your BMI is in the healthy range.",
+        color: "bg-green-50 border-green-200 text-green-800"
+      });
+    } else if (bmi < 18.5) {
+      setHealthStatus({
+        message: "⚠️ You are underweight. Consider consulting a doctor.",
+        color: "bg-yellow-50 border-yellow-200 text-yellow-800"
+      });
+    } else {
+      setHealthStatus({
+        message:
+          "⚠️ Your BMI indicates overweight. Lifestyle changes are recommended.",
+        color: "bg-red-50 border-red-200 text-red-800"
+      });
+    }
+
+    return bmi;
+  };
+
+  const handleEntrySubmit = async (e) => {
+    e.preventDefault();
+
+    const hasAny = Object.values(entry).some((val) => val.trim());
+    if (!hasAny) {
+      setEntryError("Enter at least one value to update the graphs.");
+      return;
+    }
+
+    if (!patient?.id) {
+      setEntryError("Patient details not loaded yet.");
+      return;
+    }
+
+    const metricInputs = Object.entries(entry)
+      .filter(([, value]) => value.trim())
+      .map(([key, value]) => ({
+        type: METRIC_TYPES[key],
+        value: Number(value)
+      }))
+      .filter((item) => Number.isFinite(item.value) && item.value > 0);
+
+    if (metricInputs.length === 0) {
+      setEntryError("Please enter valid numeric values.");
+      return;
+    }
+
+    setIsSavingEntry(true);
+
+    try {
+      await Promise.all(
+        metricInputs.map((item) =>
+          addPatientMetricApi(patient.id, item.type, item.value)
+        )
+      );
+
+      const bmiValue = updateBmiFromEntry(entry.weight, entry.height);
+      if (Number.isFinite(bmiValue)) {
+        await addPatientMetricApi(patient.id, "BMI", bmiValue);
+      }
+
+      await refreshMetricGraphs(
+        patient.id,
+        metricInputs.map((item) => item.type)
+      );
+
+      if (Number.isFinite(bmiValue)) {
+        const bmiRes = await getPatientBmiApi(patient.id);
+        setBmiInfo(bmiRes.data);
+        if (bmiRes.data?.bmi) {
+          const bmi = bmiRes.data.bmi;
+
+          if (bmi >= 18.5 && bmi <= 24.9) {
+            setHealthStatus({
+              message: "🎉 Excellent! Your BMI is in the healthy range.",
+              color: "bg-green-50 border-green-200 text-green-800"
+            });
+          } else if (bmi < 18.5) {
+            setHealthStatus({
+              message: "⚠️ You are underweight. Consider consulting a doctor.",
+              color: "bg-yellow-50 border-yellow-200 text-yellow-800"
+            });
+          } else {
+            setHealthStatus({
+              message:
+                "⚠️ Your BMI indicates overweight. Lifestyle changes are recommended.",
+              color: "bg-red-50 border-red-200 text-red-800"
+            });
+          }
+        }
+      }
+
+      setEntry({
+        weight: "",
+        height: "",
+        sugar: "",
+        cholesterol: ""
+      });
+
+      toast.success("Metrics saved. Charts updated.");
+    } catch (err) {
+      console.error("Failed to save metrics", err);
+      toast.error("Failed to save metrics. Please try again.");
+    } finally {
+      setIsSavingEntry(false);
+    }
+  };
+
   if (!patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -224,6 +413,88 @@ export default function SummaryPage() {
             data={metrics.cholesterol}
             unit="mg/dL"
           />
+        </div>
+
+        {/* Add Current Measurements */}
+        <div className="bg-white rounded-3xl shadow-sm p-6 lg:p-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">🧾 Add Current Metrics</h2>
+            <span className="text-xs text-gray-500">Updates charts above</span>
+          </div>
+
+          <form onSubmit={handleEntrySubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Weight (kg)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.weight}
+                  onChange={handleEntryChange("weight")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 62.5"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Height (cm)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.height}
+                  onChange={handleEntryChange("height")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 170"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Sugar (mg/dL)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.sugar}
+                  onChange={handleEntryChange("sugar")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 98"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Cholesterol (mg/dL)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={entry.cholesterol}
+                  onChange={handleEntryChange("cholesterol")}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                  placeholder="e.g., 180"
+                />
+              </div>
+            </div>
+
+            {entryError && (
+              <p className="text-sm text-red-600">{entryError}</p>
+            )}
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isSavingEntry}
+                className="px-6 py-2 rounded-full bg-secondary text-white text-sm font-semibold hover:bg-secondary/90 transition"
+              >
+                {isSavingEntry ? "Saving..." : "Add to Charts"}
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Reminders */}

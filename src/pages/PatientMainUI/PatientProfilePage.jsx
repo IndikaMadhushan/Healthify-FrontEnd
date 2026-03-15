@@ -2,6 +2,7 @@ import ProfileImageCropper from "../../components/profileImageCropper";
 import { useState, useEffect } from "react";
 import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
 import { getPatientProfileApi, updatePatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
+import toast from "react-hot-toast";
 
 export default function MyProfile() {
   const [openEdit, setOpenEdit] = useState(false);
@@ -50,7 +51,7 @@ export default function MyProfile() {
 
     } catch (err) {
       console.error("Profile image upload failed", err);
-      alert("Failed to upload profile image");
+      toast.error("Failed to upload profile image");
     }
   };
 
@@ -111,7 +112,7 @@ export default function MyProfile() {
                       window.location.reload();
                     } catch (err) {
                       console.error("Image upload failed", err);
-                      alert("Failed to upload image");
+                      toast.error("Failed to upload image");
                     }
                   }}
                 />

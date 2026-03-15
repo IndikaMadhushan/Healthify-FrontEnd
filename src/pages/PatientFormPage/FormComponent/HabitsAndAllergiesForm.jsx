@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const initialHabits = {
   smokingStatus: "",       // "never" | "current" | "stopped"
@@ -25,7 +26,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Habits & Allergies:", form);
-    alert("Habits & allergies data saved (check console)");
+    toast.success("Habits & allergies data saved (check console)");
   };
 
   // UI helper classes 

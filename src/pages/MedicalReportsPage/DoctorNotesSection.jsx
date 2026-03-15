@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
 
 export default function DoctorNotesSection() {
   const [notes, setNotes] = useState([]);
@@ -58,7 +59,7 @@ export default function DoctorNotesSection() {
       await loadNotes();
     } catch (error) {
       console.error("Failed to add note:", error);
-      alert("Failed to add note. Please try again.");
+        toast.error("Failed to add note. Please try again.");
     } finally {
       setIsAdding(false);
     }
@@ -72,7 +73,7 @@ export default function DoctorNotesSection() {
       await loadNotes();
     } catch (error) {
       console.error("Failed to delete note:", error);
-      alert("Failed to delete note. Please try again.");
+        toast.error("Failed to delete note. Please try again.");
     }
   };
 

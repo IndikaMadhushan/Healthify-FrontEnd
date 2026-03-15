@@ -2,6 +2,7 @@ import { useState } from "react";
 import ChronicIllnessesSection from "./ChronicIllnessesSection";
 import VaccineSection from "./VaccineSection";
 import SurgeryEntry from "./SurgeryEntry";
+import toast from "react-hot-toast";
 
 const initialChronic = {
   chronicIllnesses: [],
@@ -80,7 +81,7 @@ export default function PatientMedicalForm({showButton=false, onNext }) {
     };
 
     console.log("Patient medical full payload:", payload);
-    alert("Patient medical history saved (check console)");
+    toast.success("Patient medical history saved (check console)");
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";

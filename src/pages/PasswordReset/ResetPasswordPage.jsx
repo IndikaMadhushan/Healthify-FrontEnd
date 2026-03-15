@@ -4,6 +4,7 @@ import {
   confirmPasswordResetApi,
   resendPasswordResetOtpApi,
 } from "../../api/PasswordResetApi";
+import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -123,8 +124,8 @@ export default function ResetPasswordPage() {
       setLoading(true);
       await confirmPasswordResetApi(userEmail, otpValue, newPassword);
 
-      alert(
-        "✅ Password reset successful! You can now login with your new password.",
+      toast.success(
+        "Password reset successful! You can now login with your new password."
       );
       navigate("/login", { replace: true });
     } catch (err) {
@@ -151,7 +152,7 @@ export default function ResetPasswordPage() {
       setCanResend(false);
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0].focus();
-      alert("📧 New OTP sent to your email!");
+      toast.success("New OTP sent to your email!");
     } catch (err) {
       console.error("Failed to resend OTP:", err);
       const message =
