@@ -255,6 +255,8 @@ export default function SummaryPage() {
         color: "bg-red-50 border-red-200 text-red-800"
       });
     }
+
+    return bmi;
   };
 
   const handleEntrySubmit = async (e) => {
@@ -293,12 +295,41 @@ export default function SummaryPage() {
         )
       );
 
+      const bmiValue = updateBmiFromEntry(entry.weight, entry.height);
+      if (Number.isFinite(bmiValue)) {
+        await addPatientMetricApi(patient.id, "BMI", bmiValue);
+      }
+
       await refreshMetricGraphs(
         patient.id,
         metricInputs.map((item) => item.type)
       );
 
-      updateBmiFromEntry(entry.weight, entry.height);
+      if (Number.isFinite(bmiValue)) {
+        const bmiRes = await getPatientBmiApi(patient.id);
+        setBmiInfo(bmiRes.data);
+        if (bmiRes.data?.bmi) {
+          const bmi = bmiRes.data.bmi;
+
+          if (bmi >= 18.5 && bmi <= 24.9) {
+            setHealthStatus({
+              message: "🎉 Excellent! Your BMI is in the healthy range.",
+              color: "bg-green-50 border-green-200 text-green-800"
+            });
+          } else if (bmi < 18.5) {
+            setHealthStatus({
+              message: "⚠️ You are underweight. Consider consulting a doctor.",
+              color: "bg-yellow-50 border-yellow-200 text-yellow-800"
+            });
+          } else {
+            setHealthStatus({
+              message:
+                "⚠️ Your BMI indicates overweight. Lifestyle changes are recommended.",
+              color: "bg-red-50 border-red-200 text-red-800"
+            });
+          }
+        }
+      }
 
       setEntry({
         weight: "",
