@@ -1,8 +1,8 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 import ChronicIllnessesSection from "./ChronicIllnessesSection";
 import VaccineSection from "./VaccineSection";
 import SurgeryEntry from "./SurgeryEntry";
+import toast from "react-hot-toast";
 
 const initialChronic = {
   chronicIllnesses: [],
@@ -10,7 +10,7 @@ const initialChronic = {
   cancerChronic: ""
 };
 
-const vaccineInitial = {
+export const vaccineInitial = {
   takenVaccines: [],
   otherVaccine: ""
 };
@@ -22,7 +22,7 @@ const emptySurgery = {
   complications: ""
 };
 
-export default function PatientMedicalForm({ showButton = false, onNext }) {
+export default function PatientMedicalForm({showButton=false, onNext }) {
   const [patientChronic, setPatientChronic] = useState(initialChronic);
   const [vaccineData, setVaccineData] = useState(vaccineInitial);
   const [surgeries, setSurgeries] = useState([]);
@@ -81,29 +81,30 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
     };
 
     console.log("Patient medical full payload:", payload);
-    toast.success("Medical information submitted successfully");
+    toast.success("Patient medical history saved (check console)");
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
-  const actionButtonClass =
-    "px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold";
 
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Medical Information</h2>
 
+      {/* Chronic illnesses */}
       <ChronicIllnessesSection
         value={patientChronic}
         onChange={setPatientChronic}
         errors={errors}
       />
 
+      {/* Vaccines */}
       <VaccineSection
         value={vaccineData}
         onChange={setVaccineData}
         errors={errors}
       />
 
+      {/* Surgical history */}
       <div className="mt-6 border border-gray-300 rounded-xl bg-white shadow-sm p-4">
         <div className="py-2 flex items-center justify-between">
           <h2 className="font-semibold text-[18px] text-mainblack">
@@ -120,8 +121,7 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
 
         {surgeries.length === 0 && (
           <p className="text-sm text-gray-500 px-1">
-            No surgeries recorded. Click &quot;Add Surgery&quot; if the patient
-            has had any surgery.
+            No surgeries recorded. Click &quot;Add Surgery&quot; if the patient has had any surgery.
           </p>
         )}
 
@@ -138,25 +138,28 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
         </div>
       </div>
 
-      {showButton ? (
-        <div className="mt-2 flex justify-end">
-          <button
-            type="button"
-            className={actionButtonClass}
-            onClick={() => {
-              onNext();
-            }}
-          >
-            Next
-          </button>
-        </div>
-      ) : (
-        <div className="mt-2 flex justify-end">
-          <button type="submit" className={actionButtonClass}>
-            Submit Medical Info
-          </button>
-        </div>
-      )}
+      {/* Main save button */}
+      {/* <button
+        type="submit"
+        className="mt-2 px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-md text-[15px] font-semibold"
+      >
+        Next
+      </button> */}
+    {showButton && (
+      <div className="mt-2 flex justify-end">
+        <button
+        type="button"
+        className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+        onClick={() => {
+          // if you want validation later, put it here
+          onNext(); // ✅ GO TO NEXT PAGE
+        }}
+      >
+        Next
+      </button>
+      </div>
+    )}
+      
     </form>
   );
 }
