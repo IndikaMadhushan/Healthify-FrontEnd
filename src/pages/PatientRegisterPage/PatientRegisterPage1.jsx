@@ -10,7 +10,9 @@ export default function PatientRegisterPage1() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    secondName: "",
+    lastName: "",
     dateOfBirth: "",
     gender: "",
     nic: "",
@@ -33,8 +35,12 @@ export default function PatientRegisterPage1() {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
     }
 
     if (!formData.dateOfBirth) {
@@ -84,7 +90,18 @@ export default function PatientRegisterPage1() {
   const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
-      sessionStorage.setItem("patientRegStep1", JSON.stringify(formData));
+      const payload = {
+        ...formData,
+        fullName: [
+          formData.firstName,
+          formData.secondName,
+          formData.lastName,
+        ]
+          .filter(Boolean)
+          .join(" "),
+      };
+
+      sessionStorage.setItem("patientRegStep1", JSON.stringify(payload));
       navigate("/patient-register-2");
     }
   };
@@ -103,12 +120,32 @@ export default function PatientRegisterPage1() {
       </div>
 
       <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            label="First Name"
+            value={formData.firstName}
+            onChange={handleChange("firstName")}
+            error={errors.firstName}
+            placeholder="Enter your first name"
+            required
+          />
+
+          <FormField
+            label="Second Name"
+            value={formData.secondName}
+            onChange={handleChange("secondName")}
+            error={errors.secondName}
+            placeholder="Enter your second name"
+            required={false}
+          />
+        </div>
+
         <FormField
-          label="Full Name"
-          value={formData.fullName}
-          onChange={handleChange("fullName")}
-          error={errors.fullName}
-          placeholder="Enter your full name"
+          label="Last Name"
+          value={formData.lastName}
+          onChange={handleChange("lastName")}
+          error={errors.lastName}
+          placeholder="Enter your last name"
           required
         />
 
