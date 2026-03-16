@@ -45,18 +45,18 @@ export default function ServiceCard(props) {
     <div className=" lg:w-[400px] md:w-[320px] sm:w-[280px] w-[320px] md:h-[420px] h-[380px] group cursor-pointer flex flex-col">
 
       {/* Image */}
-      <div className="relative overflow-hidden rounded-t-xl h-[180px]">
+    <div className="relative overflow-hidden rounded-t-xl h-[180px]">
 
-        <img
-          src={props.image}
-          alt={props.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+      <img
+        src={props.image}
+        alt={props.title}
+        className="w-full h-full object-cover transition-all duration-700 
+        group-hover:scale-110 grayscale-[40%] brightness-90 contrast-95"
+      />
 
-        {/* Hover Mask */}
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary/60 via-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+      <div className="absolute inset-0 bg-black/20 group-hover:bg-primary/40 transition duration-500"></div>
 
-      </div>
+    </div>
 
       {/* Accent Line */}
       <div className="h-1 bg-primary w-full"></div>
@@ -77,7 +77,7 @@ export default function ServiceCard(props) {
         </h3>
 
         {/* Description */}
-        <p className="text-gray-500 text-sm leading-relaxed mt-2 px-2">
+        <p className="text-gray-500 text-md leading-relaxed mt-2 px-2">
           {props.description}
         </p>
 
