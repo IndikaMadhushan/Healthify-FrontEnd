@@ -30,6 +30,14 @@ export const getPatientProfileApi = async () => {
 export const updatePatientProfileApi = (patientId, payload) =>
     axiosInstance.put(`/api/patients/${patientId}`, payload);
 
+// Load patient medical info
+export const getPatientMedicalInfoApi = (patientId) =>
+    axiosInstance.get(`/api/patients/${patientId}/medical-info`);
+
+// Save patient medical info
+export const updatePatientMedicalInfoApi = (patientId, payload) =>
+    axiosInstance.put(`/api/patients/${patientId}/medical-info`, payload);
+
 
 // Upload profile image
 export const uploadPatientProfileImageApi = (patientId, file) => {

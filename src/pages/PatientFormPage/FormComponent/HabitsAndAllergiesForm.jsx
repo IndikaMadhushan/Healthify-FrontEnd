@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const initialHabits = {
@@ -13,8 +13,32 @@ const initialHabits = {
   drugAllergies: ""
 };
 
-export default function HabitsAndAllergiesForm({ showButton = false, onNext }) {
+export default function HabitsAndAllergiesForm({
+  showButton = false,
+  onNext,
+  initialData,
+  onSubmit,
+  isSaving = false,
+}) {
   const [form, setForm] = useState(initialHabits);
+
+  useEffect(() => {
+    if (!initialData) return;
+
+    // The form needs to rehydrate when page data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({
+      smokingStatus: initialData.smokingStatus ?? "",
+      smokingFrequency: initialData.smokingFrequency ?? "",
+      alcoholStatus: initialData.alcoholStatus ?? "",
+      alcoholFrequency: initialData.alcoholFrequency ?? "",
+      drugUseStatus: initialData.drugUseStatus ?? "",
+      drugUseFrequency: initialData.drugUseFrequency ?? "",
+      stressLevel: initialData.stressLevel ?? "",
+      foodAllergies: initialData.foodAllergies ?? "",
+      drugAllergies: initialData.drugAllergies ?? "",
+    });
+  }, [initialData]);
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({
@@ -23,10 +47,23 @@ export default function HabitsAndAllergiesForm({ showButton = false, onNext }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Habits & Allergies:", form);
-    toast.success("Lifestyle and allergy details submitted successfully");
+
+    try {
+      if (onSubmit) {
+        await onSubmit(form);
+      } else {
+        console.log("Habits & Allergies:", form);
+      }
+      toast.success("Lifestyle and allergy details submitted successfully");
+    } catch (error) {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed to submit lifestyle information";
+      toast.error(message);
+    }
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
@@ -368,8 +405,12 @@ export default function HabitsAndAllergiesForm({ showButton = false, onNext }) {
         </div>
       ) : (
         <div className="mt-2 flex justify-end">
-          <button type="submit" className={actionButtonClass}>
-            Submit Lifestyle Info
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={actionButtonClass}
+          >
+            {isSaving ? "Saving..." : "Submit Lifestyle Info"}
           </button>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ChronicIllnessesSection from "./ChronicIllnessesSection";
 import VaccineSection from "./VaccineSection";
@@ -22,11 +22,50 @@ const emptySurgery = {
   complications: ""
 };
 
-export default function PatientMedicalForm({ showButton = false, onNext }) {
+export default function PatientMedicalForm({
+  showButton = false,
+  onNext,
+  initialData,
+  onSubmit,
+  isSaving = false,
+}) {
   const [patientChronic, setPatientChronic] = useState(initialChronic);
   const [vaccineData, setVaccineData] = useState(vaccineInitial);
   const [surgeries, setSurgeries] = useState([]);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (!initialData) return;
+
+    // The form needs to rehydrate when page data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPatientChronic({
+      chronicIllnesses: Array.isArray(initialData.chronic?.chronicIllnesses)
+        ? initialData.chronic.chronicIllnesses
+        : [],
+      otherChronic: initialData.chronic?.otherChronic ?? "",
+      cancerChronic: initialData.chronic?.cancerChronic ?? "",
+    });
+    setVaccineData({
+      takenVaccines: Array.isArray(initialData.vaccines?.takenVaccines)
+        ? initialData.vaccines.takenVaccines
+        : [],
+      otherVaccine: initialData.vaccines?.otherVaccine ?? "",
+    });
+    setSurgeries(
+      Array.isArray(initialData.surgeries)
+        ? initialData.surgeries.map((item) => ({
+            ...item,
+            surgeonName:
+              item?.surgeonName ?? item?.reason ?? item?.description ?? "",
+            surgeryDate: item?.surgeryDate ?? "",
+            hospital: item?.hospital ?? "",
+            complications: item?.complications ?? "",
+          }))
+        : []
+    );
+    setErrors({});
+  }, [initialData]);
 
   const handleAddSurgery = () => {
     setSurgeries((prev) => [...prev, { ...emptySurgery }]);
@@ -42,7 +81,7 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
     setSurgeries((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -80,8 +119,20 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
       surgeries
     };
 
-    console.log("Patient medical full payload:", payload);
-    toast.success("Medical information submitted successfully");
+    try {
+      if (onSubmit) {
+        await onSubmit(payload);
+      } else {
+        console.log("Patient medical full payload:", payload);
+      }
+      toast.success("Medical information submitted successfully");
+    } catch (error) {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed to submit medical information";
+      toast.error(message);
+    }
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
@@ -152,8 +203,12 @@ export default function PatientMedicalForm({ showButton = false, onNext }) {
         </div>
       ) : (
         <div className="mt-2 flex justify-end">
-          <button type="submit" className={actionButtonClass}>
-            Submit Medical Info
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={actionButtonClass}
+          >
+            {isSaving ? "Saving..." : "Submit Medical Info"}
           </button>
         </div>
       )}
