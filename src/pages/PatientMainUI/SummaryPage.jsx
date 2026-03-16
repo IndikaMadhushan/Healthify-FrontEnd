@@ -32,6 +32,8 @@ const BMI_STATUS_STYLES = {
   OBESE: "bg-red-50 border-red-200 text-red-800",
 };
 
+const POSITIVE_NUMBER_PATTERN = /^\d*\.?\d*$/;
+
 const formatMetricData = (data) =>
   (data || []).map((m) => ({
     date: new Date(m.recordedAt).toLocaleDateString("en-US", {
@@ -205,9 +207,14 @@ export default function SummaryPage() {
   };
 
   const handleEntryChange = (field) => (e) => {
+    const { value } = e.target;
+    if (value !== "" && !POSITIVE_NUMBER_PATTERN.test(value)) {
+      return;
+    }
+
     setEntry((prev) => ({
       ...prev,
-      [field]: e.target.value,
+      [field]: value,
     }));
     if (entryError) setEntryError("");
   };
@@ -513,14 +520,23 @@ export default function SummaryPage() {
 }
 
 function MetricInput({ label, value, onChange, placeholder }) {
+  const handleKeyDown = (e) => {
+    if (["-", "+", "e", "E"].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div>
       <label className="text-sm font-medium text-gray-700">{label}</label>
       <input
         type="number"
+        min="0"
         step="0.1"
         value={value}
         onChange={onChange}
+        onKeyDown={handleKeyDown}
+        inputMode="decimal"
         className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-secondary focus:ring-2 focus:ring-secondary/20"
         placeholder={placeholder}
       />
