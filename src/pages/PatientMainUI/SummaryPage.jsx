@@ -23,7 +23,7 @@ import {
   getPeriodTrackerApi,
   getOtherRemindersApi
 } from "../../api/RemindersApi";
-import { getFirstName } from "../../utils/nameUtils";
+import { getGreetingName } from "../../utils/nameUtils";
 
 export default function SummaryPage() {
   const [greeting, setGreeting] = useState("");
@@ -349,7 +349,7 @@ export default function SummaryPage() {
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                {greeting}, {getFirstName(patient) || "there"} 👋
+                {greeting}, {getGreetingName(patient) || "there"} 👋
               </h1>
               <p className="text-sm">
                 {patient.age ?? "—"} years • {patient.gender} • ID:{" "}
