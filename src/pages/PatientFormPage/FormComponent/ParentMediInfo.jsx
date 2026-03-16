@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import ChronicIllnessesSection from "./ChronicIllnessesSection";
 
@@ -7,45 +7,13 @@ const initialChronic = {
   otherChronic: ""
 };
 
-export default function ParentMedicalForm({
-  showButton = false,
-  onNext,
-  initialData,
-  onSubmit,
-  isSaving = false,
-}) {
+export default function ParentMedicalForm({ showButton = false, onNext }) {
   const [parentChronic, setParentChronic] = useState(initialChronic);
 
-  useEffect(() => {
-    if (!initialData) return;
-
-    // The form needs to rehydrate when page data is loaded or refreshed.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setParentChronic({
-      chronicIllnesses: Array.isArray(initialData.chronicIllnesses)
-        ? initialData.chronicIllnesses
-        : [],
-      otherChronic: initialData.otherChronic ?? "",
-    });
-  }, [initialData]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    try {
-      if (onSubmit) {
-        await onSubmit(parentChronic);
-      } else {
-        console.log("Parent medical:", parentChronic);
-      }
-      toast.success("Parent medical information submitted successfully");
-    } catch (error) {
-      const message =
-        error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Failed to submit parent medical information";
-      toast.error(message);
-    }
+    console.log("Parent medical:", parentChronic);
+    toast.success("Parent medical information submitted successfully");
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-1";
@@ -79,12 +47,8 @@ export default function ParentMedicalForm({
         </div>
       ) : (
         <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={isSaving}
-            className={actionButtonClass}
-          >
-            {isSaving ? "Saving..." : "Submit Parent Info"}
+          <button type="submit" className={actionButtonClass}>
+            Submit Parent Info
           </button>
         </div>
       )}
