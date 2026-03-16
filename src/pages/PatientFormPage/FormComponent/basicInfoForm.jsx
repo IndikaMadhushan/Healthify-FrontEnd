@@ -93,6 +93,8 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
 
     const nameData = parseName(initialData);
 
+    // The form needs to rehydrate when profile data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({
       firstName: nameData.firstName,
       secondName: nameData.secondName,

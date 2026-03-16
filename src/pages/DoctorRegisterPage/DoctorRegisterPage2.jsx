@@ -6,6 +6,7 @@ import FileUpload from "../../components/FileUpload";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerDoctorApi } from "../../api/authApi";
 import toast from "react-hot-toast";
+import { getNameParts } from "../../utils/nameUtils";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
@@ -77,18 +78,21 @@ export default function DoctorRegisterPage2() {
     const step1Data = JSON.parse(
       sessionStorage.getItem("doctorRegStep1") || "{}"
     );
-
+    const { fullName: _FULL_NAME, ...rest } = step1Data;
+    const nameParts = getNameParts(step1Data);
     const payload = {
-      ...step1Data,
-      fullName:
-        step1Data.fullName ||
-        [step1Data.firstName, step1Data.secondName, step1Data.lastName]
-          .filter(Boolean)
-          .join(" "),
+      ...rest,
+      firstName: nameParts.firstName,
+      secondName: nameParts.secondName || undefined,
+      lastName: nameParts.lastName,
     };
 
     const formData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
+    });
     formData.append("password", password);
     formData.append("verificationDoc", verificationDoc);
 

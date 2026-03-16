@@ -23,6 +23,7 @@ import {
   getPeriodTrackerApi,
   getOtherRemindersApi
 } from "../../api/RemindersApi";
+import { getFirstName } from "../../utils/nameUtils";
 
 export default function SummaryPage() {
   const [greeting, setGreeting] = useState("");
@@ -87,7 +88,6 @@ export default function SummaryPage() {
 
   useEffect(() => {
     const hour = new Date().getHours();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (hour < 12) setGreeting("Good Morning");
     else if (hour < 18) setGreeting("Good Afternoon");
     else setGreeting("Good Evening");
@@ -204,21 +204,6 @@ export default function SummaryPage() {
       [field]: e.target.value
     }));
     if (entryError) setEntryError("");
-  };
-
-  const appendMetricPoint = (value, unitKey) => {
-    const numeric = Number(value);
-    if (!Number.isFinite(numeric) || numeric <= 0) return;
-
-    const dateLabel = new Date().toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric"
-    });
-
-    setMetrics((prev) => ({
-      ...prev,
-      [unitKey]: [...prev[unitKey], { date: dateLabel, value: numeric }]
-    }));
   };
 
   const updateBmiFromEntry = (weightValue, heightValue) => {
@@ -364,7 +349,7 @@ export default function SummaryPage() {
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                {greeting}, {patient.fullName.split(" ")[0]} 👋
+                {greeting}, {getFirstName(patient) || "there"} 👋
               </h1>
               <p className="text-sm">
                 {patient.age ?? "—"} years • {patient.gender} • ID:{" "}

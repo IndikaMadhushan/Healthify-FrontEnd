@@ -1358,6 +1358,7 @@ import { ExaminationAndTestsCard } from "../../components/DoctorCards/Examinatio
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
+import { getDisplayName } from "../../utils/nameUtils";
 
 import {
   createConsultPage,
@@ -1378,6 +1379,7 @@ export default function DoctorConsultPage() {
     age: 23,
     gender: "Female"
   };
+  const patientDisplayName = getDisplayName(patientInfo);
 
   // ================= FORM =================
 const [formData, setFormData] = useState({
@@ -1400,6 +1402,8 @@ const [formData, setFormData] = useState({
   const [isCompleted, setIsCompleted] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
+    return () => clearInterval(timer);
+  }, [EDIT_WINDOW_SECONDS, isCompleted, completionTime]);
   // ================= MODAL =================
   const [modal, setModal] = useState({
     open: false,
@@ -1459,6 +1463,51 @@ const [formData, setFormData] = useState({
 
         setIsCompleting(true);
 
+    setIsCompleting(true);
+
+    const completionTimestamp = Date.now();
+
+    const consultationRecord = {
+      id: `CONSULT_${Date.now()}`, // Unique ID for this consultation
+      patientId: patientInfo.patientId,
+      consultationDate: formData.date,
+      completedAt: new Date(completionTimestamp).toISOString(),
+      patientDetails: patientInfo,
+      consultation: formData,
+      doctorId: "DR123",
+      status: "completed",
+      folder: "consult",
+      editWindow: {
+        expiresAt: new Date(
+          completionTimestamp + EDIT_WINDOW_SECONDS * 1000,
+        ).toISOString(),
+        durationMinutes: EDIT_WINDOW_MINUTES,
+      },
+    };
+
+    // ==================== SIMULATE API SAVE ====================
+    setTimeout(() => {
+      console.log(
+        "✅ Consultation completed and saved to patient folder:",
+        consultationRecord,
+      );
+
+      // Mark as completed and start timer
+      setIsCompleted(true);
+      setCompletionTime(completionTimestamp);
+      setCanEdit(true);
+      setRemainingTime(EDIT_WINDOW_SECONDS);
+
+      toast.success(
+        `Consultation completed and saved! Patient: ${patientDisplayName}, Date: ${formData.date}. You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
+      );
+
+      setIsCompleting(false);
+
+      // In real app: Don't navigate away, stay on page so doctor can edit if needed
+      // navigate('/patient-dashboard');
+    }, 1500);
+  };
         const requestBody = {
 
           consultReason: formData.reasonForVisit,
@@ -1530,6 +1579,41 @@ const [formData, setFormData] = useState({
 // ================= CLEAR FORM =================
 const handleClearAll = () => {
 
+    setIsUpdating(true);
+
+    const updateRequest = {
+      consultationId: `CONSULT_${completionTime}`,
+      patientId: patientInfo.patientId,
+      patientEmail: patientInfo.email,
+      updatedAt: new Date().toISOString(),
+      updatedData: formData,
+      doctorId: "DR123",
+      status: "pending_patient_approval", // Waiting for patient to accept
+      emailNotification: {
+        to: patientInfo.email,
+        subject: `Update Request: Consultation on ${formData.date}`,
+        message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
+      },
+    };
+
+    // ==================== SIMULATE API SAVE & EMAIL SEND ====================
+    setTimeout(() => {
+      console.log(
+        "📧 Update request sent to patient for approval:",
+        updateRequest,
+      );
+      console.log(`📧 Email sent to: ${patientInfo.email}`);
+
+      toast.success(
+        `Update request sent to ${patientDisplayName}. Waiting for patient approval.`,
+      );
+
+      setIsUpdating(false);
+
+      // In real app: You might disable Update button until patient responds
+      // or show a "Pending approval" status
+    }, 1500);
+  };
   showConfirm(
     "Are you sure you want to clear all fields?",
     () => {
@@ -1715,6 +1799,23 @@ const handleCreateNewPage = () => {
                 </button>
 
               </div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Delete Consultation?
+              </h2>
+              <p className="text-sm text-gray-600">
+                Are you sure you want to delete this consultation for{" "}
+                <strong>{patientDisplayName}</strong>? This will remove it
+                from the patient's Consult folder permanently.
+              </p>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                className="px-5 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-50"
+                onClick={cancelDelete}
+              >
+                Cancel
+              </button>
 
             ) : (
 

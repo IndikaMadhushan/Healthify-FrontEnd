@@ -90,18 +90,7 @@ export default function PatientRegisterPage1() {
   const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
-      const payload = {
-        ...formData,
-        fullName: [
-          formData.firstName,
-          formData.secondName,
-          formData.lastName,
-        ]
-          .filter(Boolean)
-          .join(" "),
-      };
-
-      sessionStorage.setItem("patientRegStep1", JSON.stringify(payload));
+      sessionStorage.setItem("patientRegStep1", JSON.stringify(formData));
       navigate("/patient-register-2");
     }
   };
