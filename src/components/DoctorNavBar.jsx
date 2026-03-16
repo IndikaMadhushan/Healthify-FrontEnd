@@ -95,7 +95,7 @@ export default function DoctorNavBar({ doctor }) {
                   🏠 Dashboard
                 </button>
                 <button
-                  onClick={goToProfile}
+                  onClick={() => handleNavigation("/doctor/doctor-profile")}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                 >
                   👨‍⚕️ My Profile
