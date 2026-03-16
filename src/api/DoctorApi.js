@@ -22,20 +22,3 @@ export const getDoctorProfileApi = async () => {
 
   return res;
 };
-
-
-
-export const updateMyProfile = async (data) => {
-
-  const res = await axiosInstance.post("/api/doctors/me", data);
-
-  localStorage.setItem(
-    "doctor_me_cache",
-    JSON.stringify({
-      data: res.data,
-      expiresAt: Date.now() + 5 * 60 * 1000
-    })
-  );
-
-  return res;
-};

@@ -54,7 +54,6 @@ import ClinicPrescriptionList from "./pages/ClinicBookPage/ClinicBookPrescriptio
 import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescriptionPage/ClinicBookPrescriptionPage";
 import RouteTransition from "./components/RouteTransition";
 import LabReportsPage from "./pages/MedicalReportsPage/LabReportsPage";
-import DoctorProfile from "./pages/DoctorMainUI/DoctorProfile";
 
 function App() {
   return (
@@ -167,7 +166,7 @@ function App() {
           <Route path="/doctor" element={<DoctorLayout />}>
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<DoctorDashBoardPage />} />
-            <Route path="doctor-profile" element={<DoctorProfile/>} />
+            <Route path="doctor-profile" element={<MyProfile />} />
             <Route path=":patientId/consult" element={<DoctorConsultPage />} />
             {/* <Route path="profile" element={<DoctorProfile />} /> */}
             <Route

@@ -22,42 +22,16 @@ export default function DoctorRegisterPage1() {
   });
 
   const [errors, setErrors] = useState({});
-const SPECIALIZATIONS = [
-  "General Practice",
-  "Cardiology",
-  "Dermatology",
-  "Neurology",
-  "Pediatrics",
-  "Psychiatry",
-  "Surgery",
-  "Orthopedics",
-  "Gynecology",
-  "Obstetrics",
-  "Ophthalmology",
-  "Otolaryngology (ENT)",
-  "Urology",
-  "Nephrology",
-  "Endocrinology",
-  "Gastroenterology",
-  "Pulmonology",
-  "Hematology",
-  "Oncology",
-  "Radiology",
-  "Anesthesiology",
-  "Emergency Medicine",
-  "Family Medicine",
-  "Infectious Diseases",
-  "Rheumatology",
-  "Plastic Surgery",
-  "Thoracic Surgery",
-  "Vascular Surgery",
-  "Pathology",
-  "Nuclear Medicine",
-  "Sports Medicine",
-  "Geriatrics",
-  "Pain Management",
-  "Rehabilitation Medicine"
-];
+
+  const SPECIALIZATIONS = [
+    "Cardiology",
+    "Dermatology",
+    "General Practice",
+    "Neurology",
+    "Pediatrics",
+    "Psychiatry",
+    "Surgery",
+  ];
 
   const handleChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -155,7 +129,7 @@ const SPECIALIZATIONS = [
           value={formData.nic}
           onChange={handleChange("nic")}
           error={errors.nic}
-          placeholder="200245671234"
+          placeholder="Enter your NIC"
           required
         />
 
@@ -202,7 +176,7 @@ const SPECIALIZATIONS = [
           value={formData.licenseNumber}
           onChange={handleChange("licenseNumber")}
           error={errors.licenseNumber}
-          placeholder="12345"
+          placeholder="SLMC registration number"
           required
         />
 
