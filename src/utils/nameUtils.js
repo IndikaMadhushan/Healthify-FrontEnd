@@ -44,6 +44,11 @@ export function getFirstName(person = {}) {
   return getNameParts(person).firstName;
 }
 
+export function getGreetingName(person = {}) {
+  const { firstName, secondName } = getNameParts(person);
+  return secondName || firstName;
+}
+
 export function getInitial(person = {}) {
   const displayName = getDisplayName(person);
   return displayName ? displayName.charAt(0).toUpperCase() : "?";
