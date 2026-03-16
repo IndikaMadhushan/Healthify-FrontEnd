@@ -75,45 +75,43 @@ export default function PatientRegisterPage2() {
   };
 
   const handleFinish = async () => {
-  if (!validate()) return;
+    if (!validate()) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  const step1Data = JSON.parse(
-    sessionStorage.getItem("patientRegStep1") || "{}"
-  );
-
-  const payload = {
-    ...step1Data,
-    password: formData.password,
-  };
-
-  try {
-    await registerPatientApi(payload);
-
-    console.log("Patient registered successfully. Redirecting to OTP page...");
-
-    // Clean step1 data
-    sessionStorage.removeItem("patientRegStep1");
-
-    // Redirect to OTP page with email in navigation state
-    navigate("/verify-otp", { 
-      replace: true,
-      state: { email: payload.email }  // ← ADD THIS LINE
-    });
-
-  } catch (error) {
-    const message = getApiErrorMessage(
-      error,
-      "Patient registration failed!"
+    const step1Data = JSON.parse(
+      sessionStorage.getItem("patientRegStep1") || "{}"
     );
-    toast.error(message);
-    console.error(error);
 
-  } finally {
-    setLoading(false);
-  }
-};
+    const payload = {
+      ...step1Data,
+      fullName:
+        step1Data.fullName ||
+        [step1Data.firstName, step1Data.secondName, step1Data.lastName]
+          .filter(Boolean)
+          .join(" "),
+      password: formData.password,
+    };
+
+    try {
+      await registerPatientApi(payload);
+
+      console.log("Patient registered successfully. Redirecting to OTP page...");
+
+      sessionStorage.removeItem("patientRegStep1");
+
+      navigate("/verify-otp", {
+        replace: true,
+        state: { email: payload.email },
+      });
+    } catch (error) {
+      const message = getApiErrorMessage(error, "Patient registration failed!");
+      toast.error(message);
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getApiErrorMessage = (error, fallbackMessage) => {
     const data = error?.response?.data;
