@@ -16,15 +16,11 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
 
     const basic = basicRef.current.getData();
     const emergency = emergencyRef.current.getData();
-    const fullName = [basic.firstName, basic.secondName, basic.lastName]
-      .filter(Boolean)
-      .join(" ");
 
     const payload = {
       firstName: basic.firstName || undefined,
       secondName: basic.secondName || undefined,
       lastName: basic.lastName || undefined,
-      fullName: fullName || undefined,
       email: basic.email || undefined,
       nic: basic.nationalId || undefined,
       gender: basic.gender || undefined,

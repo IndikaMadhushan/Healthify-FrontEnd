@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddReviewModal from "./AddReview";
+import { getDisplayName } from "../utils/nameUtils";
 
 export function PatinetNavBar({
   patientData,
@@ -11,7 +12,8 @@ export function PatinetNavBar({
   const [showReviewPopup, setShowReviewPopup] = useState(false);
   if (!patientData) return null;
 
-  const { fullName, email, patientId, photoUrl } = patientData;
+  const { email, patientId, photoUrl } = patientData;
+  const fullName = getDisplayName(patientData);
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">

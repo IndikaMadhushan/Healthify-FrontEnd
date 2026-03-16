@@ -64,14 +64,7 @@ export default function DoctorRegisterPage1() {
     e.preventDefault();
     if (!validate()) return;
 
-    const payload = {
-      ...formData,
-      fullName: [formData.firstName, formData.secondName, formData.lastName]
-        .filter(Boolean)
-        .join(" "),
-    };
-
-    sessionStorage.setItem("doctorRegStep1", JSON.stringify(payload));
+    sessionStorage.setItem("doctorRegStep1", JSON.stringify(formData));
 
     navigate("/doctor-register-2");
   };

@@ -1,8 +1,9 @@
 import ProfileImageCropper from "../../components/profileImageCropper";
 import { useState, useEffect } from "react";
 import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
-import { getPatientProfileApi, updatePatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
+import { getPatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
 import toast from "react-hot-toast";
+import { getDisplayName } from "../../utils/nameUtils";
 
 function parsePatientName(patient) {
   if (
@@ -57,39 +58,6 @@ export default function MyProfile() {
     loadProfile();
   }, []);
 
-  const handleSave = async () => {
-    try {
-      await updatePatientProfileApi(patient.id, formData);
-
-      // invalidate cache (important)
-      localStorage.removeItem("patient_me_cache");
-
-      onClose();
-      window.location.reload(); // simple + safe
-    } catch (err) {
-      console.error("Profile update failed", err);
-    }
-  };
-
-  const handleProfileImageUpload = async (file) => {
-    try {
-      await uploadPatientProfileImageApi(patient.id, file);
-
-      // invalidate cached /me response
-      localStorage.removeItem("patient_me_cache");
-
-      // optional: reload profile image cleanly
-      const res = await getPatientProfileApi();
-      setPatient(res.data);
-
-    } catch (err) {
-      console.error("Profile image upload failed", err);
-      toast.error("Failed to upload profile image");
-    }
-  };
-
-
-
   if (!patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -99,6 +67,7 @@ export default function MyProfile() {
   }
 
   const patientName = parsePatientName(patient);
+  const patientDisplayName = getDisplayName(patient);
 
   return (
     <div className="min-h-screen px-4">
@@ -157,7 +126,7 @@ export default function MyProfile() {
 
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-semibold text-[#0F4F52]">
-                {patient.fullName}
+                {patientDisplayName}
               </h2>
 
               <p className="text-sm text-gray-500 mt-1">

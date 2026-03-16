@@ -10,6 +10,7 @@ import { ExaminationAndTestsCard } from "../../components/DoctorCards/Examinatio
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
+import { getDisplayName } from "../../utils/nameUtils";
 
 export default function DoctorConsultPage() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function DoctorConsultPage() {
     gender: "Female",
     //medicationPurpose: "Treat Gastritis",
   };
+  const patientDisplayName = getDisplayName(patientInfo);
 
   // ==================== STATE ====================
   const [formData, setFormData] = useState({
@@ -82,7 +84,7 @@ export default function DoctorConsultPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isCompleted, completionTime]);
+  }, [EDIT_WINDOW_SECONDS, isCompleted, completionTime]);
 
   // ==================== HELPER FUNCTIONS ====================
 
@@ -175,7 +177,7 @@ export default function DoctorConsultPage() {
       setRemainingTime(EDIT_WINDOW_SECONDS);
 
       toast.success(
-        `Consultation completed and saved! Patient: ${patientInfo.fullName}, Date: ${formData.date}. You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
+        `Consultation completed and saved! Patient: ${patientDisplayName}, Date: ${formData.date}. You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.`,
       );
 
       setIsCompleting(false);
@@ -232,7 +234,7 @@ export default function DoctorConsultPage() {
       console.log(`📧 Email sent to: ${patientInfo.email}`);
 
       toast.success(
-        `Update request sent to ${patientInfo.fullName}. Waiting for patient approval.`,
+        `Update request sent to ${patientDisplayName}. Waiting for patient approval.`,
       );
 
       setIsUpdating(false);
@@ -460,7 +462,7 @@ export default function DoctorConsultPage() {
               </h2>
               <p className="text-sm text-gray-600">
                 Are you sure you want to delete this consultation for{" "}
-                <strong>{patientInfo.fullName}</strong>? This will remove it
+                <strong>{patientDisplayName}</strong>? This will remove it
                 from the patient's Consult folder permanently.
               </p>
             </div>
