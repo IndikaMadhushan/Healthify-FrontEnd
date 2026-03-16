@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const  API_BASE_URL = "http://localhost:8080/api/auth";
+import axiosInstance from "./axiosInstance";
 
 //log in api
 export const loginApi = async (email, password) => {
-    const response = await axios.post(`${API_BASE_URL}/login`, {
+    const response = await axiosInstance.post(`/api/auth/login`, {
         email,
         password,
     });
@@ -14,8 +12,8 @@ export const loginApi = async (email, password) => {
 
 //patinet register api
 export const registerPatientApi = async (patientData) => {
-    const response = await axios.post(
-        `${API_BASE_URL}/patient/register`,
+    const response = await axiosInstance.post(
+        `/api/auth/patient/register`,
         patientData,
         {
             headers: {
@@ -29,8 +27,8 @@ export const registerPatientApi = async (patientData) => {
 
 //doctor register api
 export const registerDoctorApi = async (formData) => {
-    const response = await axios.post(
-        `${API_BASE_URL}/doctor/register`,
+    const response = await axiosInstance.post(
+        `/api/auth/doctor/register`,
         formData,
             {
                 headers: {
@@ -41,3 +39,19 @@ export const registerDoctorApi = async (formData) => {
 
     return response.data;
 };
+
+//otp verification
+export const verifyOtpApi = (email, otp) =>
+    axiosInstance.post(`/api/auth/verify-email`, null, {
+    params: { email, otp }
+  });
+
+  //otp resend
+export const resendOtpApi = (email) =>
+    axiosInstance.post(`/api/auth/resend-otp`, null, {
+    params: { email }
+  });
+
+
+
+

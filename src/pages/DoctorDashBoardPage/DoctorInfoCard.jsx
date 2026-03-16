@@ -1,43 +1,52 @@
-
 import { useRef } from "react";
+import { getDisplayName } from "../../utils/nameUtils";
 
 export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
   const fileInputRef = useRef(null);
 
+  //  API data not loaded yet
+  if (!doctor) {
+    return (
+      <div className="bg-white rounded-2xl shadow-md p-6 mb-6 border">
+        <p className="text-gray-500">Loading doctor profile...</p>
+      </div>
+    );
+  }
+
   const handleProfileImageChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onProfileUpdate({ ...doctor, profileImage: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      onProfileUpdate({
+        ...doctor,
+        photoUrl: reader.result, // align with backend
+      });
+    };
+    reader.readAsDataURL(file);
   };
+  const doctorDisplayName = getDisplayName(doctor);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-        {/* Profile Picture */}
+
+        {/* PROFILE IMAGE */}
         <div className="relative">
           <img
-            src={doctor.profileImage}
-            alt={doctor.fullName}
+            src={doctor.photoUrl || "/profilePic.png"}
+            alt={doctorDisplayName}
             className="w-32 h-32 rounded-full object-cover border-4 border-secondary shadow-lg"
           />
+
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-0 right-0 bg-secondary text-white p-2 rounded-full shadow-lg hover:bg-secondary/90 transition"
-            title="Update profile picture"
+            className="absolute bottom-0 right-0 bg-secondary text-white p-2 rounded-full shadow-lg"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
-                clipRule="evenodd"
-              />
-            </svg>
+            📷
           </button>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -47,18 +56,20 @@ export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
           />
         </div>
 
-        {/* Doctor Info */}
+        {/* DOCTOR INFO */}
         <div className="flex-1 text-center sm:text-left">
           <h1 className="text-3xl font-bold text-secondary mb-2">
-            {doctor.fullName}
+            {doctorDisplayName}
           </h1>
+
           <p className="text-gray-600 text-sm mb-1">
-            <span className="font-semibold">SLMC:</span> {doctor.slmcNumber}
+            <span className="font-semibold">License:</span> {doctor.licenseNumber}
           </p>
+
           <p className="text-gray-600 text-sm mb-1">
-            <span className="font-semibold">Specialization:</span>{" "}
-            {doctor.specialization}
+            <span className="font-semibold">Specialization:</span> {doctor.specialization}
           </p>
+
           <p className="text-gray-600 text-sm">
             <span className="font-semibold">Hospital:</span> {doctor.hospital}
           </p>

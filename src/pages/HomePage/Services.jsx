@@ -1,7 +1,16 @@
-import React from "react";
 import ServiceCard from "./ServiceCard";
 import { MdUploadFile } from "react-icons/md";
 import { motion } from "framer-motion";
+import { MdCloudUpload } from "react-icons/md";
+import { SiGoogleanalytics } from "react-icons/si";
+import { PiClockCountdownFill } from "react-icons/pi";
+import { FaAddressBook } from "react-icons/fa";
+import { FaUserDoctor } from "react-icons/fa6";
+import { MdOutlineFamilyRestroom } from "react-icons/md";
+
+
+
+
 
 // Parent animation (stagger)
 const containerVariants = {
@@ -39,7 +48,7 @@ export default function ServicesExample() {
 
       {/* Motion wrapper */}
       <motion.div
-        className="grid lg:grid-cols-3 sm:grid-cols-2 gap-4 sm:px-20 px-6 py-16 place-items-center"
+        className="grid lg:grid-cols-3 sm:grid-cols-2 gap-4 sm:px-10 px-6 py-16 place-items-center"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -48,56 +57,69 @@ export default function ServicesExample() {
         {/* Card 1 */}
         <motion.div variants={cardVariants}>
           <ServiceCard
-            Icon={MdUploadFile}
+            image="report.webp"
+            icon={<MdCloudUpload />}
             title="Smart Report Upload"
-            desc="Upload your medical reports in seconds. PDFs, images, or scans stored securely in one place."
+            description="Upload your medical reports in seconds. PDFs, images, or scans stored securely in one place."
           />
         </motion.div>
 
         {/* Card 2 */}
         <motion.div variants={cardVariants}>
           <ServiceCard
-            Icon={MdUploadFile}
+            image="datas.webp"
+            icon={<SiGoogleanalytics />}
             title="Health Data Analytics"
-            desc="Visual graphs and trends that help you understand blood sugar, cholesterol, BP, and overall health progress."
+            description="Visual graphs and trends that help you understand blood sugar, cholesterol, BP, and overall health progress."
           />
         </motion.div>
+        {/* Card 5 */}
+        <motion.div variants={cardVariants}>
+           <ServiceCard
+            image="doc.jpg"
+            icon={<FaUserDoctor />}
+            title="Doctor Access"
+            description="Doctors can securely access your medical reports and full medical history anytime."
+          />
+        </motion.div>
+
 
         {/* Card 3 */}
         <motion.div variants={cardVariants}>
           <ServiceCard
-            Icon={MdUploadFile}
+            image="remind.jpeg"
+            icon={<PiClockCountdownFill />}
             title="Medication Reminders"
-            desc="Never miss a dose again with automated medicine reminders and schedule tracking."
+            description="Never miss a dose again with automated medicine reminders and schedule tracking."
           />
         </motion.div>
 
         {/* Card 4 */}
         <motion.div variants={cardVariants}>
           <ServiceCard
-            Icon={MdUploadFile}
-            title="Doctor Access"
-            desc="Doctors can securely access your medical reports and full medical history anytime."
+            image="book.webp"
+            icon={<FaAddressBook />}
+            title="Manage Clinic Book"
+            description="Easily organize your clinic book with your visits and prescriptions in one smart way."
           />
         </motion.div>
 
-        {/* Card 5 */}
-        <motion.div variants={cardVariants}>
-          <ServiceCard
-            Icon={MdUploadFile}
-            title="Family Medical History "
-            desc="Keep track of family health records, vaccinations, allergies, and long-term medical history."
-          />
-        </motion.div>
-
+        
         {/* Card 6 */}
-        <motion.div variants={cardVariants}>
+        {/* <motion.div variants={cardVariants}>
           <ServiceCard
             Icon={MdUploadFile}
             title="Manage Clinic Book"
             desc="Easily organize your clinic book with your visits and prescriptions in one smart way."
           />
-        </motion.div>
+        </motion.div> */}
+
+        <ServiceCard
+  image="family.jpg"
+  icon={<MdOutlineFamilyRestroom />}
+  title="Family Medical History"
+  description="Keep track of family health records, vaccinations, allergies, and long-term medical history."
+/>
 
       </motion.div>
     </div>

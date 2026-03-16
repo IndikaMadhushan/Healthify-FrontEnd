@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
-import SuccessModal from "../../components/SuccessModal";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerPatientApi } from "../../api/authApi";
+import toast from "react-hot-toast";
+import { getNameParts } from "../../utils/nameUtils";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
@@ -17,7 +18,6 @@ export default function PatientRegisterPage2() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,13 +25,6 @@ export default function PatientRegisterPage2() {
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("patientRegStep1");
-    const registrationComplete = sessionStorage.getItem("registrationComplete");
-
-    if (registrationComplete) {
-      sessionStorage.removeItem("registrationComplete");
-      navigate("/form", { replace: true });
-      return;
-    }
 
     if (!step1Data) {
       navigate("/patient-register-1", { replace: true });
@@ -41,10 +34,12 @@ export default function PatientRegisterPage2() {
   const handleChange = (field) => (e) => {
     const value =
       e.target.type === "checkbox" ? e.target.checked : e.target.value;
+
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -88,29 +83,55 @@ export default function PatientRegisterPage2() {
     const step1Data = JSON.parse(
       sessionStorage.getItem("patientRegStep1") || "{}"
     );
+    const { fullName: _FULL_NAME, ...rest } = step1Data;
+    const nameParts = getNameParts(step1Data);
 
     const payload = {
-      ...step1Data,
+      ...rest,
+      firstName: nameParts.firstName,
+      secondName: nameParts.secondName || undefined,
+      lastName: nameParts.lastName,
       password: formData.password,
     };
 
-    try{
+    try {
       await registerPatientApi(payload);
 
+      console.log("Patient registered successfully. Redirecting to OTP page...");
+
       sessionStorage.removeItem("patientRegStep1");
-      setShowSuccessModal(true);
-    } catch(error){
-      const message = error.response?.data?.message || "Patient registration failed!";
-      alert(message + error);
+
+      navigate("/verify-otp", {
+        replace: true,
+        state: { email: payload.email },
+      });
+    } catch (error) {
+      const message = getApiErrorMessage(error, "Patient registration failed!");
+      toast.error(message);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleModalClose = () => {
-    setShowSuccessModal(false);
-    sessionStorage.removeItem("registrationComplete");
-    navigate("/patient-dashboard", { replace: true });
+  const getApiErrorMessage = (error, fallbackMessage) => {
+    const data = error?.response?.data;
+
+    if (typeof data === "string") return data;
+    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.error === "string") return data.error;
+
+    if (Array.isArray(data?.errors)) {
+      const messages = data.errors
+        .map((item) => (typeof item === "string" ? item : item?.message))
+        .filter(Boolean);
+
+      if (messages.length) return messages.join(", ");
+    }
+
+    if (typeof error?.message === "string") return error.message;
+
+    return fallbackMessage;
   };
 
   return (
@@ -128,7 +149,6 @@ export default function PatientRegisterPage2() {
       <div className="space-y-5">
         <PasswordInput
           label="Password"
-          name="password"
           value={formData.password}
           onChange={handleChange("password")}
           error={errors.password}
@@ -138,7 +158,6 @@ export default function PatientRegisterPage2() {
 
         <PasswordInput
           label="Confirm Password"
-          name="confirmPassword"
           value={formData.confirmPassword}
           onChange={handleChange("confirmPassword")}
           error={errors.confirmPassword}
@@ -152,7 +171,7 @@ export default function PatientRegisterPage2() {
               type="checkbox"
               checked={formData.agreedToTerms}
               onChange={handleChange("agreedToTerms")}
-              className="mt-1 w-4 h-4 text-secondary focus:ring-secondary rounded"
+              className="mt-1 w-4 h-4 text-secondary rounded"
             />
             <span className="text-sm text-gray-700">
               I agree to the{" "}
@@ -169,12 +188,14 @@ export default function PatientRegisterPage2() {
                 onClick={() => window.open("/privacy", "_blank")}
                 className="text-secondary hover:underline"
               >
-                Private Policy
+                Privacy Policy
               </button>
             </span>
           </label>
           {errors.agreedToTerms && (
-            <p className="text-xs text-red-500 mt-1">{errors.agreedToTerms}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.agreedToTerms}
+            </p>
           )}
         </div>
 
@@ -182,15 +203,16 @@ export default function PatientRegisterPage2() {
           <button
             type="button"
             onClick={handleBack}
-            className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition"
+            className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition"
           >
             Back
           </button>
+
           <button
             type="button"
             onClick={handleFinish}
             disabled={loading || !formData.agreedToTerms}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition disabled:opacity-50"
           >
             {loading ? "Processing..." : "Finish"}
           </button>
@@ -206,15 +228,6 @@ export default function PatientRegisterPage2() {
           Login here
         </button>
       </p>
-
-      {/* Reusable Success Modal */}
-      <SuccessModal
-        show={showSuccessModal}
-        title="Registration Successful!"
-        message="Welcome to Healthify! Your account has been created successfully."
-        buttonText="Continue to dashboard"
-        onClose={handleModalClose}
-      />
     </RegistrationLayout>
   );
 }

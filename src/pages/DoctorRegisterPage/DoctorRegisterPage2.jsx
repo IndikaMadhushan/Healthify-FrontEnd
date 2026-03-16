@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import FileUpload from "../../components/FileUpload";
-import SuccessModal from "../../components/SuccessModal";
-import axios from "axios";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerDoctorApi } from "../../api/authApi";
+import toast from "react-hot-toast";
+import { getNameParts } from "../../utils/nameUtils";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ export default function DoctorRegisterPage2() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const step1Data = sessionStorage.getItem("doctorRegStep1");
@@ -47,6 +46,9 @@ export default function DoctorRegisterPage2() {
       newErrors.password = "Password is required";
     } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+      newErrors.password =
+        "Password must contain uppercase, lowercase, and number";
     }
 
     if (!confirmPassword) {
@@ -76,31 +78,80 @@ export default function DoctorRegisterPage2() {
     const step1Data = JSON.parse(
       sessionStorage.getItem("doctorRegStep1") || "{}"
     );
+    const { fullName: _FULL_NAME, ...rest } = step1Data;
+    const nameParts = getNameParts(step1Data);
+    const payload = {
+      ...rest,
+      firstName: nameParts.firstName,
+      secondName: nameParts.secondName || undefined,
+      lastName: nameParts.lastName,
+    };
 
     const formData = new FormData();
-    Object.entries(step1Data).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
+    });
     formData.append("password", password);
     formData.append("verificationDoc", verificationDoc);
 
     try {
       await registerDoctorApi(formData);
 
+      console.log("Doctor registered successfully. Redirecting to OTP page...");
+
+      const userEmail = step1Data.email;
+
       sessionStorage.removeItem("doctorRegStep1");
-      setShowSuccess(true);
-    } catch (err) {
-      alert("Registration failed. Please try again." + err.message);
+
+      navigate("/verify-otp", {
+        replace: true,
+        state: {
+          email: userEmail,
+          userType: "doctor",
+        },
+      });
+    } catch (error) {
+      const message = getApiErrorMessage(error, "Doctor registration failed!");
+      toast.error(message);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
+  const getApiErrorMessage = (error, fallbackMessage) => {
+    const data = error?.response?.data;
+
+    if (typeof data === "string") return data;
+    if (typeof data?.message === "string") return data.message;
+    if (typeof data?.error === "string") return data.error;
+
+    if (Array.isArray(data?.errors)) {
+      const messages = data.errors
+        .map((item) => (typeof item === "string" ? item : item?.message))
+        .filter(Boolean);
+
+      if (messages.length) return messages.join(", ");
+    }
+
+    if (typeof error?.message === "string") return error.message;
+
+    return fallbackMessage;
+  };
+
   return (
     <RegistrationLayout image={pRegImage2} imageAlt="Doctor Registration">
-      <h1 className="text-2xl lg:text-3xl font-bold text-mainblack mb-6">
-        Set Password & Verification
-      </h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
+          Doctor Registration
+        </h1>
+        <div className="flex gap-2">
+          <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+          <span className="w-3 h-3 rounded-full bg-secondary"></span>
+        </div>
+      </div>
 
       <div className="space-y-5">
         <PasswordInput
@@ -108,6 +159,7 @@ export default function DoctorRegisterPage2() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
+          placeholder="Enter your password"
           required
         />
 
@@ -116,6 +168,7 @@ export default function DoctorRegisterPage2() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           error={errors.confirmPassword}
+          placeholder="Re-enter your password"
           required
         />
 
@@ -128,7 +181,6 @@ export default function DoctorRegisterPage2() {
           required
         />
 
-        {/*  APPROVAL CONFIRMATION */}
         <div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -164,22 +216,22 @@ export default function DoctorRegisterPage2() {
             type="button"
             onClick={handleFinish}
             disabled={loading || !agreedToApproval}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold
-                       hover:bg-secondary/90 transition transform hover:scale-105
-                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? "Processing..." : "Finish"}
           </button>
         </div>
       </div>
 
-      <SuccessModal
-        show={showSuccess}
-        title="Registration Successful!"
-        message="Your account will be activated after admin verification."
-        buttonText="Go to Login"
-        onClose={() => navigate("/login", { replace: true })}
-      />
+      <p className="text-center text-sm text-gray-600 mt-6">
+        Already have an account?{" "}
+        <button
+          onClick={() => navigate("/login")}
+          className="text-secondary hover:underline font-semibold"
+        >
+          Login here
+        </button>
+      </p>
     </RegistrationLayout>
   );
 }

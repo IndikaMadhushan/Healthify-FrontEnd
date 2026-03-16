@@ -1,25 +1,90 @@
 import React, { useRef } from "react";
 import BasicInfoForm from "./FormComponent/basicInfoForm";
 import EmergencyContactForm from "./FormComponent/Emergency";
+import { updatePatientProfileApi } from "../../api/PatientApi";
+import toast from "react-hot-toast";
 
-export default function PatientProfileEdit({ onClose }) {
+export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
   const basicRef = useRef();
   const emergencyRef = useRef();
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const basicValid = basicRef.current.validate();
     const emergencyValid = emergencyRef.current.validate();
 
     if (!basicValid || !emergencyValid) return;
 
-    const payload = {
-      basic: basicRef.current.getData(),
-      emergency: emergencyRef.current.getData()
+    const basic = basicRef.current.getData();
+    const emergency = emergencyRef.current.getData();
+    const cleanedBasic = {
+      ...basic,
+      firstName: basic.firstName.trim(),
+      secondName: basic.secondName.trim(),
+      lastName: basic.lastName.trim(),
+      email: basic.email.trim(),
+      nationalId: basic.nationalId.trim().toUpperCase(),
+      occupation: basic.occupation.trim(),
+      address: basic.address.trim(),
+      contactNumber: basic.contactNumber.trim(),
+      nationality: basic.nationality.trim(),
+      mainCity: basic.mainCity.trim(),
+    };
+    const cleanedEmergency = {
+      primary: {
+        name: emergency.primary.name.trim(),
+        phone: emergency.primary.phone.trim(),
+        relationship: emergency.primary.relationship.trim(),
+      },
+      secondary: {
+        name: emergency.secondary.name.trim(),
+        phone: emergency.secondary.phone.trim(),
+        relationship: emergency.secondary.relationship.trim(),
+      },
     };
 
-    console.log("ALL VALID ✔", payload);
-    alert("Profile ready to update");
+    const payload = {
+      firstName: cleanedBasic.firstName || undefined,
+      secondName: cleanedBasic.secondName || undefined,
+      lastName: cleanedBasic.lastName || undefined,
+      email: cleanedBasic.email || undefined,
+      nic: cleanedBasic.nationalId || undefined,
+      gender: basic.gender || undefined,
+      dateOfBirth: basic.dob || undefined,
+      occupation: cleanedBasic.occupation || undefined,
+      district: cleanedBasic.mainCity || undefined,
+      phone: cleanedBasic.contactNumber || undefined,
+      address: cleanedBasic.address || undefined,
+      nationality: cleanedBasic.nationality || undefined,
+
+      primaryContact: cleanedEmergency.primary.name
+        ? {
+          name: cleanedEmergency.primary.name,
+          phoneNumber: cleanedEmergency.primary.phone,
+          relationship: cleanedEmergency.primary.relationship
+        }
+        : undefined,
+
+      secondaryContact: cleanedEmergency.secondary.name
+        ? {
+          name: cleanedEmergency.secondary.name,
+          phoneNumber: cleanedEmergency.secondary.phone,
+          relationship: cleanedEmergency.secondary.relationship
+        }
+        : undefined
+    };
+
+    try {
+      await updatePatientProfileApi(patient.id, payload);
+      localStorage.removeItem("patient_me_cache");
+      toast.success("Profile updated successfully");
+      onUpdated();
+      onClose();
+    } catch (err) {
+      console.error("Profile update failed", err);
+      toast.error("Failed to update profile");
+    }
   };
+
 
   return (
     <div
@@ -38,13 +103,13 @@ export default function PatientProfileEdit({ onClose }) {
 
         {/* FORMS */}
         <div className="max-h-[65vh] overflow-y-auto pr-2 space-y-6">
-          <BasicInfoForm ref={basicRef} />
-          <EmergencyContactForm ref={emergencyRef} />
+          <BasicInfoForm ref={basicRef} initialData={patient} />
+          <EmergencyContactForm ref={emergencyRef} initialData={patient} />
         </div>
 
         {/* FOOTER */}
         <div className="flex justify-end gap-4 border-t pt-4">
-          
+
 
           <button
             onClick={handleUpdate}

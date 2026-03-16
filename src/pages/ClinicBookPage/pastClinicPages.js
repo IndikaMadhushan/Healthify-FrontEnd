@@ -1,0 +1,48 @@
+export const pastClinicPagesDummy = [
+  {
+    id: "CONSULT_001",
+    date: "2025-01-10",
+    time: "10:30 AM",
+    reason: "Gastritis follow-up",
+    fullData: {
+      timestamp: "2025-01-10T10:30:00Z",
+      pageData: {
+        date: "2025-01-10",
+        reasonForVisit: "Gastritis follow-up",
+        examinationNotes: "Mild epigastric tenderness",
+        bloodPressure: "120/80",
+        pulse: "72",
+        temperature: "36.8",
+        weight: "55kg",
+        respiratoryRate: "18",
+        suggestedTests: "H. pylori test",
+        doctorNote: "Continue PPI",
+        nextClinicDate: "2025-01-20",
+        medication: "Omeprazole",
+      },
+    },
+  },
+  {
+    id: "CONSULT_002",
+    date: "2025-01-05",
+    time: "09:15 AM",
+    reason: "Abdominal pain",
+    fullData: {
+      timestamp: "2025-01-05T09:15:00Z",
+      pageData: {
+        date: "2025-01-05",
+        reasonForVisit: "Abdominal pain",
+        examinationNotes: "No guarding",
+        bloodPressure: "118/76",
+        pulse: "70",
+        temperature: "37.0",
+        weight: "54kg",
+        respiratoryRate: "17",
+        suggestedTests: "",
+        doctorNote: "Observe",
+        nextClinicDate: "",
+        medication: "Antacid",
+      },
+    },
+  },
+];

@@ -18,10 +18,10 @@ const reviews = [
   { id:2, name:"Charu Silva", image:"https://picsum.photos/seed/rev2/400/400", review:"Fantastic app — reminders are lifesavers and the reports section is very organised." },
   { id:3, name:"Samanthi", image:"https://picsum.photos/seed/rev3/400/400", review:"Very useful for busy people. Love the reminders!" },
   { id:4, name:"Kamal", image:"https://picsum.photos/seed/rev4/400/400", review:"Good experience. Helpful notifications and clean layout." },
-  { id:5, name:"Parindya Hewage", image:"https://picsum.photos/seed/rev1/400/400", review:"this is very important valuable help to my healht management with my busy life easyily " },
+  { id:5, name:"Parindya Hewage", image:"https://picsum.photos/seed/rev1/400/400", review:"this is very important valuable help to my healht management with my busy life easyily  " },
   { id:6, name:"Charu Silva", image:"https://picsum.photos/seed/rev2/400/400", review:"Fantastic app — reminders are lifesavers and the reports section is very organised." },
   { id:7, name:"Samanthi", image:"https://picsum.photos/seed/rev3/400/400", review:"Very useful for busy people. Love the reminders!" },
-  { id:8, name:"Kamal", image:"https://picsum.photos/seed/rev4/400/400", review:"Good experience. Helpful notifications and clean layout." },
+  { id:8, name:"Kamal", image:"https://picsum.photos/seed/rev4/400/400", review:"Good experience. Helpful notifications and clean layout.this is very important valuable help to my healht management with my busy life easyily.this is very important valuable help to my healht management with my busy life easyily" },
   
 ];
 

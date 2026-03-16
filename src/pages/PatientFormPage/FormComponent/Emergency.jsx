@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
+import toast from "react-hot-toast";
+import {
+  isValidPersonName,
+  isValidSriLankanPhoneNumber,
+  sanitizePersonName,
+  sanitizePhoneNumber,
+} from "../../../utils/patientProfileValidation";
 
 const initialEmergency = {
   primary: {
@@ -14,12 +21,45 @@ const initialEmergency = {
   }
 };
 
-const EmergencyContactForm = forwardRef(({ showButton=false }, ref) => {
+const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, ref) => {
   const [form, setForm] = useState(initialEmergency);
   const [errors, setErrors] = useState({});
 
+  const clearFieldError = (section, field) => {
+    const errorKeyMap = {
+      primary: {
+        name: "primaryName",
+        phone: "primaryPhone",
+      },
+      secondary: {
+        name: "secondaryName",
+        phone: "secondaryPhone",
+      },
+    };
+
+    const errorKey = errorKeyMap[section]?.[field];
+    if (!errorKey) return;
+
+    setErrors((prev) => {
+      if (!prev[errorKey]) return prev;
+
+      const nextErrors = { ...prev };
+      delete nextErrors[errorKey];
+      return nextErrors;
+    });
+  };
+
   const handleChange = (section, field) => (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+
+    if (field === "phone") {
+      value = sanitizePhoneNumber(value);
+    }
+
+    if (field === "name") {
+      value = sanitizePersonName(value);
+    }
+
     setForm((prev) => ({
       ...prev,
       [section]: {
@@ -27,70 +67,75 @@ const EmergencyContactForm = forwardRef(({ showButton=false }, ref) => {
         [field]: value
       }
     }));
+
+    clearFieldError(section, field);
   };
 
-const validate = () => {
-  const newErrors = {};
+  useEffect(() => {
+    if (!initialData) return;
 
-  // Name required
-  if (!form.primary.name.trim()) {
-    newErrors.primaryName = "Emergency contact person is required";
-  }
-
-  // Phone – Sri Lanka validation
-  if (!form.primary.phone) {
-    newErrors.primaryPhone = "Emergency contact number is required";
-  } else {
-    const number = form.primary.phone;
-
-    // Must be exactly 10 digits
-    if (!/^\d{10}$/.test(number)) {
-      newErrors.primaryPhone =
-        "Contact number must have exactly 10 digits";
-    } else {
-      const validPrefixes = [
-        "011","031","033","034","038","036",
-        "054","081","051","052","066",
-        "091","041","047",
-        "032","037",
-        "021","023","024",
-        "063","067","065","026",
-        "025","027",
-        "055","057",
-        "045","035",
-        "070","071","072","074",
-        "075","076","077","078"
-      ];
-
-      const prefix = number.substring(0, 3);
-
-      if (!validPrefixes.includes(prefix)) {
-        newErrors.primaryPhone =
-          "Invalid Sri Lanka contact number";
+    // The form needs to rehydrate when profile data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({
+      primary: {
+        name: initialData.primaryContact?.name || "",
+        phone: initialData.primaryContact?.phoneNumber || "",
+        relationship: initialData.primaryContact?.relationship || ""
+      },
+      secondary: {
+        name: initialData.secondaryContact?.name || "",
+        phone: initialData.secondaryContact?.phoneNumber || "",
+        relationship: initialData.secondaryContact?.relationship || ""
       }
-    }
-  }
+    });
+  }, [initialData]);
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-  
-    useImperativeHandle(ref, () => ({
-      validate,
-      getData: () => form
-    }));
+  const validate = () => {
+    const newErrors = {};
+
+    const validateContactSection = (sectionKey, errorPrefix) => {
+      const section = form[sectionKey];
+      const hasAnyValue = Object.values(section).some((item) => item.trim());
+
+      if (!hasAnyValue) return;
+
+      if (!section.name.trim()) {
+        newErrors[`${errorPrefix}Name`] = "Emergency contact person is required";
+      } else if (!isValidPersonName(section.name)) {
+        newErrors[`${errorPrefix}Name`] =
+          "Emergency contact name can contain only letters, spaces, apostrophes, and hyphens";
+      }
+
+      if (!section.phone) {
+        newErrors[`${errorPrefix}Phone`] = "Emergency contact number is required";
+      } else if (section.phone.length !== 10) {
+        newErrors[`${errorPrefix}Phone`] =
+          "Contact number must have exactly 10 digits";
+      } else if (!isValidSriLankanPhoneNumber(section.phone)) {
+        newErrors[`${errorPrefix}Phone`] = "Invalid Sri Lanka contact number";
+      }
+    };
+
+    validateContactSection("primary", "primary");
+    validateContactSection("secondary", "secondary");
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  useImperativeHandle(ref, () => ({
+    validate,
+    getData: () => form
+  }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     console.log("Emergency contacts:", form);
-    alert("Emergency contact details saved (check console)");
+    toast.success("Emergency contact details saved (check console)");
   };
 
-  /** --------------------
-      NEW STYLING CLASSES
-  ---------------------- **/
   const inputBase =
     "mt-1 w-full h-10 px-3 rounded-md bg-gray-100 border text-[15px] text-gray-700 " +
     "focus:ring-2 focus:ring-secondary focus:border-secondary transition";
@@ -111,17 +156,13 @@ const validate = () => {
 
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
-
-      {/* Main Heading */}
       <h2 className={headingCss}>Emergency Contacts</h2>
 
-      {/* -------------------- PRIMARY CONTACT -------------------- */}
       <div className={sectionBox}>
         <h3 className={subHeadingCss}>
           Primary Emergency Contact <span className="text-red-500">*</span>
         </h3>
 
-        {/* Name */}
         <div className="mb-4">
           <label className={labelCss}>Emergency Contact Person *</label>
           <input
@@ -136,13 +177,14 @@ const validate = () => {
           )}
         </div>
 
-        {/* Phone */}
         <div className="mb-4">
           <label className={labelCss}>Emergency Contact Number *</label>
           <input
             type="text"
             value={form.primary.phone}
             onChange={handleChange("primary", "phone")}
+            inputMode="numeric"
+            maxLength={10}
             className={inputBase + " " + withError(errors.primaryPhone)}
             placeholder="Enter contact number"
           />
@@ -151,7 +193,6 @@ const validate = () => {
           )}
         </div>
 
-        {/* Relationship */}
         <div>
           <label className={labelCss}>Relationship to Patient (optional)</label>
           <input
@@ -164,35 +205,39 @@ const validate = () => {
         </div>
       </div>
 
-      {/* -------------------- SECONDARY CONTACT -------------------- */}
       <div className={sectionBox}>
         <h3 className={subHeadingCss}>Secondary Emergency Contact (optional)</h3>
 
-        {/* Name */}
         <div className="mb-4">
           <label className={labelCss}>Emergency Contact Person</label>
           <input
             type="text"
             value={form.secondary.name}
             onChange={handleChange("secondary", "name")}
-            className={inputBase + " border-gray-300"}
+            className={inputBase + " " + withError(errors.secondaryName)}
             placeholder="Enter full name"
           />
+          {errors.secondaryName && (
+            <p className="text-xs text-red-500 mt-1">{errors.secondaryName}</p>
+          )}
         </div>
 
-        {/* Phone */}
         <div className="mb-4">
           <label className={labelCss}>Emergency Contact Number</label>
           <input
             type="text"
             value={form.secondary.phone}
             onChange={handleChange("secondary", "phone")}
-            className={inputBase + " border-gray-300"}
+            inputMode="numeric"
+            maxLength={10}
+            className={inputBase + " " + withError(errors.secondaryPhone)}
             placeholder="Enter contact number"
           />
+          {errors.secondaryPhone && (
+            <p className="text-xs text-red-500 mt-1">{errors.secondaryPhone}</p>
+          )}
         </div>
 
-        {/* Relationship */}
         <div>
           <label className={labelCss}>Relationship to Patient</label>
           <input
@@ -204,16 +249,17 @@ const validate = () => {
           />
         </div>
       </div>
-    {showButton && (
-      <div className="mt-2 flex justify-end">
-        <button
-          type="submit"
-          className="px-5 py-2 bg-secondary/90  hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
-        >
-          Save
-        </button>
-      </div>
-    )}
+
+      {showButton && (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="submit"
+            className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
+          >
+            Save
+          </button>
+        </div>
+      )}
     </form>
   );
 });

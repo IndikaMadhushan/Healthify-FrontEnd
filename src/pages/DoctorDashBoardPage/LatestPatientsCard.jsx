@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { getDisplayName } from "../../utils/nameUtils";
 
 export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
   const [searchQuery] = useState("");
@@ -9,7 +10,7 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
     searchQuery.trim() === ""
       ? recentPatients
       : recentPatients.filter((patient) =>
-          patient.name.toLowerCase().includes(searchQuery.toLowerCase()),
+          getDisplayName(patient).toLowerCase().includes(searchQuery.toLowerCase()),
         );
 
   return (
@@ -35,7 +36,7 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
             className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
           >
             <div className="flex-1">
-              <p className="font-semibold text-gray-900">{patient.name}</p>
+              <p className="font-semibold text-gray-900">{getDisplayName(patient)}</p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                 <p className="text-xs text-gray-600">{patient.nic}</p>
                 <p className="text-xs text-gray-600">{patient.gender}</p>

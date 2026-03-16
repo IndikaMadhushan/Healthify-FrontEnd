@@ -1,466 +1,804 @@
-//thathsara
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { DoctorNavBar } from "../../components/DoctorNavBar";
+// thahsara
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import DoctorNavBar from "../../components/DoctorNavBar2";
 import { PatientDetailsCard } from "../../components/DoctorCards/PatientDetailsCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { ExaminationAndTestsCard } from "../../components/DoctorCards/ExaminationAndTestsCard";
+import { AdditionalNotesCard } from "../../components/DoctorCards/AdditionalNotesCard";
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { PastClinicPagesCard } from "../../components/DoctorCards/PastClinicPagesCard";
 
+import { createClinicPageById } from "../../api/ClinicPageApi";
+import { getPatientDataByClinicBookId } from "../../api/ClinicBookApi";
+import {
+  getClinicPagesByClinicBookId,
+  getClinicPageById,
+  updateClinicPage,
+  deleteClinicPage,
+  requestEditApproval
+} from "../../api/ClinicPageApi";
+
 export default function DoctorClinicBookPage() {
   const navigate = useNavigate();
+  const { clinicBookId } = useParams();
 
-  // ==================== MOCK PATIENT DATA ====================
-  const patientInfo = {
-    patientId: "UR5678",
-    fullName: "Parindya Hewage",
-    email: "parindya@gmail.com",
-    age: 23,
-    gender: "Female",
-  };
+  const [patientInfo, setPatientInfo] = useState(null);
+  const [pastPages, setPastPages] = useState([]);
 
-  // ==================== MOCK PAST CLINIC PAGES ====================
-  const [pastPages] = useState([
-    {
-      id: 1,
-      date: "2025-09-23",
-      time: "10:08AM",
-      reason: "Follow-up gastritis treatment",
-    },
-    {
-      id: 2,
-      date: "2025-08-21",
-      time: "10:08AM",
-      reason: "Initial consultation for stomach pain",
-    },
-    {
-      id: 3,
-      date: "2025-08-23",
-      time: "10:08AM",
-      reason: "Medication adjustment",
-    },
-    {
-      id: 4,
-      date: "2025-09-23",
-      time: "10:00AM",
-      reason: "Medication adjustment",
-    },
-  ]);
-
-  // ==================== FORM STATE ====================
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
-    reasonForVisit: "",
-    examinationNotes: "",
-    bloodPressure: "",
-    pulse: "",
-    temperature: "",
-    weight: "",
-    respiratoryRate: "",
-    medication: "",
+    subReason: "",
+    clinicExaming: "",
+    clinicSuggestTest: "",
+    clinicDoctorNote: "",
+    nextClinic: "",
+    medication: [],
+    mediMessure: {
+      BP: "",
+      pulse: "",
+      temperature: "",
+      weight: "",
+      bloodSugar: "",
+      cholesterol: "",
+    },
   });
-
+  const [approvalRequestedPageId, setApprovalRequestedPageId] = useState(null);
   const [errors, setErrors] = useState({});
   const [isCompleting, setIsCompleting] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // ==================== TIME-BASED EDITING STATE ====================
-  const [isCompleted, setIsCompleted] = useState(false); // Has doctor completed the page?
-  const [completionTime, setCompletionTime] = useState(null); // When was it completed?
-  const [remainingTime, setRemainingTime] = useState(null); // Time left to edit (in seconds)
-  const [canEdit, setCanEdit] = useState(false); // Can doctor edit right now?
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [completionTime, setCompletionTime] = useState(null);
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [canEdit, setCanEdit] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const EDIT_WINDOW_MINUTES = 10; // Edit window duration
-  const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60; // 600 seconds
+  const [isViewingOldPage, setIsViewingOldPage] = useState(false);
+  const [selectedPageId, setSelectedPageId] = useState(null);
 
-  // ==================== TIMER EFFECT ====================
-  /**
-   * Countdown timer after completion
-   * Updates every second to show remaining time
-   * Disables Update/Delete buttons after 10 minutes
-   */
+  const EDIT_WINDOW_MINUTES = 10;
+  const EDIT_WINDOW_SECONDS = EDIT_WINDOW_MINUTES * 60;
+
+  // ===== Modern UI Modal State =====
+const [modal, setModal] = useState({
+  open: false,
+  message: "",
+  confirm: false,
+  onConfirm: null,
+});
+
+// show normal message
+const showMessage = (message) => {
+  setModal({
+    open: true,
+    message,
+    confirm: false,
+    onConfirm: null,
+  });
+};
+
+// show confirm dialog
+const showConfirm = (message, callback) => {
+  setModal({
+    open: true,
+    message,
+    confirm: true,
+    onConfirm: callback,
+  });
+};
+
+// close modal
+const closeModal = () => {
+  setModal({
+    open: false,
+    message: "",
+    confirm: false,
+    onConfirm: null,
+  });
+};
+
+  // ================= LOAD PATIENT =================
   useEffect(() => {
-    if (!isCompleted || !completionTime) return;
+    if (!clinicBookId) return;
 
-    const timer = setInterval(() => {
-      const now = Date.now();
-      const elapsed = Math.floor((now - completionTime) / 1000); // seconds elapsed
-      const remaining = EDIT_WINDOW_SECONDS - elapsed;
-      if (remaining <= 0) {
-        // Time's up!
-        setRemainingTime(0);
-        setCanEdit(false);
-        clearInterval(timer);
-      } else {
-        setRemainingTime(remaining);
-        setCanEdit(true);
-      }
-    }, 1000);
+    getPatientDataByClinicBookId(clinicBookId)
+      .then((res) => {
+        const data = res.data;
+        setPatientInfo({
+          patientId: data.patinetId,
+          age: data.age,
+          gender: data.gender,
+          medicationPurpose: data.visit_reason,
+        });
+      })
+      .catch((err) => console.error(err));
+  }, [clinicBookId]);
 
-    return () => clearInterval(timer);
-  }, [isCompleted, completionTime]);
+  // ================= LOAD PAST PAGES =================
+  useEffect(() => {
+    if (!clinicBookId) return;
 
-  // ==================== HELPER FUNCTIONS ====================
+    getClinicPagesByClinicBookId(clinicBookId)
+      .then((res) => setPastPages(res.data))
+      .catch((err) => console.error(err));
+  }, [clinicBookId]);
 
-  // Format remaining time as MM:SS
-  const formatTime = (seconds) => {
-    if (!seconds || seconds <= 0) return "00:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
+  // ================= VIEW OLD PAGE =================
+  const handleViewPage = async (page) => {
+    try {
+      const response = await getClinicPageById(page.id);
+      const data = response.data.data;
 
-  // ==================== HANDLERS ====================
-  const handleNavigate = (path) => {
-    navigate(path);
-  };
+      const metrics = data.healthMetricRequestSetDTO?.metrics || {};
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/login");
-  };
+      const updatedForm = {
+        subReason: data.subReason || "",
+        clinicExaming: data.clinicExaming || "",
+        clinicSuggestTest: data.clinicSuggestTest || "",
+        clinicDoctorNote: data.clinicDoctorNote || "",
+        nextClinic: data.nextClinic
+          ? data.nextClinic.split("T")[0]
+          : "",
+        medication:
+          data.medication?.map((med) => ({
+            medicine: med.drugName || "",
+            dose: med.dosage || "",
+            frequency: med.frequency || "",
+            duration: med.duration || "",
+            timing: med.instruction || "",
+          })) || [],
+        mediMessure: {
+          BP:
+            metrics.BLOOD_PRESSURE_SYSTOLIC &&
+            metrics.BLOOD_PRESSURE_DIASTOLIC
+              ? `${metrics.BLOOD_PRESSURE_SYSTOLIC}/${metrics.BLOOD_PRESSURE_DIASTOLIC}`
+              : "",
+          pulse: metrics.HEART_RATE ?? "",
+          temperature: metrics.TEMPERATURE ?? "",
+          weight: metrics.WEIGHT ?? "",
+          bloodSugar: metrics.BLOOD_SUGAR ?? "",
+          cholesterol: metrics.CHOLESTEROL ?? "",
+        },
+      };
 
-  // Unified change handler
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+      setFormData(updatedForm);
 
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
-  const handleMoreAboutPatient = () => {
-    navigate("/doctorViewform");
-  };
-
-  // Validate form
-  const validate = () => {
-    const newErrors = {};
-
-    if (!formData.reasonForVisit.trim()) {
-      newErrors.reasonForVisit = "Reason for visit is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Complete and save clinic book page
-  const handleComplete = async () => {
-    if (!validate()) {
-      alert("Please fill in all required fields");
-      return;
-    }
-
-    setIsCompleting(true);
-    const completionTimestamp = Date.now();
-
-    // ==================== SIMULATE API SAVE ====================
-    const clinicBookPage = {
-      id: `CONSULT_${Date.now()}`,
-      patientId: patientInfo.patientId,
-      clinicBookId: "CB001", // ID of the clinic book this page belongs to
-      pageDate: formData.date,
-      timestamp: new Date(completionTimestamp).toISOString(),
-      patientDetails: patientInfo,
-      pageData: formData,
-      doctorId: "DR123",
-      status: "completed",
-      folder: "clinic-book", // Saved in patient's clinic book folder
-      editWindow: {
-        expiresAt: new Date(
-          completionTimestamp + EDIT_WINDOW_SECONDS * 1000,
-        ).toISOString(),
-        durationMinutes: EDIT_WINDOW_MINUTES,
-      },
-    };
-
-    setTimeout(() => {
-      console.log("✅ Clinic Book Page saved:", clinicBookPage);
-
-      // Mark as completed and start timer
+      // 🔥 IMPORTANT
+      setIsViewingOldPage(true);
+      setSelectedPageId(page.id);
       setIsCompleted(true);
-      setCompletionTime(completionTimestamp);
       setCanEdit(true);
-      setRemainingTime(EDIT_WINDOW_SECONDS);
 
-      alert(
-        `✅ Clinic Book Page completed and saved!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\n You have ${EDIT_WINDOW_MINUTES} minutes to make edits if needed.\n\n This clinic book is now saved in patient's Clinic Book folder.`,
-      );
-
-      setIsCompleting(false);
-      //navigate("/patient-dashboard");
-    }, 1500);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load clinic page");
+    }
   };
 
-  // ==================== UPDATE HANDLER ====================
-  /**
-   * UPDATE: Edit completed consultation within 10-minute window
-   * - Only works if canEdit is true
-   * - Sends email to patient for approval
-   * - Patient must accept before changes are saved
-   * - After patient accepts → Updated page replaces original in folder
-   */
-  const handleUpdate = async () => {
-    if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer update this consultation.",
-      );
-      return;
-    }
-
-    if (!validate()) {
-      alert("Please fill in required fields before updating");
-      return;
-    }
-
-    setIsUpdating(true);
-
-    const updateRequest = {
-      clinicId: `CONSULT_${completionTime}`,
-      patientId: patientInfo.patientId,
-      patientEmail: patientInfo.email,
-      updatedAt: new Date().toISOString(),
-      updatedData: formData,
-      doctorId: "DR123",
-      status: "pending_patient_approval", // Waiting for patient to accept
-      emailNotification: {
-        to: patientInfo.email,
-        subject: `Update Request: Consultation on ${formData.date}`,
-        message: `Dr. Samantha Silva has requested to update your consultation record from ${formData.date}. Please review and approve the changes.`,
+  // ================= CREATE NEW =================
+  const handleCreateNewPage = () => {
+    setFormData({
+      subReason: "",
+      clinicExaming: "",
+      clinicSuggestTest: "",
+      clinicDoctorNote: "",
+      nextClinic: "",
+      medication: [],
+      mediMessure: {
+        BP: "",
+        pulse: "",
+        temperature: "",
+        weight: "",
+        bloodSugar: "",
+        cholesterol: "",
       },
-    };
-    // ==================== SIMULATE API SAVE & EMAIL SEND ====================
-    setTimeout(() => {
-      console.log(
-        "📧 Update request sent to patient for approval:",
-        updateRequest,
-      );
-      console.log(`📧 Email sent to: ${patientInfo.email}`);
+    });
 
-      alert(
-        `📧 Update request sent!\n\nPatient: ${patientInfo.fullName}\nEmail: ${patientInfo.email}\n\n⏳ Waiting for patient approval...\n\nThe patient will receive an email to accept these changes.\nOnce approved, the updated consultation will be saved to their Consult folder.`,
-      );
+    setErrors({});
+    setIsViewingOldPage(false);
+    setSelectedPageId(null);
+    setIsCompleted(false);
+    setCanEdit(false);
+    setCompletionTime(null);
+    setRemainingTime(null);
 
-      setIsUpdating(false);
-
-      // In real app: You might disable Update button until patient responds
-      // or show a "Pending approval" status
-    }, 1500);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  // ==================== DELETE HANDLER ====================
-  /**
-   * DELETE: Remove consultation from patient's folder
-   * - Only works if canEdit is true (within 10-minute window)
-   * - Shows confirmation modal
-   * - Permanently removes consultation from patient folder
-   */
-  const handleDelete = () => {
-    if (!canEdit) {
-      alert(
-        "⏰ Edit window has expired. You can no longer delete this consultation.",
-      );
-      return;
+
+  // ================= COMPLETE =================
+//   const handleComplete = async () => {
+//   if (!formData.subReason.trim()) {
+//     alert("Please fill required fields");
+//     return;
+//   }
+
+//   try {
+//     setIsCompleting(true);
+
+//     const requestBody = {
+//       subReason: formData.subReason,
+//       clinicExaming: formData.clinicExaming,
+//       clinicSuggestTest: formData.clinicSuggestTest,
+//       clinicDoctorNote: formData.clinicDoctorNote,
+//       nextClinic: formData.nextClinic,
+//       medication: formData.medication.map((med) => ({
+//         drugName: med.medicine,
+//         dosage: med.dose,
+//         frequency: med.frequency,
+//         duration: med.duration,
+//         instruction: med.timing,
+//       })),
+//     };
+
+//     // ================= METRICS =================
+//     const metrics = {};
+
+//     if (formData.mediMessure?.pulse)
+//       metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
+
+//     if (formData.mediMessure?.temperature)
+//       metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
+
+//     if (formData.mediMessure?.weight)
+//       metrics["WEIGHT"] = Number(formData.mediMessure.weight);
+
+//     if (formData.mediMessure?.bloodSugar)
+//       metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
+
+//     if (formData.mediMessure?.cholesterol)
+//       metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
+
+//     if (formData.mediMessure?.BP) {
+//       const [sys, dia] = formData.mediMessure.BP.split("/");
+//       metrics["BLOOD_PRESSURE_SYSTOLIC"] = Number(sys);
+//       metrics["BLOOD_PRESSURE_DIASTOLIC"] = Number(dia);
+//     }
+
+//     if (Object.keys(metrics).length > 0) {
+//       requestBody.healthMetricRequestSetDTO = { metrics };
+//     }
+
+//     // ================= API CALL =================
+//     await createClinicPageById(clinicBookId, requestBody);
+
+//     const now = Date.now();
+//     setCompletionTime(now);
+//     setIsCompleted(true);
+//     setRemainingTime(EDIT_WINDOW_SECONDS);
+//     setCanEdit(true);
+//     setShowSuccessModal(true);
+
+//   } catch (error) {
+//     console.error(error);
+//     alert("❌ Error saving clinic page");
+//   } finally {
+//     setIsCompleting(false);
+//   }
+// };
+
+
+const handleComplete = async () => {
+  if (!formData.subReason.trim()) {
+    toast.error("Please fill required fields");
+    return;
+  }
+
+  try {
+    setIsCompleting(true);
+
+    const requestBody = {
+      subReason: formData.subReason,
+      clinicExaming: formData.clinicExaming,
+      clinicSuggestTest: formData.clinicSuggestTest,
+      clinicDoctorNote: formData.clinicDoctorNote,
+      nextClinic: formData.nextClinic,
+      medication: formData.medication.map((med) => ({
+        drugName: med.medicine,
+        dosage: med.dose,
+        frequency: med.frequency,
+        duration: med.duration,
+        instruction: med.timing,
+      })),
+    };
+
+    // ================= METRICS =================
+    const metrics = {};
+
+    if (formData.mediMessure?.pulse)
+      metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
+
+    if (formData.mediMessure?.temperature)
+      metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
+
+    if (formData.mediMessure?.weight)
+      metrics["WEIGHT"] = Number(formData.mediMessure.weight);
+
+    if (formData.mediMessure?.bloodSugar)
+      metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
+
+    if (formData.mediMessure?.cholesterol)
+      metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
+
+    if (formData.mediMessure?.BP) {
+      const [sys, dia] = formData.mediMessure.BP.split("/");
+      metrics["BLOOD_PRESSURE_SYSTOLIC"] = Number(sys);
+      metrics["BLOOD_PRESSURE_DIASTOLIC"] = Number(dia);
     }
-    setShowDeleteConfirm(true);
-  };
 
-  const confirmDelete = () => {
-    const deleteRecord = {
-      clinicId: `CONSULT_${completionTime}`,
-      patientId: patientInfo.patientId,
-      deletedAt: new Date().toISOString(),
-      deletedBy: "DR123",
-      reason: "Doctor deleted within edit window",
-    };
+    if (Object.keys(metrics).length > 0) {
+      requestBody.healthMetricRequestSetDTO = { metrics };
+    }
 
-    console.log("🗑️ Consultation deleted from patient folder:", deleteRecord);
+    // ================= API CALL =================
+    const response = await createClinicPageById(clinicBookId, requestBody);
 
-    alert(
-      `🗑️ Consultation deleted!\n\nPatient: ${patientInfo.fullName}\nDate: ${formData.date}\n\nThe consultation has been removed from the patient's Consult folder.`,
-    );
+    // 🔥 IMPORTANT: switch to VIEW MODE
+    const newPageId = response?.data?.data?.clinicPageId;
 
-    setShowDeleteConfirm(false);
-    navigate("/patient-dashboard");
-  };
+    setIsViewingOldPage(true);
+    setSelectedPageId(newPageId);
 
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false);
-  };
+    const now = Date.now();
+    setCompletionTime(now);
+    setIsCompleted(true);
+    setRemainingTime(EDIT_WINDOW_SECONDS);
+    setCanEdit(true);
 
-  // ==================== RENDER ====================
+    setShowSuccessModal(true);
+
+  }catch (error) {
+    console.error(error);
+
+    if (error.response?.data?.error) {
+      showMessage(error.response.data.error);
+    } else {
+      showMessage("Error saving clinic page");
+    }
+
+  } finally {
+    setIsCompleting(false);
+  }
+};
+
+
+
+// const handleUpdate = async () => {
+
+//   if (approvalRequestedPageId === selectedPageId) {
+//     showMessage("Patient approval is pending for this page.");
+//     return;
+//   }
+
+//   showConfirm(
+//     "Do you want to update this clinic page?",
+//     async () => {
+
+//       try {
+
+//         const requestBody = {
+//           subReason: formData.subReason,
+//           clinicExaming: formData.clinicExaming,
+//           clinicSuggestTest: formData.clinicSuggestTest,
+//           clinicDoctorNote: formData.clinicDoctorNote,
+//           nextClinic: formData.nextClinic,
+//           medication: formData.medication.map((med) => ({
+//             drugName: med.medicine,
+//             dosage: med.dose,
+//             frequency: med.frequency,
+//             duration: med.duration,
+//             instruction: med.timing,
+//           })),
+//         };
+
+//         await updateClinicPage(selectedPageId, requestBody);
+
+//         showMessage("Clinic page updated successfully");
+
+//       } catch (error) {
+
+//         if (
+//           error.response?.status === 403 &&
+//           error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
+//         ) {
+
+//           showConfirm(
+//             "Edit time expired. Do you want to request approval from the patient?",
+//             async () => {
+
+//               await requestEditApproval(selectedPageId);
+
+//               setApprovalRequestedPageId(selectedPageId);
+
+//               showMessage("Approval request sent to patient");
+
+//             }
+//           );
+
+//         } else {
+
+//           showMessage("Update failed");
+
+//         }
+
+//       }
+
+//     }
+//   );
+// };
+
+const handleUpdate = async () => {
+
+  if (approvalRequestedPageId === selectedPageId) {
+    showMessage("Patient approval is pending for this page.");
+    return;
+  }
+
+  showConfirm(
+    "Do you want to update this clinic page?",
+    async () => {
+
+      try {
+
+        const requestBody = {
+          subReason: formData.subReason,
+          clinicExaming: formData.clinicExaming,
+          clinicSuggestTest: formData.clinicSuggestTest,
+          clinicDoctorNote: formData.clinicDoctorNote,
+          nextClinic: formData.nextClinic,
+          medication: formData.medication.map((med) => ({
+            drugName: med.medicine,
+            dosage: med.dose,
+            frequency: med.frequency,
+            duration: med.duration,
+            instruction: med.timing,
+          })),
+        };
+
+        // ================= METRICS =================
+        const metrics = {};
+
+        const pulse = Number(formData.mediMessure?.pulse);
+        if (!isNaN(pulse) && pulse > 0) {
+          metrics["HEART_RATE"] = pulse;
+        }
+
+        const temperature = Number(formData.mediMessure?.temperature);
+        if (!isNaN(temperature) && temperature > 0) {
+          metrics["TEMPERATURE"] = temperature;
+        }
+
+        const weight = Number(formData.mediMessure?.weight);
+        if (!isNaN(weight) && weight > 0) {
+          metrics["WEIGHT"] = weight;
+        }
+
+        const bloodSugar = Number(formData.mediMessure?.bloodSugar);
+        if (!isNaN(bloodSugar) && bloodSugar > 0) {
+          metrics["BLOOD_SUGAR"] = bloodSugar;
+        }
+
+        const cholesterol = Number(formData.mediMessure?.cholesterol);
+        if (!isNaN(cholesterol) && cholesterol > 0) {
+          metrics["CHOLESTEROL"] = cholesterol;
+        }
+
+        const bp = formData.mediMessure?.BP;
+
+        if (bp && bp.includes("/")) {
+          const [sys, dia] = bp.split("/");
+
+          const sysVal = Number(sys);
+          const diaVal = Number(dia);
+
+          if (!isNaN(sysVal) && !isNaN(diaVal)) {
+            metrics["BLOOD_PRESSURE_SYSTOLIC"] = sysVal;
+            metrics["BLOOD_PRESSURE_DIASTOLIC"] = diaVal;
+          }
+        }
+
+        if (Object.keys(metrics).length > 0) {
+          requestBody.healthMetricRequestSetDTO = { metrics };
+        }
+
+        await updateClinicPage(selectedPageId, requestBody);
+
+        showMessage("Clinic page updated successfully");
+
+      } catch (error) {
+
+        if (
+          error.response?.status === 403 &&
+          error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
+        ) {
+
+          showConfirm(
+            "Edit time expired. Do you want to request approval from the patient?",
+            async () => {
+
+              await requestEditApproval(selectedPageId);
+
+              setApprovalRequestedPageId(selectedPageId);
+
+              showMessage("Approval request sent to patient");
+
+            }
+          );
+
+        } else {
+
+          showMessage("Update failed");
+
+        }
+
+      }
+
+    }
+  );
+};                                         
+
+
+// const handleDelete = async () => {
+//   try {
+
+//     await deleteClinicPage(selectedPageId);
+
+//     alert("🗑 Deleted successfully");
+
+//     handleCreateNewPage();
+
+//   } catch (error) {
+
+//     if (
+//       error.response?.status === 403 &&
+//       error.response?.data?.error === "DELETE_WINDOW_EXPIRED_REQUEST_APPROVAL"
+//     ) {
+
+//       const confirmRequest = window.confirm(
+//         "Delete time expired. Request approval from patient?"
+//       );
+
+//       if (confirmRequest) {
+//         await requestEditApproval(selectedPageId);
+//         alert("Approval request sent to patient email");
+//       }
+
+//     } else {
+//       alert("Delete failed");
+//     }
+
+//   }
+// };
+
+
+const handleDelete = async () => {
+
+  if (approvalRequestedPageId === selectedPageId) {
+    showMessage("Patient approval is pending for this page.");
+    return;
+  }
+
+  showConfirm(
+    "Do you want to delete this clinic page?",
+    async () => {
+
+      try {
+
+        await deleteClinicPage(selectedPageId);
+
+        showMessage("Clinic page deleted successfully");
+
+        handleCreateNewPage();
+
+      } catch (error) {
+
+        if (
+          error.response?.status === 403 &&
+          error.response?.data?.error === "DELETE_WINDOW_EXPIRED_REQUEST_APPROVAL"
+        ) {
+
+          showConfirm(
+            "Delete time expired. Do you want to request approval from the patient?",
+            async () => {
+
+              await requestEditApproval(selectedPageId);
+
+              setApprovalRequestedPageId(selectedPageId);
+
+              showMessage("Approval request sent to patient");
+
+            }
+          );
+
+        } else {
+
+          showMessage("Delete failed");
+
+        }
+
+      }
+
+    }
+  );
+};
+
+  // ================= RENDER =================
   return (
     <>
-      <DoctorNavBar
-        patientData={patientInfo}
-        doctorData={{
-          fullName: "Dr. Samantha Silva",
-          email: "doctor@hospital.com",
-        }}
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      />
+      <DoctorNavBar patientData={patientInfo} />
+
       <div className="min-h-screen bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-2xl font-bold text-mainblack mb-6">
             Clinic Book Page
           </h1>
-          {/* Status Badge */}
-          {isCompleted && (
-            <div className="flex items-center gap-3 mb-6">
-              {canEdit ? (
-                <div className="px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg">
-                  <p className="text-sm font-semibold text-yellow-800">
-                    ⏰ Edit Window: {formatTime(remainingTime)} remaining
-                  </p>
-                  <p className="text-xs text-yellow-600">
-                    Update & Delete available until time expires
-                  </p>
-                </div>
-              ) : (
-                <div className="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg">
-                  <p className="text-sm font-semibold text-gray-800">
-                    🔒 Locked - Edit window expired
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    This consultation can no longer be edited
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-          {/* ========== GRID LAYOUT: 3 COLUMNS ========== */}
+
           <div className="grid lg:grid-cols-3 gap-6">
-            {/* LEFT COLUMN */}
             <div className="space-y-6">
-              <PatientDetailsCard
-                patientInfo={patientInfo}
-                onMoreAboutPatient={handleMoreAboutPatient}
-                showMedicationPurpose={false}
+              <PatientDetailsCard patientInfo={patientInfo} />
+              <PastClinicPagesCard
+                pastPages={pastPages}
+                onViewPage={handleViewPage}
               />
-              <PastClinicPagesCard pastPages={pastPages} />
+
+              <div className="flex justify-between items-center mb-6">
+                <button
+                  onClick={handleCreateNewPage}
+                  className="px-4 py-2 w-full bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+                >
+                  ➕ Create New Page
+                </button>
+              </div>
             </div>
-            {/* RIGHT COLUMN */}
+
             <div className="lg:col-span-2 space-y-6">
               <TodayPageFormCard
                 formData={formData}
-                onChange={handleChange}
+                onChange={(field, value) =>
+                  setFormData((prev) => ({ ...prev, [field]: value }))
+                }
                 errors={errors}
               />
 
               <ExaminationAndTestsCard
                 formData={formData}
-                onChange={handleChange}
+                onChange={(field, value) =>
+                  setFormData((prev) => ({ ...prev, [field]: value }))
+                }
               />
 
-              <VitalSignsCard formData={formData} onChange={handleChange} />
-
-              <MedicationCard formData={formData} onChange={handleChange} />
-
-              {/* ACTION BUTTONS */}
-              <div className="flex justify-between items-center mt-6">
-                {isCompleted && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleUpdate}
-                      disabled={!canEdit || isUpdating}
-                      className={`px-6 py-3 rounded-lg font-semibold ${
-                        canEdit
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                    >
-                      {isUpdating ? "Updating..." : "✏️ Update"}
-                    </button>
-                    {/* Delete Button */}
-                    <button
-                      onClick={handleDelete}
-                      disabled={!canEdit}
-                      className={`px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105 ${
-                        canEdit
-                          ? "bg-red-600 text-white  hover:bg-red-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                      title={
-                        !canEdit
-                          ? "Edit window expired"
-                          : "Delete clinic book page"
-                      }
-                    >
-                      🗑️ Delete
-                    </button>
-                  </div>
-                )}
-                {/* RIGHT: Complete Button (only if not completed yet) */}
-                {!isCompleted && (
-                  <button
-                    onClick={handleComplete}
-                    disabled={isCompleting}
-                    className="ml-auto px-8 py-3 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50"
-                  >
-                    {isCompleting ? "Completing..." : "✅ Complete"}
-                  </button>
-                )}
-              </div>
-              {/* check from here */}
-              {!isCompleted && (
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800">
-                    ℹ️ <strong>Note:</strong> After clicking "Complete", you'll
-                    have {EDIT_WINDOW_MINUTES} minutes to make edits.
-                  </p>
-                </div>
-              )}
-            </div>{" "}
-            {/* ✅ CLOSE lg:col-span-2 */}
-          </div>{" "}
-          {/* ✅ CLOSE grid */}
-        </div>{" "}
-        {/* ✅ CLOSE max-w-7xl */}
-      </div>{" "}
-      {/* ✅ CLOSE min-h-screen */}
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <div className="flex flex-col items-center text-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-                <span className="text-red-600 text-3xl">⚠️</span>
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">
-                Delete Consultation?
-              </h2>
-              <p className="text-sm text-gray-600">
-                Are you sure you want to delete this consultation for{" "}
-                <strong>{patientInfo.fullName}</strong>? This will remove it
-                from the patient's Consult folder permanently.
-              </p>
+              <VitalSignsCard
+                formData={formData}
+                onChange={(field, value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    mediMessure: {
+                      ...prev.mediMessure,
+                      [field]: value,
+                    },
+                  }))
+                }
+              />
             </div>
+          </div>
 
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                className="px-5 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-50"
-                onClick={cancelDelete}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-5 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700"
-                onClick={confirmDelete}
-              >
-                Yes, Delete
-              </button>
+          <div className="pt-5 gap-5 flex flex-col">
+            <AdditionalNotesCard
+              formData={formData}
+              onChange={(field, value) =>
+                setFormData((prev) => ({ ...prev, [field]: value }))
+              }
+            />
+
+            <MedicationCard
+              formData={formData}
+              onChange={(field, value) =>
+                setFormData((prev) => ({ ...prev, [field]: value }))
+              }
+            />
+
+            <div className="flex justify-between items-center mt-6">
+              {isViewingOldPage ? (
+                <div className="ml-auto flex gap-3">
+                  <button
+                    onClick={handleUpdate}
+                    disabled={approvalRequestedPageId === selectedPageId}
+                    className={`px-6 py-3 rounded-lg font-semibold text-white
+                    ${approvalRequestedPageId === selectedPageId
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"}`}
+                  >
+                    ✏️ Update
+                  </button>
+
+                  <button
+                    onClick={handleDelete}
+                    disabled={approvalRequestedPageId === selectedPageId}
+                    className={`px-6 py-3 rounded-lg font-semibold text-white
+                    ${approvalRequestedPageId === selectedPageId
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-600 hover:bg-red-700"}`}
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleComplete}
+                  disabled={isCompleting}
+                  className="ml-auto px-8 py-3 bg-secondary text-white rounded-lg font-semibold hover:bg-secondary/90 transition"
+                >
+                  {isCompleting ? "Completing..." : "✅ Complete"}
+                </button>
+              )}
             </div>
           </div>
         </div>
+      </div>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
+            <h2 className="text-xl font-bold text-green-600 mb-3">
+              ✅ Clinic Page Saved
+            </h2>
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="px-6 py-2 bg-secondary text-white rounded-lg font-semibold"
+            >
+              OK
+            </button>
+          </div>
+        </div>
       )}
+
+
+      {modal.open && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 text-center">
+
+      <p className="text-gray-800 text-lg mb-6">
+        {modal.message}
+      </p>
+
+      {modal.confirm ? (
+        <div className="flex justify-center gap-4">
+
+          <button
+            onClick={() => {
+              modal.onConfirm && modal.onConfirm();
+              closeModal();
+            }}
+            className="px-6 py-2 bg-secondary text-white rounded-lg"
+          >
+            Yes
+          </button>
+
+          <button
+            onClick={closeModal}
+            className="px-6 py-2 bg-gray-300 rounded-lg"
+          >
+            No
+          </button>
+
+        </div>
+      ) : (
+
+        <button
+          onClick={closeModal}
+          className="px-6 py-2 bg-secondary text-white rounded-lg"
+        >
+          OK
+        </button>
+
+      )}
+
+    </div>
+  </div>
+)}
     </>
   );
 }

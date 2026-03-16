@@ -1,5 +1,7 @@
 //thathsara
 
+import { getDisplayName, getInitial } from "../../utils/nameUtils";
+
 export function PatientDetailsCard({
   patientInfo,
   onMoreAboutPatient,
@@ -10,19 +12,20 @@ export function PatientDetailsCard({
     fullName: "Parindya Hewage",
     age: 23,
     gender: "Female",
-    medicationPurpose: "Treat Gastritis",
+    //medicationPurpose: "Treat Gastritis",
   };
+  const patientDisplayName = getDisplayName(patient);
 
   const cardBox = "border border-gray-300 rounded-xl bg-white shadow-sm p-4";
   return (
     <div className={cardBox}>
       <div className="flex items-center gap-3 mb-4">
         <div className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xl">
-          {patient.fullName.charAt(0)}
+          {getInitial(patient)}
         </div>
         <div>
           <h2 className="text-lg font-bold text-gray-800">
-            {patient.fullName}
+            {patientDisplayName}
           </h2>
           <p className="text-sm text-gray-500">Patient Details</p>
         </div>
