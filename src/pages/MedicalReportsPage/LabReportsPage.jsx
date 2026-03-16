@@ -2,6 +2,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { getPatientProfileApi } from "../../api/PatientApi";
+import { uploadPatientReportApi } from "../../api/ReportsApi";
+import { getSignedUrlApi } from "../../api/FilesApi";
 
 // Helper functions
 const validateFile = (file) => {
@@ -22,15 +25,6 @@ const validateFile = (file) => {
   }
 
   return { valid: true };
-};
-
-const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 };
 
 const formatDate = (dateString) => {
@@ -98,6 +92,7 @@ export default function LabReportsPage() {
   const [folderName, setFolderName] = useState("");
   const [viewing, setViewing] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [resolvedPatientId, setResolvedPatientId] = useState(null);
 
   const fileInputRef = useRef(null);
   // TODO: Replace with actual user ID from auth context
@@ -119,6 +114,26 @@ export default function LabReportsPage() {
       }
     }
   }, [userId, category]);
+
+  useEffect(() => {
+    const loadPatientId = async () => {
+      const role = localStorage.getItem("role")?.toUpperCase();
+      if (role === "DOCTOR") {
+        const selectedPatientId = localStorage.getItem("selectedPatientId");
+        setResolvedPatientId(selectedPatientId || null);
+        return;
+      }
+
+      try {
+        const profileRes = await getPatientProfileApi();
+        setResolvedPatientId(profileRes.data?.id || null);
+      } catch (error) {
+        console.error("Failed to load patient profile", error);
+      }
+    };
+
+    loadPatientId();
+  }, []);
 
   // Save items to localStorage
   const saveItems = (newItems) => {
@@ -163,18 +178,29 @@ export default function LabReportsPage() {
   const handleConfirmUpload = async () => {
     if (!pendingFile) return;
 
+    if (!resolvedPatientId) {
+      toast.error("Patient not selected");
+      return;
+    }
+
     setUploading(true);
 
     try {
-      const base64Data = await fileToBase64(pendingFile);
+      const reportDate = new Date().toISOString().slice(0, 10);
+      const response = await uploadPatientReportApi(
+        resolvedPatientId,
+        "LAB_REPORT",
+        pendingFile,
+        reportDate
+      );
 
       const newFile = {
-        id: Date.now().toString(),
+        id: response.data?.id || Date.now().toString(),
         title: titleText.trim() || "Untitled",
         name: pendingFile.name,
-        data: base64Data,
+        fileUrl: response.data?.fileUrl,
         type: pendingFile.type,
-        uploadedAt: new Date().toISOString(),
+        uploadedAt: response.data?.uploadedAt || new Date().toISOString(),
         folderId: currentFolder,
         isFolder: false,
       };
@@ -243,13 +269,27 @@ export default function LabReportsPage() {
     saveItems(updated);
   };
 
+  const resolveFileUrl = async (file) => {
+    if (file.data) return file.data;
+    if (!file.fileUrl) return "";
+    return getSignedUrlApi("medical-files", file.fileUrl);
+  };
+
   const handleDownload = (file) => {
-    const link = document.createElement("a");
-    link.href = file.data;
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    resolveFileUrl(file)
+      .then((url) => {
+        if (!url) throw new Error("Missing file URL");
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => {
+        console.error("Failed to download file", error);
+        toast.error("Failed to download file");
+      });
   };
 
   const handleFolderClick = (folderId) => {
@@ -429,11 +469,18 @@ export default function LabReportsPage() {
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden"
               >
                 <button
-                  onClick={() => setViewing(file)}
+                  onClick={async () => {
+                    const url = await resolveFileUrl(file);
+                    if (!url) {
+                      toast.error("File unavailable");
+                      return;
+                    }
+                    setViewing({ ...file, data: url });
+                  }}
                   className="w-full block"
                 >
                   <div className="h-40 bg-gray-50 flex items-center justify-center">
-                    {file.type.startsWith("image/") ? (
+                    {file.type.startsWith("image/") && file.data ? (
                       <img
                         src={file.data}
                         alt={file.title}
@@ -464,7 +511,14 @@ export default function LabReportsPage() {
 
                 <div className="flex border-t p-3 gap-2">
                   <button
-                    onClick={() => setViewing(file)}
+                    onClick={async () => {
+                      const url = await resolveFileUrl(file);
+                      if (!url) {
+                        toast.error("File unavailable");
+                        return;
+                      }
+                      setViewing({ ...file, data: url });
+                    }}
                     className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
                   >
                     View

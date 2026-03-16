@@ -23,7 +23,7 @@ import {
   getPeriodTrackerApi,
   getOtherRemindersApi,
 } from "../../api/RemindersApi";
-import { getGreetingName } from "../../utils/nameUtils";
+import { getNameParts } from "../../utils/nameUtils";
 
 const BMI_STATUS_STYLES = {
   NORMAL: "bg-green-50 border-green-200 text-green-800",
@@ -306,7 +306,7 @@ export default function SummaryPage() {
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold mb-2">
-                {greeting}, {getGreetingName(patient) || "there"} 👋
+                {greeting}, {getNameParts(patient).secondName || "there"} 👋
               </h1>
               <p className="text-sm">
                 {patient.age ?? "—"} years • {patient.gender} • ID:{" "}

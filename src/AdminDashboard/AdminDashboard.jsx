@@ -9,7 +9,6 @@ import {
   getPatientByIdApi,
   toggleDoctorStatusApi,
   togglePatientStatusApi,
-  buildAdminFileUrl,
   getAdminProfileApi
 } from '../api/AdminApi';
 import { getDisplayName } from '../utils/nameUtils';
@@ -126,24 +125,21 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleViewDocument = (documentUrl) => {
+  const handleViewDocument = async (documentUrl) => {
     if (!documentUrl) {
       toast.error('No verification document available');
       return;
     }
-    setCurrentDocumentUrl(buildAdminFileUrl(documentUrl));
+    setCurrentDocumentUrl(documentUrl);
     setShowDocumentModal(true);
   };
 
-  const handleDownloadDocument = (documentUrl) => {
+  const handleDownloadDocument = async (documentUrl) => {
     if (!documentUrl) {
       toast.error('No verification document available');
       return;
     }
-    
-    // Convert view URL to download URL
-    const downloadUrl = buildAdminFileUrl(documentUrl.replace('/uploads/', '/uploads/download/'));
-    window.open(downloadUrl, '_blank');
+    window.open(documentUrl, '_blank');
   };
 
   const handleApproveDoctor = async (userId) => {
