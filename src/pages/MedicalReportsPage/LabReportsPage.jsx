@@ -1,6 +1,7 @@
 // src/pages/MedicalReportsPage/LabReportsPage.jsx
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 // Helper functions
 const validateFile = (file) => {
@@ -131,7 +132,7 @@ export default function LabReportsPage() {
 
     if (role === "DOCTOR") {
       if (!patientId) {
-        alert("No patient selected");
+        toast.error("No patient selected");
         navigate("/doctor/dashboard");
         return;
       }
@@ -148,7 +149,7 @@ export default function LabReportsPage() {
 
     const validation = validateFile(file);
     if (!validation.valid) {
-      alert(validation.error);
+      toast.error(validation.error);
       e.target.value = null;
       return;
     }
@@ -186,7 +187,7 @@ export default function LabReportsPage() {
       setShowTitleModal(false);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload file. Please try again.");
+      toast.error("Failed to upload file. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -200,7 +201,7 @@ export default function LabReportsPage() {
 
   const handleCreateFolder = () => {
     if (!folderName.trim()) {
-      alert("Please enter a folder name");
+      toast.error("Please enter a folder name");
       return;
     }
 
