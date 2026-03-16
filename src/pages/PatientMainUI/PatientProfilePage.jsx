@@ -4,6 +4,39 @@ import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
 import { getPatientProfileApi, updatePatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
 import toast from "react-hot-toast";
 
+function parsePatientName(patient) {
+  if (
+    patient?.firstName !== undefined ||
+    patient?.secondName !== undefined ||
+    patient?.lastName !== undefined
+  ) {
+    return {
+      firstName: patient.firstName || "-",
+      secondName: patient.secondName || "-",
+      lastName: patient.lastName || "-",
+    };
+  }
+
+  const parts = (patient?.fullName || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return { firstName: "-", secondName: "-", lastName: "-" };
+  }
+
+  if (parts.length === 1) {
+    return { firstName: parts[0], secondName: "-", lastName: "-" };
+  }
+
+  return {
+    firstName: parts[0],
+    secondName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "-",
+    lastName: parts[parts.length - 1],
+  };
+}
+
 export default function MyProfile() {
   const [openEdit, setOpenEdit] = useState(false);
   const [patient, setPatient] = useState(null);
@@ -64,6 +97,8 @@ export default function MyProfile() {
       </div>
     );
   }
+
+  const patientName = parsePatientName(patient);
 
   return (
     <div className="min-h-screen px-4">
@@ -160,7 +195,9 @@ export default function MyProfile() {
 
         {/* PERSONAL INFORMATION */}
         <ProfileSection1 title="Personal Information" margin="mb-10">
-          <Info label="Full Name" value={patient.fullName} />
+          <Info label="First Name" value={patientName.firstName} />
+          <Info label="Second Name" value={patientName.secondName} />
+          <Info label="Last Name" value={patientName.lastName} />
           <Info label="Date of Birth" value={patient.dateOfBirth} />
           <Info label="Age" value={patient.age} />
           <Info label="Gender" value={patient.gender} />

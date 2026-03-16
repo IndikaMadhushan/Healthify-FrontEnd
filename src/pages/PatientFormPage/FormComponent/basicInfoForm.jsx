@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
 
 const basic_form = {
-  fullName: "",
+  firstName: "",
+  secondName: "",
+  lastName: "",
   dob: "",
   age: "",
   gender: "",
@@ -47,6 +49,39 @@ function calculateAge(dobString) {
   return `${years} years ${months} months`;
 }
 
+function parseName(initialData) {
+  if (
+    initialData?.firstName !== undefined ||
+    initialData?.secondName !== undefined ||
+    initialData?.lastName !== undefined
+  ) {
+    return {
+      firstName: initialData.firstName || "",
+      secondName: initialData.secondName || "",
+      lastName: initialData.lastName || "",
+    };
+  }
+
+  const parts = (initialData?.fullName || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return { firstName: "", secondName: "", lastName: "" };
+  }
+
+  if (parts.length === 1) {
+    return { firstName: parts[0], secondName: "", lastName: "" };
+  }
+
+  return {
+    firstName: parts[0],
+    secondName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
+    lastName: parts[parts.length - 1],
+  };
+}
+
 
 const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, ref) => {
   const [form, setForm] = useState(basic_form);
@@ -56,8 +91,12 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
   useEffect(() => {
     if (!initialData) return;
 
+    const nameData = parseName(initialData);
+
     setForm({
-      fullName: initialData.fullName || "",
+      firstName: nameData.firstName,
+      secondName: nameData.secondName,
+      lastName: nameData.lastName,
       dob: initialData.dateOfBirth || "",
       age: initialData.dateOfBirth
         ? calculateAge(initialData.dateOfBirth)
@@ -80,8 +119,12 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
     const newErrors = {};
 
 
-    if (form.fullName !== "" && !form.fullName.trim()) {
-      newErrors["basic.fullName"] = "Full name is required";
+    if (!form.firstName.trim()) {
+      newErrors["basic.firstName"] = "First name is required";
+    }
+
+    if (!form.lastName.trim()) {
+      newErrors["basic.lastName"] = "Last name is required";
     }
 
     if (!form.dob) {
@@ -249,16 +292,44 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
 
         {/* Full name */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="px-2">
+            <label className={labelCss}>First Name *</label>
+            <input
+              type="text"
+              value={form.firstName}
+              onChange={handleChange("firstName")}
+              className={inputBase + " " + withError("basic.firstName")}
+            />
+            {errors["basic.firstName"] && (
+              <p className="text-red-500 text-xs mt-1">{errors["basic.firstName"]}</p>
+            )}
+          </div>
+
+          <div className="px-2">
+            <label className={labelCss}>Second Name</label>
+            <input
+              type="text"
+              value={form.secondName}
+              onChange={handleChange("secondName")}
+              className={inputBase + " " + withError("basic.secondName")}
+            />
+            {errors["basic.secondName"] && (
+              <p className="text-red-500 text-xs mt-1">{errors["basic.secondName"]}</p>
+            )}
+          </div>
+        </div>
+
         <div className="px-2">
-          <label className={labelCss}>Full Name *</label>
+          <label className={labelCss}>Last Name *</label>
           <input
             type="text"
-            value={form.fullName}
-            onChange={handleChange("fullName")}
-            className={inputBase + " " + withError("basic.fullName")}
+            value={form.lastName}
+            onChange={handleChange("lastName")}
+            className={inputBase + " " + withError("basic.lastName")}
           />
-          {errors["basic.fullName"] && (
-            <p className="text-red-500 text-xs mt-1">{errors["basic.fullName"]}</p>
+          {errors["basic.lastName"] && (
+            <p className="text-red-500 text-xs mt-1">{errors["basic.lastName"]}</p>
           )}
         </div>
 
