@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
 import {
+  isValidEmail,
   isValidNic,
   isValidPersonName,
   isValidSriLankanPhoneNumber,
@@ -92,7 +93,12 @@ function parseName(initialData) {
 
 const todayString = new Date().toISOString().split("T")[0];
 
-const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, ref) => {
+const BasicInfoForm = forwardRef(({
+  showButton = false,
+  onNext,
+  initialData,
+  readOnly = false
+}, ref) => {
   const [form, setForm] = useState(basic_form);
   const [errors, setErrors] = useState({});
 
@@ -112,9 +118,13 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       age: initialData.dateOfBirth
         ? calculateAge(initialData.dateOfBirth)
         : "",
-      gender: initialData.gender || "",
+      gender: typeof initialData.gender === "string"
+        ? initialData.gender.toLowerCase()
+        : "",
       nationality: initialData.nationality || "",
-      maritalStatus: initialData.maritalStatus || "",
+      maritalStatus: typeof initialData.maritalStatus === "string"
+        ? initialData.maritalStatus.toLowerCase()
+        : "",
       occupation: initialData.occupation || "",
       address: initialData.address || "",
       mainCity: initialData.district || "",
@@ -166,8 +176,14 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
 
     if (!form.gender) newErrors["basic.gender"] = "Gender is required";
     if (!form.nationality) newErrors["basic.nationality"] = "Nationality is required";
-    if (!form.occupation) newErrors["basic.occupation"] = "Occupation is required";
-    if (!form.address) newErrors["basic.address"] = "Address is required";
+    if (!form.occupation.trim()) newErrors["basic.occupation"] = "Occupation is required";
+    if (form.occupation.trim().length > 100) {
+      newErrors["basic.occupation"] = "Occupation must be 100 characters or less";
+    }
+    if (!form.address.trim()) newErrors["basic.address"] = "Address is required";
+    if (form.address.trim().length > 255) {
+      newErrors["basic.address"] = "Address must be 255 characters or less";
+    }
     if (!form.mainCity) newErrors["basic.mainCity"] = "District is required";
     if (!form.maritalStatus) newErrors["basic.maritalStatus"] = "Marital status is required";
     if (!form.nationalId) newErrors["basic.nationalId"] = "NIC number is required";
@@ -182,7 +198,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
     // EMAIL REQUIRED + FORMAT
     if (!form.email.trim()) {
       newErrors["basic.email"] = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) {
+    } else if (!isValidEmail(form.email)) {
       newErrors["basic.email"] = "Invalid email address";
     }
 
@@ -233,7 +249,15 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
     }
 
     if (field === "email") {
-      value = value.trimStart();
+      value = value.trimStart().slice(0, 254);
+    }
+
+    if (field === "occupation") {
+      value = value.slice(0, 100);
+    }
+
+    if (field === "address") {
+      value = value.slice(0, 255);
     }
 
     setForm((prev) => {
@@ -280,6 +304,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       <h2 className={sectionHeading}>Basic Information</h2>
 
       <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
+        <fieldset disabled={readOnly} className="grid grid-cols-1 gap-4">
 
         {/* Full name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -289,6 +314,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
               type="text"
               value={form.firstName}
               onChange={handleChange("firstName")}
+              maxLength={50}
               className={inputBase + " " + withError("basic.firstName")}
             />
             {errors["basic.firstName"] && (
@@ -302,6 +328,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
               type="text"
               value={form.secondName}
               onChange={handleChange("secondName")}
+              maxLength={50}
               className={inputBase + " " + withError("basic.secondName")}
             />
             {errors["basic.secondName"] && (
@@ -316,6 +343,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="text"
             value={form.lastName}
             onChange={handleChange("lastName")}
+            maxLength={50}
             className={inputBase + " " + withError("basic.lastName")}
           />
           {errors["basic.lastName"] && (
@@ -436,6 +464,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="text"
             value={form.occupation}
             onChange={handleChange("occupation")}
+            maxLength={100}
             className={inputBase + " " + withError("basic.occupation")}
           />
           {errors["basic.occupation"] && (
@@ -450,6 +479,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="text"
             value={form.address}
             onChange={handleChange("address")}
+            maxLength={255}
             className={inputBase + " " + withError("basic.address")}
           />
           {errors["basic.address"] && (
@@ -509,6 +539,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="email"
             value={form.email}
             onChange={handleChange("email")}
+            maxLength={254}
             className={inputBase + " " + withError("basic.email")}
           />
           {errors["basic.email"] && (
@@ -537,7 +568,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
         )} */}
 
         {/* Submit */}
-        {showButton && (
+        {showButton && !readOnly && (
           <div className="px-2 mt-2 flex justify-end">
             <button
               type="button"
@@ -548,6 +579,8 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             </button>
           </div>
         )}
+
+        </fieldset>
 
       </form>
     </div>

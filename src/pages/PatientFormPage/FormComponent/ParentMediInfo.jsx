@@ -13,8 +13,10 @@ export default function ParentMedicalForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [parentChronic, setParentChronic] = useState(initialChronic);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!initialData) return;
@@ -27,16 +29,58 @@ export default function ParentMedicalForm({
         : [],
       otherChronic: initialData.otherChronic ?? "",
     });
+    setErrors({});
   }, [initialData]);
+
+  const handleChronicChange = (nextValue) => {
+    setParentChronic(nextValue);
+    setErrors((prev) => {
+      if (
+        prev.otherChronic &&
+        (!nextValue.chronicIllnesses.includes("Other") ||
+          nextValue.otherChronic.trim())
+      ) {
+        const nextErrors = { ...prev };
+        delete nextErrors.otherChronic;
+        return nextErrors;
+      }
+
+      return prev;
+    });
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+    if (
+      parentChronic.chronicIllnesses.includes("Other") &&
+      !parentChronic.otherChronic.trim()
+    ) {
+      nextErrors.otherChronic = "Please specify other chronic illness";
+    }
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      return null;
+    }
+
+    return {
+      ...parentChronic,
+      otherChronic: parentChronic.otherChronic.trim(),
+    };
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (readOnly) return;
+
+    const payload = validateForm();
+    if (!payload) return;
 
     try {
       if (onSubmit) {
-        await onSubmit(parentChronic);
+        await onSubmit(payload);
       } else {
-        console.log("Parent medical:", parentChronic);
+        console.log("Parent medical:", payload);
       }
       toast.success("Parent medical information submitted successfully");
     } catch (error) {
@@ -46,6 +90,13 @@ export default function ParentMedicalForm({
         "Failed to submit parent medical information";
       toast.error(message);
     }
+  };
+
+  const handleNextClick = () => {
+    if (readOnly) return;
+    const payload = validateForm();
+    if (!payload) return;
+    onNext();
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-1";
@@ -63,16 +114,20 @@ export default function ParentMedicalForm({
         </p>
       </div>
 
-      <ChronicIllnessesSection value={parentChronic} onChange={setParentChronic} />
+      <fieldset disabled={readOnly}>
+      <ChronicIllnessesSection
+        value={parentChronic}
+        onChange={handleChronicChange}
+        errors={errors}
+      />
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"
             className={actionButtonClass}
-            onClick={() => {
-              onNext();
-            }}
+            onClick={handleNextClick}
           >
             Next
           </button>

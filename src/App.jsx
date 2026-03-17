@@ -45,7 +45,6 @@ import AllDoctorNotes from "./pages/AllDoctorNotes/AllDoctorNotes";
 import ForgotPasswordPage from "./pages/PasswordReset/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/PasswordReset/ResetPasswordPage";
 import PatientLayout from "./layouts/PatientLayout";
-import MyProfile from "./pages/PatientMainUI/PatientProfilePage";
 // import { Navigate } from "react-router-dom";
 import DoctorLayout from "./layouts/DoctorLayout";
 
@@ -59,6 +58,7 @@ import ClinicBookPrescriptionPage from "./pages/ClinicBookPage/ClinicBookPrescri
 import RouteTransition from "./components/RouteTransition";
 import LabReportsPage from "./pages/MedicalReportsPage/LabReportsPage";
 import DoctorProfile from "./pages/DoctorMainUI/DoctorProfile";
+import DoctorPatientProfile from "./pages/DoctorMainUI/DoctorPatientProfile";
 
 function App() {
   return (
@@ -182,7 +182,7 @@ function App() {
               element={<PatientFormDoctorView />}
             />
 
-            <Route path=":patientId/profile" element={<MyProfile />} />
+            <Route path=":patientId/profile" element={<DoctorPatientProfile />} />
             <Route
               path=":patientId/medical-reports"
               element={<MedicalReportsPage />}

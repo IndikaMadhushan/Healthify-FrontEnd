@@ -1,42 +1,73 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
 import pRegImage1 from "../../assets/p-reg-image1.png";
+import {
+  isValidEmail,
+  isValidNic,
+  isValidPersonName,
+  isValidSriLankanPhoneNumber,
+  normalizeEmail,
+  sanitizeNic,
+  sanitizePersonName,
+  sanitizePhoneNumber,
+} from "../../utils/patientProfileValidation";
+
+const todayString = new Date().toISOString().split("T")[0];
 
 export default function PatientRegisterPage1() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    secondName: "",
-    lastName: "",
-    dateOfBirth: "",
-    gender: "",
-    nic: "",
-    email: "",
-    phone: "",
+  const [formData, setFormData] = useState(() => {
+    const emptyForm = {
+      firstName: "",
+      secondName: "",
+      lastName: "",
+      dateOfBirth: "",
+      gender: "",
+      nic: "",
+      email: "",
+      phone: "",
+    };
+
+    const savedStep1 = sessionStorage.getItem("patientRegStep1");
+    if (!savedStep1) {
+      return emptyForm;
+    }
+
+    try {
+      return { ...emptyForm, ...JSON.parse(savedStep1) };
+    } catch {
+      return emptyForm;
+    }
   });
 
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const savedStep1 = sessionStorage.getItem("patientRegStep1");
-    if (savedStep1) {
-      try {
-        setFormData(JSON.parse(savedStep1));
-      } catch (e) {
-        // ignore invalid cache
-      }
-    }
-  }, []);
-
   const handleChange = (field) => (e) => {
+    let value = e.target.value;
+
+    if (["firstName", "secondName", "lastName"].includes(field)) {
+      value = sanitizePersonName(value).slice(0, 50);
+    }
+
+    if (field === "nic") {
+      value = sanitizeNic(value);
+    }
+
+    if (field === "phone") {
+      value = sanitizePhoneNumber(value);
+    }
+
+    if (field === "email") {
+      value = value.trimStart().slice(0, 254);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [field]: e.target.value,
+      [field]: value,
     }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -48,19 +79,33 @@ export default function PatientRegisterPage1() {
 
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
+    } else if (!isValidPersonName(formData.firstName)) {
+      newErrors.firstName =
+        "First name can contain only letters, spaces, apostrophes, and hyphens";
+    }
+
+    if (formData.secondName.trim() && !isValidPersonName(formData.secondName)) {
+      newErrors.secondName =
+        "Second name can contain only letters, spaces, apostrophes, and hyphens";
     }
 
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
+    } else if (!isValidPersonName(formData.lastName)) {
+      newErrors.lastName =
+        "Last name can contain only letters, spaces, apostrophes, and hyphens";
     }
 
     if (!formData.dateOfBirth) {
       newErrors.dateOfBirth = "Date of birth is required";
     } else {
-      const dob = new Date(formData.dateOfBirth);
+      const dob = new Date(`${formData.dateOfBirth}T00:00:00`);
       const today = new Date();
-      const age = today.getFullYear() - dob.getFullYear();
-      if (age < 0 || age > 150) {
+      today.setHours(0, 0, 0, 0);
+      const maxPastDate = new Date(today);
+      maxPastDate.setFullYear(today.getFullYear() - 150);
+
+      if (Number.isNaN(dob.getTime()) || dob > today || dob < maxPastDate) {
         newErrors.dateOfBirth = "Please enter a valid date of birth";
       }
     }
@@ -71,35 +116,43 @@ export default function PatientRegisterPage1() {
 
     if (!formData.nic.trim()) {
       newErrors.nic = "NIC number is required";
-    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())) {
+    } else if (!isValidNic(formData.nic)) {
       newErrors.nic = "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
     if (!formData.email.trim()) {
       newErrors.email = "Email address is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+    } else if (!isValidEmail(formData.email)) {
       newErrors.email = "Invalid email format";
     }
 
     // phone number is optional, but validate if provided
     if (formData.phone.trim()) {
-      if (!/^[0-9()+-\s]+$/.test(formData.phone)) {
-        newErrors.phone = "Invalid contact number format";
+      if (formData.phone.length !== 10) {
+        newErrors.phone = "Contact number must have exactly 10 digits";
+      } else if (!isValidSriLankanPhoneNumber(formData.phone)) {
+        newErrors.phone = "Invalid Sri Lanka contact number";
       }
     }
 
     setErrors(newErrors);
-    if (newErrors.phone) {
-      toast.error(newErrors.phone);
-    }
     return Object.keys(newErrors).length === 0;
   };
 
   const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log("Step 1 data:", formData);
-      sessionStorage.setItem("patientRegStep1", JSON.stringify(formData));
+      const cleanedData = {
+        ...formData,
+        firstName: formData.firstName.trim(),
+        secondName: formData.secondName.trim(),
+        lastName: formData.lastName.trim(),
+        nic: formData.nic.trim().toUpperCase(),
+        email: normalizeEmail(formData.email),
+        phone: formData.phone.trim(),
+      };
+      console.log("Step 1 data:", cleanedData);
+      sessionStorage.setItem("patientRegStep1", JSON.stringify(cleanedData));
       navigate("/patient-register-2");
     }
   };
@@ -126,6 +179,8 @@ export default function PatientRegisterPage1() {
             error={errors.firstName}
             placeholder="Enter your first name"
             required
+            maxLength={50}
+            autoComplete="given-name"
           />
 
           <FormField
@@ -135,6 +190,8 @@ export default function PatientRegisterPage1() {
             error={errors.secondName}
             placeholder="Enter your second name"
             required={false}
+            maxLength={50}
+            autoComplete="additional-name"
           />
         </div>
 
@@ -145,6 +202,8 @@ export default function PatientRegisterPage1() {
           error={errors.lastName}
           placeholder="Enter your last name"
           required
+          maxLength={50}
+          autoComplete="family-name"
         />
 
         <FormField
@@ -154,6 +213,7 @@ export default function PatientRegisterPage1() {
           onChange={handleChange("dateOfBirth")}
           error={errors.dateOfBirth}
           required
+          max={todayString}
         />
 
         <RadioGroup
@@ -172,6 +232,8 @@ export default function PatientRegisterPage1() {
           error={errors.nic}
           placeholder="e.g., 123456789V or 123456789012"
           required
+          maxLength={12}
+          autoComplete="off"
         />
 
         <FormField
@@ -182,6 +244,8 @@ export default function PatientRegisterPage1() {
           error={errors.email}
           placeholder="your.email@example.com"
           required
+          maxLength={254}
+          autoComplete="email"
         />
 
         <FormField
@@ -191,6 +255,9 @@ export default function PatientRegisterPage1() {
           error={errors.phone}
           placeholder="+94 XX XXX XXXX (optional)"
           required={false}
+          inputMode="numeric"
+          maxLength={10}
+          autoComplete="tel"
         />
 
         <div className="flex justify-center pt-4">

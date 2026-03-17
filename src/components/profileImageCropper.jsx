@@ -1,7 +1,8 @@
-
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
+import ProfileAvatar from "./ProfileAvatar";
+import { FaUser } from "react-icons/fa";
 
 /* ================= HELPERS ================= */
 
@@ -48,20 +49,16 @@ async function getCroppedImg(imageSrc, pixelCrop) {
 
 /* ================= COMPONENT ================= */
 
-export default function ProfileImageCropper({ onCropped, imageUrl }) {
+export default function ProfileImageCropper({
+  onCropped,
+  imageUrl,
+  fallbackIcon,
+}) {
   // const inputRef = useRef(null);
   const modalInputRef = useRef(null);
 
-  const [src, setSrc] = useState(null);
-  const [profileSrc, setProfileSrc] = useState(null);
-  const [ file ,setFile] = useState(null);
-
-  useEffect(() => {
-    if(imageUrl) {
-      setProfileSrc(imageUrl);
-      setSrc(imageUrl);
-    }
-  }, [imageUrl]);
+  const [src, setSrc] = useState(undefined);
+  const [profileSrc, setProfileSrc] = useState(undefined);
 
   const [showCrop, setShowCrop] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -73,10 +70,14 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
   const [pendingVisible, setPendingVisible] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  const resolvedProfileSrc =
+    profileSrc !== undefined ? profileSrc : (imageUrl || "");
+  const resolvedCropSrc = src !== undefined ? src : resolvedProfileSrc;
+
   const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
   const MAX_BYTES = 5 * 1024 * 1024;
 
-  const hasCustomPhoto = Boolean(profileSrc);
+  const hasCustomPhoto = Boolean(resolvedProfileSrc);
 
   /* ========== FILE SELECT ========== */
 
@@ -94,7 +95,6 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
     }
 
     const url = URL.createObjectURL(f);
-    setFile(f);
     setSrc(url);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
@@ -108,10 +108,10 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
   /* ========== SAVE IMAGE ========== */
 
   const handleSave = async () => {
-    if (!src || !croppedAreaPixels) return;
+    if (!resolvedCropSrc || !croppedAreaPixels) return;
 
     setLoading(true);
-    const { blob, dataUrl } = await getCroppedImg(src, croppedAreaPixels);
+    const { blob, dataUrl } = await getCroppedImg(resolvedCropSrc, croppedAreaPixels);
     const croppedFile = new File([blob], "profile.jpg", { type: blob.type });
 
     setPendingSrc(dataUrl);
@@ -121,7 +121,6 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
     setTimeout(() => {
       setProfileSrc(dataUrl);
       setSrc(dataUrl);
-      setFile(croppedFile);
       setPendingSrc(null);
       setPendingVisible(false);
       setShowCrop(false);
@@ -134,9 +133,8 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
   /* ========== REMOVE IMAGE ========== */
 
   const handleRemove = () => {
-    setProfileSrc(null);
-    setSrc(null);
-    setFile(null);
+    setProfileSrc("");
+    setSrc("");
     setShowCrop(false);
     setPendingSrc(null);
     setPendingVisible(false);
@@ -152,14 +150,15 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
           onClick={() => setShowCrop(true)}
         >
 
-          {/* default photo */}
-          <img
-            src={profileSrc || "/profilePic.png"}
+          <ProfileAvatar
+            src={resolvedProfileSrc}
             alt="Profile"
-            className="w-full h-full object-cover transition-opacity"
-            style={{
-              opacity: pendingSrc ? (pendingVisible ? 0 : 1) : 1
-            }}
+            className="w-full h-full transition-opacity"
+            imageClassName="w-full h-full object-cover"
+            fallbackClassName="bg-[#F7FCFB]"
+            fallbackIcon={
+              fallbackIcon || <FaUser className="text-4xl text-[#7AA7A3]" />
+            }
           />
 
           {pendingSrc && (
@@ -191,17 +190,26 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
             </div>
 
             <div className="relative h-[280px] bg-gray-100">
-              <Cropper
-                image={src || "/profilePic.png"}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                cropShape="round"
-                showGrid={false}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-              />
+              {resolvedCropSrc ? (
+                <Cropper
+                  image={resolvedCropSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  cropShape="round"
+                  showGrid={false}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center gap-3 text-gray-500">
+                  {fallbackIcon || (
+                    <FaUser className="text-5xl text-[#7AA7A3]" />
+                  )}
+                  <p className="text-sm font-medium">Choose a photo to upload</p>
+                </div>
+              )}
             </div>
 
             <div className="px-6 py-4 space-y-2">
@@ -219,7 +227,7 @@ export default function ProfileImageCropper({ onCropped, imageUrl }) {
               </button>
 
               {/* Save only if image selected */}
-              {src && croppedAreaPixels && (
+              {resolvedCropSrc && croppedAreaPixels && (
                 <button
                   onClick={handleSave}
                   disabled={loading}

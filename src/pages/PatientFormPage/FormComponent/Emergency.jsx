@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
-import toast from "react-hot-toast";
 import {
   isValidPersonName,
+  isValidRelationship,
   isValidSriLankanPhoneNumber,
   sanitizePersonName,
   sanitizePhoneNumber,
+  sanitizeRelationship,
 } from "../../../utils/patientProfileValidation";
 
 const initialEmergency = {
@@ -21,7 +22,13 @@ const initialEmergency = {
   }
 };
 
-const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, ref) => {
+const RELATIONSHIP_OPTIONS = ["Mother", "Father", "Sister", "Brother"];
+
+const EmergencyContactForm = forwardRef(({
+  showButton = false,
+  initialData,
+  readOnly = false
+}, ref) => {
   const [form, setForm] = useState(initialEmergency);
   const [errors, setErrors] = useState({});
 
@@ -30,10 +37,12 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
       primary: {
         name: "primaryName",
         phone: "primaryPhone",
+        relationship: "primaryRelationship",
       },
       secondary: {
         name: "secondaryName",
         phone: "secondaryPhone",
+        relationship: "secondaryRelationship",
       },
     };
 
@@ -58,6 +67,10 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
 
     if (field === "name") {
       value = sanitizePersonName(value);
+    }
+
+    if (field === "relationship") {
+      value = sanitizeRelationship(value);
     }
 
     setForm((prev) => ({
@@ -93,11 +106,11 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
   const validate = () => {
     const newErrors = {};
 
-    const validateContactSection = (sectionKey, errorPrefix) => {
+    const validateContactSection = (sectionKey, errorPrefix, isRequired = false) => {
       const section = form[sectionKey];
       const hasAnyValue = Object.values(section).some((item) => item.trim());
 
-      if (!hasAnyValue) return;
+      if (!hasAnyValue && !isRequired) return;
 
       if (!section.name.trim()) {
         newErrors[`${errorPrefix}Name`] = "Emergency contact person is required";
@@ -114,9 +127,17 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
       } else if (!isValidSriLankanPhoneNumber(section.phone)) {
         newErrors[`${errorPrefix}Phone`] = "Invalid Sri Lanka contact number";
       }
+
+      if (
+        section.relationship.trim() &&
+        !isValidRelationship(section.relationship)
+      ) {
+        newErrors[`${errorPrefix}Relationship`] =
+          "Relationship can contain only letters, spaces, apostrophes, hyphens, and slashes";
+      }
     };
 
-    validateContactSection("primary", "primary");
+    validateContactSection("primary", "primary", true);
     validateContactSection("secondary", "secondary");
 
     setErrors(newErrors);
@@ -132,8 +153,6 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
     e.preventDefault();
     if (!validate()) return;
 
-    console.log("Emergency contacts:", form);
-    toast.success("Emergency contact details saved (check console)");
   };
 
   const inputBase =
@@ -154,10 +173,19 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
 
   const subHeadingCss = "font-semibold text-[17px] mb-3 text-mainblack";
 
+  const getRelationshipOptions = (value) => {
+    if (value && !RELATIONSHIP_OPTIONS.includes(value)) {
+      return [value, ...RELATIONSHIP_OPTIONS];
+    }
+
+    return RELATIONSHIP_OPTIONS;
+  };
+
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={headingCss}>Emergency Contacts</h2>
 
+      <fieldset disabled={readOnly} className="space-y-6">
       <div className={sectionBox}>
         <h3 className={subHeadingCss}>
           Primary Emergency Contact <span className="text-red-500">*</span>
@@ -169,6 +197,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.primary.name}
             onChange={handleChange("primary", "name")}
+            maxLength={50}
             className={inputBase + " " + withError(errors.primaryName)}
             placeholder="Enter full name"
           />
@@ -195,13 +224,21 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
 
         <div>
           <label className={labelCss}>Relationship to Patient (optional)</label>
-          <input
-            type="text"
+          <select
             value={form.primary.relationship}
             onChange={handleChange("primary", "relationship")}
-            className={inputBase + " border-gray-300"}
-            placeholder="Mother, Father, Spouse, Friend"
-          />
+            className={inputBase + " " + withError(errors.primaryRelationship)}
+          >
+            <option value="">Select relationship</option>
+            {getRelationshipOptions(form.primary.relationship).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.primaryRelationship && (
+            <p className="text-xs text-red-500 mt-1">{errors.primaryRelationship}</p>
+          )}
         </div>
       </div>
 
@@ -214,6 +251,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.secondary.name}
             onChange={handleChange("secondary", "name")}
+            maxLength={50}
             className={inputBase + " " + withError(errors.secondaryName)}
             placeholder="Enter full name"
           />
@@ -240,17 +278,27 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
 
         <div>
           <label className={labelCss}>Relationship to Patient</label>
-          <input
-            type="text"
+          <select
             value={form.secondary.relationship}
             onChange={handleChange("secondary", "relationship")}
-            className={inputBase + " border-gray-300"}
-            placeholder="Sibling, Friend, Neighbour"
-          />
+            className={inputBase + " " + withError(errors.secondaryRelationship)}
+          >
+            <option value="">Select relationship</option>
+            {getRelationshipOptions(form.secondary.relationship).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.secondaryRelationship && (
+            <p className="text-xs text-red-500 mt-1">{errors.secondaryRelationship}</p>
+          )}
         </div>
       </div>
 
-      {showButton && (
+      </fieldset>
+
+      {showButton && !readOnly && (
         <div className="mt-2 flex justify-end">
           <button
             type="submit"

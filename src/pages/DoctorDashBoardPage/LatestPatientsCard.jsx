@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { getDisplayName } from "../../utils/nameUtils";
 
 export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
   const [searchQuery] = useState("");
 
-  // Filter patients by name
   const filteredPatients =
     searchQuery.trim() === ""
       ? recentPatients
@@ -18,15 +16,11 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
       <h2 className="text-2xl font-bold text-secondary mb-2">
         Latest Patients
       </h2>
-      {/* <p className="text-sm text-gray-600 mb-4">
-        View and manage patients who have granted you access to their records
-      </p> */}
 
-      {/* Patient List */}
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {recentPatients.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-8">
-            No recent patients. Search for patients to view their profiles.
+            No recent patients. Search for patients to open their records.
           </p>
         )}
 
@@ -36,12 +30,17 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
             className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
           >
             <div className="flex-1">
-              <p className="font-semibold text-gray-900">{getDisplayName(patient)}</p>
+              <p className="font-semibold text-gray-900">
+                {getDisplayName(patient) || `Patient #${patient.id}`}
+              </p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                <p className="text-xs text-gray-600">{patient.nic}</p>
-                <p className="text-xs text-gray-600">{patient.gender}</p>
+                <p className="text-xs text-gray-600">
+                  ID: {patient.patientId || patient.id}
+                </p>
+                <p className="text-xs text-gray-600">{patient.nic || "-"}</p>
+                <p className="text-xs text-gray-600">{patient.gender || "-"}</p>
                 <p className="text-xs text-gray-500">
-                  📅 Last visit on {patient.lastVisit}
+                  Last visit on {patient.lastVisit || "-"}
                 </p>
               </div>
             </div>
@@ -50,7 +49,7 @@ export default function LatestPatientsCard({ recentPatients, onViewProfile }) {
               onClick={() => onViewProfile(patient)}
               className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm rounded-lg transition whitespace-nowrap"
             >
-              View Profile
+              Open Patient
             </button>
           </div>
         ))}

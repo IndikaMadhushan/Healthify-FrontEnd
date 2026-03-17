@@ -28,6 +28,7 @@ export default function PatientMedicalForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [patientChronic, setPatientChronic] = useState(initialChronic);
   const [vaccineData, setVaccineData] = useState(vaccineInitial);
@@ -71,20 +72,75 @@ export default function PatientMedicalForm({
     setSurgeries((prev) => [...prev, { ...emptySurgery }]);
   };
 
+  const handleChronicChange = (nextValue) => {
+    setPatientChronic(nextValue);
+    setErrors((prev) => {
+      const nextErrors = { ...prev };
+
+      if (
+        !nextValue.chronicIllnesses.includes("Cancer") ||
+        nextValue.cancerChronic.trim()
+      ) {
+        delete nextErrors.cancerChronic;
+      }
+
+      if (
+        !nextValue.chronicIllnesses.includes("Other") ||
+        nextValue.otherChronic.trim()
+      ) {
+        delete nextErrors.otherChronic;
+      }
+
+      return nextErrors;
+    });
+  };
+
+  const handleVaccineChange = (nextValue) => {
+    setVaccineData(nextValue);
+    setErrors((prev) => {
+      if (
+        prev.otherVaccine &&
+        (!nextValue.takenVaccines.includes("Other") ||
+          nextValue.otherVaccine.trim())
+      ) {
+        const nextErrors = { ...prev };
+        delete nextErrors.otherVaccine;
+        return nextErrors;
+      }
+
+      return prev;
+    });
+  };
+
   const handleChangeSurgery = (index, updated) => {
+    setErrors((prev) => {
+      if (!prev.surgeries?.[index]) return prev;
+      const nextSurgeries = [...prev.surgeries];
+      nextSurgeries[index] = {};
+      return { ...prev, surgeries: nextSurgeries };
+    });
     setSurgeries((prev) =>
       prev.map((item, i) => (i === index ? updated : item))
     );
   };
 
   const handleRemoveSurgery = (index) => {
+    setErrors((prev) => {
+      if (!prev.surgeries) return prev;
+      const nextSurgeries = prev.surgeries.filter((_, i) => i !== index);
+      return { ...prev, surgeries: nextSurgeries };
+    });
     setSurgeries((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const validateForm = () => {
     const newErrors = {};
+    const normalizedSurgeries = surgeries.map((item) => ({
+      surgeonName: item.surgeonName.trim(),
+      surgeryDate: item.surgeryDate,
+      hospital: item.hospital.trim(),
+      complications: item.complications.trim(),
+    }));
 
     if (
       patientChronic.chronicIllnesses.includes("Cancer") &&
@@ -107,17 +163,58 @@ export default function PatientMedicalForm({
       newErrors.otherVaccine = "Please specify other vaccine";
     }
 
+    const surgeryErrors = normalizedSurgeries.map((item) => {
+      const hasAnyValue = Object.values(item).some(Boolean);
+      if (!hasAnyValue) return {};
+
+      const rowErrors = {};
+      const surgeryDate = item.surgeryDate
+        ? new Date(`${item.surgeryDate}T00:00:00`)
+        : null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (!item.surgeryDate) {
+        rowErrors.surgeryDate = "Date of surgery is required";
+      } else if (Number.isNaN(surgeryDate.getTime()) || surgeryDate > today) {
+        rowErrors.surgeryDate = "Please enter a valid past surgery date";
+      }
+
+      return rowErrors;
+    });
+
+    if (surgeryErrors.some((item) => Object.keys(item).length > 0)) {
+      newErrors.surgeries = surgeryErrors;
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      return;
+      return null;
     }
 
-    const payload = {
-      chronic: patientChronic,
-      vaccines: vaccineData,
-      surgeries
+    return {
+      chronic: {
+        ...patientChronic,
+        otherChronic: patientChronic.otherChronic.trim(),
+        cancerChronic: patientChronic.cancerChronic.trim(),
+      },
+      vaccines: {
+        ...vaccineData,
+        otherVaccine: vaccineData.otherVaccine.trim(),
+      },
+      surgeries: normalizedSurgeries.filter((item) =>
+        Object.values(item).some(Boolean)
+      ),
     };
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (readOnly) return;
+
+    const payload = validateForm();
+    if (!payload) return;
 
     try {
       if (onSubmit) {
@@ -135,6 +232,13 @@ export default function PatientMedicalForm({
     }
   };
 
+  const handleNextClick = () => {
+    if (readOnly) return;
+    const payload = validateForm();
+    if (!payload) return;
+    onNext();
+  };
+
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
   const actionButtonClass =
     "px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold";
@@ -143,15 +247,17 @@ export default function PatientMedicalForm({
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Medical Information</h2>
 
+      <fieldset disabled={readOnly} className="space-y-6">
+
       <ChronicIllnessesSection
         value={patientChronic}
-        onChange={setPatientChronic}
+        onChange={handleChronicChange}
         errors={errors}
       />
 
       <VaccineSection
         value={vaccineData}
-        onChange={setVaccineData}
+        onChange={handleVaccineChange}
         errors={errors}
       />
 
@@ -184,19 +290,19 @@ export default function PatientMedicalForm({
               value={surgery}
               onChange={handleChangeSurgery}
               onRemove={handleRemoveSurgery}
+              errors={errors.surgeries?.[index] || {}}
             />
           ))}
         </div>
       </div>
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"
             className={actionButtonClass}
-            onClick={() => {
-              onNext();
-            }}
+            onClick={handleNextClick}
           >
             Next
           </button>

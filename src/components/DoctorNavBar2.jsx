@@ -449,11 +449,25 @@ export default function DoctorNavBar({ doctor, patient }) {
   if (!doctor) return null;
   const safePatient = patient || null;
   const doctorDisplayName = getDisplayName(doctor);
-  const patientDisplayName = getDisplayName(safePatient);
+  const patientDisplayName =
+    getDisplayName(safePatient) || (safePatient?.id ? `Patient #${safePatient.id}` : "");
+  const patientPhotoUrl =
+    safePatient?.photoUrl || safePatient?.profilePic || "/profilePic.png";
+  const doctorPhotoUrl =
+    doctor?.photoUrl || doctor?.profilePic || "/profilePic.png";
 
   const handleNavigation = (path) => {
     setDropdownOpen(false);
     navigate(path);
+  };
+
+  const handlePatientProfileNavigation = () => {
+    if (!safePatient) return;
+
+    setDropdownOpen(false);
+    navigate(`/doctor/${safePatient.patientId || safePatient.id}/profile`, {
+      state: { patient: safePatient },
+    });
   };
 
   const handleLogout = () => {
@@ -482,7 +496,7 @@ export default function DoctorNavBar({ doctor, patient }) {
             {safePatient && (
               <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-lg">
                 <img
-                  src={safePatient.profilePic || "/profilePic.png"}
+                  src={patientPhotoUrl}
                   alt={patientDisplayName}
                   className="w-10 h-10 rounded-full object-cover"
                 />
@@ -491,7 +505,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                     Viewing Patient: {patientDisplayName}
                   </p>
                   <p className="text-xs text-gray-600 truncate">
-                    {safePatient.email}
+                    {safePatient.email || safePatient.patientId || `ID ${safePatient.id}`}
                   </p>
                 </div>
               </div>
@@ -503,9 +517,9 @@ export default function DoctorNavBar({ doctor, patient }) {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-100 transition"
               >
-                {doctor.photoUrl ? (
+                {doctor.photoUrl || doctor.profilePic ? (
                   <img
-                    src={doctor.photoUrl}
+                    src={doctorPhotoUrl}
                     alt={doctorDisplayName}
                     className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border object-cover"
                   />
@@ -542,61 +556,53 @@ export default function DoctorNavBar({ doctor, patient }) {
               </button>
 
               {/* DROPDOWN MENU */}
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                  {/* HOME */}
-                  <button
-                    onClick={() => handleNavigation("/")}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                  >
-                    🏠 Home
-                  </button>
-                  <hr className="my-2 border-gray-200" />
-                  {/* PATIENT SECTION */}
-                  {safePatient && (
-                    <>
-                      <div className="px-4 py-2">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                          Patient
-                        </p>
-                      </div>
-                      <button
-                        onClick={() =>
-                          handleNavigation(`/doctor/${safePatient.id}/profile`)
-                        }
-                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                      >
-                        👤 Profile
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleNavigation(
-                            `/doctor/${safePatient.id}/medical-reports`,
-                          )
-                        }
-                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                      >
-                        📊 Dashboard
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleNavigation(
-                            `/doctor/${safePatient.id}/doctorViewform`,
-                          )
-                        }
-                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                      >
-                        📝 Medical Info
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleNavigation(`/doctor/${safePatient.id}/consult`)
-                        }
-                        className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                      >
-                        📋 Consultation
-                      </button>
-                      {/* <button
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                {/* HOME */}
+                <button
+                  onClick={() => handleNavigation("/")}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                >
+                  🏠 Home
+                </button>
+                <hr className="my-2 border-gray-200" />
+                {/* PATIENT SECTION */}
+                {safePatient && (
+                  <>
+                    <div className="px-4 py-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        Patient
+                      </p>
+                    </div>
+                    <button
+                      onClick={handlePatientProfileNavigation}
+                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      👤 Profile
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleNavigation(`/doctor/${safePatient.id}/medical-reports`)
+                      }
+                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      📊 Dashboard
+                    </button>
+                    <button
+                      onClick={() => handleNavigation(`/doctor/${safePatient.id}/doctorViewform`)}
+                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      📝 Medical Info
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleNavigation(`/doctor/${safePatient.id}/consult`)
+                      }
+                      className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                    >
+                      📋 Consultation
+                    </button>
+                    {/* <button
                       onClick={() =>
                         handleNavigation(
                           "/doctor-clinic-book/:patientId/:bookId",
@@ -643,7 +649,7 @@ export default function DoctorNavBar({ doctor, patient }) {
         {safePatient && (
           <div className="md:hidden flex items-center gap-3 px-3 py-2 mb-2 bg-secondary/5 rounded-lg">
             <img
-              src={safePatient.profilePic || "/profilePic.png"}
+              src={patientPhotoUrl}
               alt={patientDisplayName}
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -652,7 +658,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                 Patient: {patientDisplayName}
               </p>
               <p className="text-[10px] text-gray-600 truncate">
-                {safePatient.email}
+                {safePatient.email || safePatient.patientId || `ID ${safePatient.id}`}
               </p>
             </div>
           </div>

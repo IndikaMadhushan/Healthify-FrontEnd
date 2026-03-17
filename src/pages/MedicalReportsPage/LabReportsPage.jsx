@@ -13,6 +13,7 @@ import {
 import { getPatientProfileApi } from "../../api/PatientApi";
 import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
+import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const validateFile = (file) => {
@@ -183,7 +184,9 @@ export default function LabReportsPage() {
       return;
     }
     setPendingFile(file);
-    setTitleText(file.name.replace(/\.[^/.]+$/, "").slice(0, 30));
+    setTitleText(
+      sanitizeStorageLabel(file.name.replace(/\.[^/.]+$/, ""), 30),
+    );
     setShowTitleModal(true);
     e.target.value = null;
   };
@@ -199,9 +202,14 @@ export default function LabReportsPage() {
 
     setUploading(true);
     try {
+      const sanitizedTitle =
+        sanitizeStorageLabel(titleText, 30) ||
+        sanitizeStorageLabel(pendingFile.name.replace(/\.[^/.]+$/, ""), 30) ||
+        "Untitled";
+
       await uploadLabFile(
         pendingFile,
-        titleText.trim() || "Untitled",
+        sanitizedTitle,
         currentFolder,
       );
 
@@ -234,12 +242,14 @@ export default function LabReportsPage() {
 
   // ── create folder ───────────────────────────────────────────────────────────
   const handleCreateFolder = async () => {
-    if (!folderName.trim()) {
+    const sanitizedFolderName = sanitizeStorageLabel(folderName, 30);
+
+    if (!sanitizedFolderName) {
       toast.error("Please enter a folder name");
       return;
     }
     try {
-      await createLabFolder(folderName.trim(), currentFolder);
+      await createLabFolder(sanitizedFolderName, currentFolder);
       toast.success("Folder created");
       setFolderName("");
       setShowFolderModal(false);
@@ -534,11 +544,12 @@ export default function LabReportsPage() {
               type="text"
               value={titleText}
               onChange={(e) =>
-                e.target.value.length <= 30 && setTitleText(e.target.value)
+                setTitleText(sanitizeStorageLabel(e.target.value, 30))
               }
               placeholder="Enter a title for this file"
               className="w-full p-3 border-2 border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
               disabled={uploading}
+              maxLength={30}
               autoFocus
             />
             <p className="text-xs text-gray-500 mb-4">
@@ -572,10 +583,11 @@ export default function LabReportsPage() {
               type="text"
               value={folderName}
               onChange={(e) =>
-                e.target.value.length <= 30 && setFolderName(e.target.value)
+                setFolderName(sanitizeStorageLabel(e.target.value, 30))
               }
               placeholder="Enter folder name"
               className="w-full p-3 border-2 border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+              maxLength={30}
               autoFocus
             />
             <p className="text-xs text-gray-500 mb-4">

@@ -1,18 +1,19 @@
 export function getNameParts(person = {}) {
+  const safePerson = person ?? {};
   const hasSplitNames =
-    person.firstName !== undefined ||
-    person.secondName !== undefined ||
-    person.lastName !== undefined;
+    safePerson.firstName !== undefined ||
+    safePerson.secondName !== undefined ||
+    safePerson.lastName !== undefined;
 
   if (hasSplitNames) {
     return {
-      firstName: person.firstName?.trim() || "",
-      secondName: person.secondName?.trim() || "",
-      lastName: person.lastName?.trim() || "",
+      firstName: safePerson.firstName?.trim() || "",
+      secondName: safePerson.secondName?.trim() || "",
+      lastName: safePerson.lastName?.trim() || "",
     };
   }
 
-  const parts = (person.fullName || "")
+  const parts = (safePerson.fullName || "")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
@@ -33,23 +34,25 @@ export function getNameParts(person = {}) {
 }
 
 export function getDisplayName(person = {}) {
-  if (typeof person.fullName === "string" && person.fullName.trim()) {
-    return person.fullName.trim();
+  const safePerson = person ?? {};
+
+  if (typeof safePerson.fullName === "string" && safePerson.fullName.trim()) {
+    return safePerson.fullName.trim();
   }
 
-  return Object.values(getNameParts(person)).filter(Boolean).join(" ");
+  return Object.values(getNameParts(safePerson)).filter(Boolean).join(" ");
 }
 
 export function getFirstName(person = {}) {
-  return getNameParts(person).firstName;
+  return getNameParts(person ?? {}).firstName;
 }
 
 export function getGreetingName(person = {}) {
-  const { firstName, secondName } = getNameParts(person);
+  const { firstName, secondName } = getNameParts(person ?? {});
   return secondName || firstName;
 }
 
 export function getInitial(person = {}) {
-  const displayName = getDisplayName(person);
+  const displayName = getDisplayName(person ?? {});
   return displayName ? displayName.charAt(0).toUpperCase() : "?";
 }

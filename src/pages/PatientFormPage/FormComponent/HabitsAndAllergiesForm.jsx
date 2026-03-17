@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { sanitizeMultilineText } from "../../../utils/patientProfileValidation";
 
 const initialHabits = {
   smokingStatus: "",
@@ -19,8 +20,10 @@ export default function HabitsAndAllergiesForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [form, setForm] = useState(initialHabits);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (!initialData) return;
@@ -38,23 +41,98 @@ export default function HabitsAndAllergiesForm({
       foodAllergies: initialData.foodAllergies ?? "",
       drugAllergies: initialData.drugAllergies ?? "",
     });
+    setErrors({});
   }, [initialData]);
 
   const handleChange = (field) => (e) => {
+    let value = e.target.value;
+
+    if (field === "foodAllergies" || field === "drugAllergies") {
+      value = sanitizeMultilineText(value, 250);
+    }
+
     setForm((prev) => ({
       ...prev,
-      [field]: e.target.value
+      [field]: value,
+      ...(field === "smokingStatus" && value === "never"
+        ? { smokingFrequency: "" }
+        : {}),
+      ...(field === "alcoholStatus" && value === "never"
+        ? { alcoholFrequency: "" }
+        : {}),
+      ...(field === "drugUseStatus" && value === "never"
+        ? { drugUseFrequency: "" }
+        : {}),
     }));
+
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+
+       if (field === "smokingStatus" && value === "never") {
+        delete next.smokingFrequency;
+      }
+
+      if (field === "alcoholStatus" && value === "never") {
+        delete next.alcoholFrequency;
+      }
+
+      if (field === "drugUseStatus" && value === "never") {
+        delete next.drugUseFrequency;
+      }
+
+      return next;
+    });
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+
+    if (
+      ["current", "stopped"].includes(form.smokingStatus) &&
+      !form.smokingFrequency
+    ) {
+      nextErrors.smokingFrequency = "Please select how often you smoke";
+    }
+
+    if (
+      ["current", "stopped"].includes(form.alcoholStatus) &&
+      !form.alcoholFrequency
+    ) {
+      nextErrors.alcoholFrequency = "Please select how often you drink";
+    }
+
+    if (
+      ["current", "stopped"].includes(form.drugUseStatus) &&
+      !form.drugUseFrequency
+    ) {
+      nextErrors.drugUseFrequency = "Please select how often you use drugs";
+    }
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      return null;
+    }
+
+    return {
+      ...form,
+      foodAllergies: form.foodAllergies.trim(),
+      drugAllergies: form.drugAllergies.trim(),
+    };
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (readOnly) return;
+
+    const payload = validateForm();
+    if (!payload) return;
 
     try {
       if (onSubmit) {
-        await onSubmit(form);
+        await onSubmit(payload);
       } else {
-        console.log("Habits & Allergies:", form);
+        console.log("Habits & Allergies:", payload);
       }
       toast.success("Lifestyle and allergy details submitted successfully");
     } catch (error) {
@@ -64,6 +142,13 @@ export default function HabitsAndAllergiesForm({
         "Failed to submit lifestyle information";
       toast.error(message);
     }
+  };
+
+  const handleNextClick = () => {
+    if (readOnly) return;
+    const payload = validateForm();
+    if (!payload) return;
+    onNext();
   };
 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
@@ -80,6 +165,8 @@ export default function HabitsAndAllergiesForm({
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Lifestyle & Habits</h2>
+
+      <fieldset disabled={readOnly} className="space-y-6">
 
       <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
         <div className={cardBox}>
@@ -164,6 +251,9 @@ export default function HabitsAndAllergiesForm({
                   More than 10 per day
                 </label>
               </div>
+              {errors.smokingFrequency && (
+                <p className="text-xs text-red-500 mt-2">{errors.smokingFrequency}</p>
+              )}
             </div>
           )}
         </div>
@@ -250,6 +340,9 @@ export default function HabitsAndAllergiesForm({
                   3 or more times per week
                 </label>
               </div>
+              {errors.alcoholFrequency && (
+                <p className="text-xs text-red-500 mt-2">{errors.alcoholFrequency}</p>
+              )}
             </div>
           )}
         </div>
@@ -326,6 +419,9 @@ export default function HabitsAndAllergiesForm({
                   Regularly
                 </label>
               </div>
+              {errors.drugUseFrequency && (
+                <p className="text-xs text-red-500 mt-2">{errors.drugUseFrequency}</p>
+              )}
             </div>
           )}
         </div>
@@ -376,6 +472,7 @@ export default function HabitsAndAllergiesForm({
             className={textAreaBase}
             placeholder="Mention any food allergies (e.g. peanuts, seafood) or write 'None'"
             value={form.foodAllergies}
+            maxLength={250}
             onChange={handleChange("foodAllergies")}
           />
         </div>
@@ -386,19 +483,19 @@ export default function HabitsAndAllergiesForm({
             className={textAreaBase}
             placeholder="Mention any medicine allergies (e.g. penicillin) or write 'None'"
             value={form.drugAllergies}
+            maxLength={250}
             onChange={handleChange("drugAllergies")}
           />
         </div>
       </div>
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"
             className={actionButtonClass}
-            onClick={() => {
-              onNext();
-            }}
+            onClick={handleNextClick}
           >
             Next
           </button>

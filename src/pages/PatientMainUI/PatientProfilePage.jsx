@@ -4,6 +4,7 @@ import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
 import { getPatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
 import toast from "react-hot-toast";
 import { getDisplayName } from "../../utils/nameUtils";
+import { FaUser } from "react-icons/fa";
 
 function parsePatientName(patient) {
   if (
@@ -105,6 +106,7 @@ export default function MyProfile() {
 
 
                   imageUrl={patient.photoUrl}
+                  fallbackIcon={<FaUser className="text-4xl text-[#7AA7A3]" />}
                   onCropped={async (file) => {
                     try {
                       await uploadPatientProfileImageApi(patient.id, file);
