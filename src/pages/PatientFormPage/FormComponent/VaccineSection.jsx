@@ -1,4 +1,5 @@
 import { vaccines } from "../../../data/medi";
+import { sanitizeSingleLineText } from "../../../utils/patientProfileValidation";
 
 export default function VaccineSection({ value, onChange, errors = {} }) {
 
@@ -74,10 +75,11 @@ export default function VaccineSection({ value, onChange, errors = {} }) {
                 (errors.otherVaccine ? "border-red-500 focus:ring-red-500" : "border-gray-300")
               }
               value={value.otherVaccine || ""}
+              maxLength={100}
               onChange={(e) =>
                 onChange({
                   ...value,
-                  otherVaccine: e.target.value
+                  otherVaccine: sanitizeSingleLineText(e.target.value, 100)
                 })
               }
             />

@@ -449,8 +449,10 @@
 //   );
 // }
 
-
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { validateFile } from "../../utils/medicalStorage";
+import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
 
 export default function UploaderPopUp({ title, onFilesChange }) {
   const fileInputRef = useRef(null);
@@ -464,8 +466,17 @@ export default function UploaderPopUp({ title, onFilesChange }) {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
 
+    const validation = validateFile(f);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      e.target.value = null;
+      return;
+    }
+
     setPendingFile(f);
-    setTitleText(f.name.replace(/\.[^/.]+$/, "").slice(0, 30));
+    setTitleText(
+      sanitizeStorageLabel(f.name.replace(/\.[^/.]+$/, ""), 30),
+    );
     setShowTitleModal(true);
     e.target.value = null;
   };
@@ -473,9 +484,14 @@ export default function UploaderPopUp({ title, onFilesChange }) {
   const confirmAdd = () => {
     if (!pendingFile) return;
 
+    const sanitizedTitle =
+      sanitizeStorageLabel(titleText, 30) ||
+      sanitizeStorageLabel(pendingFile.name.replace(/\.[^/.]+$/, ""), 30) ||
+      "Untitled";
+
     const newReport = {
       id: Date.now().toString(),
-      title: titleText.trim() || "Untitled",
+      title: sanitizedTitle,
       name: pendingFile.name,
       url: URL.createObjectURL(pendingFile),
       uploadedAt: new Date().toISOString()
@@ -487,6 +503,12 @@ export default function UploaderPopUp({ title, onFilesChange }) {
       return updated;
     });
 
+    setPendingFile(null);
+    setTitleText("");
+    setShowTitleModal(false);
+  };
+
+  const cancelAdd = () => {
     setPendingFile(null);
     setTitleText("");
     setShowTitleModal(false);
@@ -571,13 +593,14 @@ export default function UploaderPopUp({ title, onFilesChange }) {
             <input
               value={titleText}
               onChange={(e) =>
-                setTitleText(e.target.value.slice(0, 30))
+                setTitleText(sanitizeStorageLabel(e.target.value, 30))
               }
               className="w-full p-2 border rounded mb-2"
+              maxLength={30}
             />
 
             <div className="flex justify-end gap-2">
-              <button onClick={() => setShowTitleModal(false)}>
+              <button onClick={cancelAdd}>
                 Cancel
               </button>
 

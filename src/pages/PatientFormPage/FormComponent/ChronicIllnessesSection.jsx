@@ -1,18 +1,17 @@
 import { chronic } from "../../../data/medi";
+import { sanitizeSingleLineText } from "../../../utils/patientProfileValidation";
 
 export default function ChronicIllnessesSection({ value, onChange, errors = {} }) {
   const handleChronicCheckbox = (item) => (e) => {
     const checked = e.target.checked;
     const current = value.chronicIllnesses || [];
 
-    const errors = {};
-
     if (value.chronicIllnesses.includes("Cancer") && !value.cancerChronic.trim()) {
-      errors.cancerChronic = "Please specify cancer type";
+      // validation is handled on submit
     }
 
     if (value.chronicIllnesses.includes("Other") && !value.otherChronic.trim()) {
-      errors.otherChronic = "Please specify other illness";
+      // validation is handled on submit
     }
 
     if (item === "Other") {
@@ -99,10 +98,11 @@ export default function ChronicIllnessesSection({ value, onChange, errors = {} }
                 (errors.cancerChronic ? "border-red-500 focus:ring-red-500" : "border-gray-300")
               }
               value={value.cancerChronic || ""}
+              maxLength={100}
               onChange={(e) =>
                 onChange({
                   ...value,
-                  cancerChronic: e.target.value
+                  cancerChronic: sanitizeSingleLineText(e.target.value, 100)
                 })
               }
             />
@@ -124,10 +124,11 @@ export default function ChronicIllnessesSection({ value, onChange, errors = {} }
                 (errors.otherChronic ? "border-red-500 focus:ring-red-500" : "border-gray-300")
               }
               value={value.otherChronic || ""}
+              maxLength={100}
               onChange={(e) =>
                 onChange({
                   ...value,
-                  otherChronic: e.target.value
+                  otherChronic: sanitizeSingleLineText(e.target.value, 100)
                 })
               }
             />

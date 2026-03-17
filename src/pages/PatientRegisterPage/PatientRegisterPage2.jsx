@@ -6,13 +6,12 @@ import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerPatientApi } from "../../api/authApi";
 import toast from "react-hot-toast";
 import { getNameParts } from "../../utils/nameUtils";
+import {
+  getPasswordValidationMessage,
+} from "../../utils/patientProfileValidation";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const [formData, setFormData] = useState({
     password: "",
@@ -52,13 +51,9 @@ export default function PatientRegisterPage2() {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain uppercase, lowercase, and number";
+    const passwordError = getPasswordValidationMessage(formData.password);
+    if (passwordError) {
+      newErrors.password = passwordError;
     }
 
     if (!formData.confirmPassword) {
@@ -160,6 +155,8 @@ export default function PatientRegisterPage2() {
           error={errors.password}
           placeholder="Enter your password"
           required
+          maxLength={64}
+          autoComplete="new-password"
         />
 
         <PasswordInput
@@ -169,6 +166,8 @@ export default function PatientRegisterPage2() {
           error={errors.confirmPassword}
           placeholder="Re-enter your password"
           required
+          maxLength={64}
+          autoComplete="new-password"
         />
 
         <div>

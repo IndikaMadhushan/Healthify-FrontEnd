@@ -3,6 +3,7 @@ import BasicInfoForm from "./FormComponent/basicInfoForm";
 import EmergencyContactForm from "./FormComponent/Emergency";
 import { updatePatientProfileApi } from "../../api/PatientApi";
 import toast from "react-hot-toast";
+import { normalizeEmail } from "../../utils/patientProfileValidation";
 
 export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
   const basicRef = useRef();
@@ -21,13 +22,14 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
       firstName: basic.firstName.trim(),
       secondName: basic.secondName.trim(),
       lastName: basic.lastName.trim(),
-      email: basic.email.trim(),
+      email: normalizeEmail(basic.email),
       nationalId: basic.nationalId.trim().toUpperCase(),
       occupation: basic.occupation.trim(),
       address: basic.address.trim(),
       contactNumber: basic.contactNumber.trim(),
       nationality: basic.nationality.trim(),
       mainCity: basic.mainCity.trim(),
+      maritalStatus: basic.maritalStatus,
     };
     const cleanedEmergency = {
       primary: {
@@ -51,6 +53,7 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
       gender: basic.gender || undefined,
       dateOfBirth: basic.dob || undefined,
       occupation: cleanedBasic.occupation || undefined,
+      maritalStatus: cleanedBasic.maritalStatus || undefined,
       district: cleanedBasic.mainCity || undefined,
       phone: cleanedBasic.contactNumber || undefined,
       address: cleanedBasic.address || undefined,

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { getPatientProfileApi } from "../../api/PatientApi";
 import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
+import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
 
 export default function FileUploadView({
   userId,
@@ -76,7 +77,9 @@ export default function FileUploadView({
     }
 
     setPendingFile(file);
-    setTitleText(file.name.replace(/\.[^/.]+$/, "").slice(0, 30));
+    setTitleText(
+      sanitizeStorageLabel(file.name.replace(/\.[^/.]+$/, ""), 30),
+    );
     setShowTitleModal(true);
     e.target.value = null;
   };
@@ -92,6 +95,10 @@ export default function FileUploadView({
     setUploading(true);
 
     try {
+      const sanitizedTitle =
+        sanitizeStorageLabel(titleText, 30) ||
+        sanitizeStorageLabel(pendingFile.name.replace(/\.[^/.]+$/, ""), 30) ||
+        "Untitled";
       const reportDate = new Date().toISOString().slice(0, 10);
       const response = await uploadPatientReportApi(
         resolvedPatientId,
@@ -102,7 +109,7 @@ export default function FileUploadView({
 
       const newFile = {
         id: response.data?.id || Date.now().toString(),
-        title: titleText.trim() || "Untitled",
+        title: sanitizedTitle,
         name: pendingFile.name,
         fileUrl: response.data?.fileUrl,
         type: pendingFile.type,
@@ -304,14 +311,13 @@ export default function FileUploadView({
             <input
               type="text"
               value={titleText}
-              onChange={(e) => {
-                if (e.target.value.length <= 30) {
-                  setTitleText(e.target.value);
-                }
-              }}
+              onChange={(e) =>
+                setTitleText(sanitizeStorageLabel(e.target.value, 30))
+              }
               placeholder="Enter a title for this file"
               className="w-full p-3 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
               disabled={uploading}
+              maxLength={30}
             />
 
             <p className="text-xs text-gray-500 mb-4">

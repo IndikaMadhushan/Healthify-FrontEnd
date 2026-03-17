@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddReviewModal from "./AddReview";
 import { getDisplayName } from "../utils/nameUtils";
 
 export function PatinetNavBar({
@@ -9,7 +8,7 @@ export function PatinetNavBar({
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [showReviewPopup, setShowReviewPopup] = useState(false);
+
   if (!patientData) return null;
 
   const { email, patientId, photoUrl } = patientData;
@@ -19,7 +18,6 @@ export function PatinetNavBar({
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex justify-between items-center h-20">
-          {/* LEFT: LOGO */}
           <div className="flex items-center">
             <img
               src="/logo.png"
@@ -29,10 +27,9 @@ export function PatinetNavBar({
             />
           </div>
 
-          {/* RIGHT: PATIENT INFO */}
           <div className="relative">
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => setDropdownOpen((prev) => !prev)}
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
             >
               <img
@@ -67,23 +64,13 @@ export function PatinetNavBar({
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                 <button
-                  onClick={() => setShowReviewPopup(true)}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                >
-                  ⭐ Write a Review
-                </button>
-                <AddReviewModal
-                  isOpen={showReviewPopup}
-                  onClose={() => setShowReviewPopup(false)}
-                />
-                <button
                   onClick={() => {
                     localStorage.clear();
                     navigate("/");
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
                 >
-                  🚪 Logout
+                  Logout
                 </button>
               </div>
             )}
