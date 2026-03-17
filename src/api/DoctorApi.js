@@ -53,7 +53,7 @@ export function syncDoctorProfileCache(data) {
 
 export const DOCTOR_PROFILE_UPDATED = DOCTOR_PROFILE_UPDATED_EVENT;
 
-export const getDoctorProfileApi = async (options = {}) => {
+export const getMyDoctorProfile = async (options = {}) => {
   const { force = false } = options;
   const cachedDoctor = force ? null : getCachedDoctorProfile();
   if (cachedDoctor) {
@@ -65,17 +65,14 @@ export const getDoctorProfileApi = async (options = {}) => {
   return res;
 };
 
-export const updateMyProfile = async (data) => {
-  const res = await axiosInstance.post("/api/doctors/me", data);
-  if (res?.data && typeof res.data === "object") {
-    syncDoctorProfileCache(res.data);
-    return res;
-  }
-
-  return getDoctorProfileApi({ force: true });
+export const updateMyDoctorProfile = async (data) => {
+  await axiosInstance.post("/api/doctors/me", data);
+  const latestProfile = await getMyDoctorProfile({ force: true });
+  syncDoctorProfileCache(latestProfile.data);
+  return latestProfile;
 };
 
-export const uploadDoctorProfileImageApi = async (file) => {
+export const uploadMyDoctorProfileImage = async (file) => {
   const formData = new FormData();
   formData.append("image", file);
 
@@ -87,10 +84,23 @@ export const uploadDoctorProfileImageApi = async (file) => {
     },
   );
 
-  if (res?.data && typeof res.data === "object") {
-    syncDoctorProfileCache(res.data);
-    return res;
+  const photoUrl = typeof res.data === "string" ? res.data : res.data?.photoUrl;
+  const cachedDoctor = getCachedDoctorProfile();
+
+  if (photoUrl && cachedDoctor) {
+    const updatedDoctor = {
+      ...cachedDoctor,
+      photoUrl,
+    };
+    syncDoctorProfileCache(updatedDoctor);
+  } else {
+    const latestProfile = await getMyDoctorProfile({ force: true });
+    syncDoctorProfileCache(latestProfile.data);
   }
 
-  return getDoctorProfileApi({ force: true });
+  return res;
 };
+
+export const getDoctorProfileApi = getMyDoctorProfile;
+export const updateMyProfile = updateMyDoctorProfile;
+export const uploadDoctorProfileImageApi = uploadMyDoctorProfileImage;
