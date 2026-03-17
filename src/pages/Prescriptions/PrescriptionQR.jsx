@@ -83,15 +83,21 @@
 // }
 
 import { QRCodeCanvas } from "qrcode.react";
-
 export default function PrescriptionQR({ prescription }) {
 
-  // ✅ ALWAYS USE clinicPageId
   const clinicPageId = prescription?.clinicPageId;
+  const consultId = prescription?.consultId;
 
-  if (!clinicPageId) return null; // safety guard
+  // ✅ create URL properly
+  let verifyUrl = "";
 
-  const verifyUrl = `${window.location.origin}/verify/${clinicPageId}`;
+  if (clinicPageId) {
+    verifyUrl = `http://localhost:5173/verify/clinic/${clinicPageId}`;
+  } else if (consultId) {
+    verifyUrl = `http://localhost:5173/verify/consult/${consultId}`;
+  }
+
+  if (!verifyUrl) return null;
 
   return (
     <div style={{ textAlign: "start", maxWidth: 190 }}>

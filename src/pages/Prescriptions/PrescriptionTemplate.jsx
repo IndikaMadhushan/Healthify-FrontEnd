@@ -248,7 +248,7 @@ export default function PrescriptionTemplate({ data }) {
         <p><b>Doctor:</b> {data.createdDoctor}</p>
         <p><b>SLMC:</b> {data.slmc}</p>
       </div>
-
+        <p><b>Date:</b> {data.pagecreatedDate} {data.pagecreatedTime}</p>
       {/* PATIENT INFO */}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <p><b>Patient:</b> {data.patientName}</p>
@@ -256,27 +256,31 @@ export default function PrescriptionTemplate({ data }) {
         <p><b>Gender:</b> {data.patientGender}</p>
       </div>
 
-        <p><b>Date:</b> {data.pagecreatedDate} {data.pagecreatedTime}</p>
+        <p><b>Reason:</b> {data.consultReason || data.subReason}</p>
+
       {/* {data?.createdAt && (
         <p><b>Date:</b> {data.createdAt}</p>
       )} */}
 
       {/* VITALS */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 30 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
         {vitals?.BLOOD_PRESSURE_SYSTOLIC !== undefined && (
-          <p><b>Blood pressure: </b> {vitals.BLOOD_PRESSURE_SYSTOLIC}/{vitals.BLOOD_PRESSURE_DIASTOLIC}</p>
+          <p><b>Blood pressure(mmHg): </b> {vitals.BLOOD_PRESSURE_SYSTOLIC}/{vitals.BLOOD_PRESSURE_DIASTOLIC}</p>
         )}
         {vitals?.HEART_RATE !== undefined && (
-          <p><b>Heart Rate:</b> {vitals.HEART_RATE}</p>
+          <p><b>Heart Rate(bpm):</b> {vitals.HEART_RATE}</p>
         )}
         {vitals?.TEMPERATURE !== undefined && (
-          <p><b>Temperature:</b> {vitals.TEMPERATURE}</p>
+          <p><b>Temperature(°F):</b> {vitals.TEMPERATURE}</p>
         )}
         {vitals?.WEIGHT !== undefined && (
-          <p><b>Weight:</b> {vitals.WEIGHT}</p>
+          <p><b>Weight(kg):</b> {vitals.WEIGHT}</p>
         )}
         {vitals?.BLOOD_SUGAR !== undefined && (
-          <p><b>Blood Sugar:</b> {vitals.BLOOD_SUGAR}</p>
+          <p><b>Blood Sugar(mg/dL):</b> {vitals.BLOOD_SUGAR}</p>
+        )}
+        {vitals?.BLOOD_SUGAR !== undefined && (
+          <p><b>Cholesterol(mg/dL):</b> {vitals.CHOLESTEROL}</p>
         )}
       </div>
      
@@ -290,6 +294,7 @@ export default function PrescriptionTemplate({ data }) {
               <th style={cell}>Dose</th>
               <th style={cell}>Frequency</th>
               <th style={cell}>Duration</th>
+              <th style={cell}>Time</th>
             </tr>
           </thead>
           <tbody>
@@ -299,6 +304,7 @@ export default function PrescriptionTemplate({ data }) {
                 <td style={cell}>{m.dosage}</td>
                 <td style={cell}>{m.frequency}</td>
                 <td style={cell}>{m.duration}</td>
+                <td style={cell}>{m.instruction}</td>
               </tr>
             ))}
           </tbody>
@@ -307,11 +313,11 @@ export default function PrescriptionTemplate({ data }) {
 
       {/* NOTES */}
       <div>
-        {data?.clinicExaming && (
-          <p><b>Examine:</b> {data.clinicExaming}</p>
+        {(data?.clinicExaming ||data?.consultExaming) && (
+          <p><b>Examine:</b> {data.clinicExaming || data.consultExaming} </p>
         )}
-        {data?.clinicSuggestTest && (
-          <p><b>Tests:</b> {data.clinicSuggestTest}</p>
+        {(data?.clinicSuggestTest || data?.consultSuggestTest )  && (
+          <p><b>Tests:</b> {data.clinicSuggestTest|| data.consultSuggestTest}</p>
         )}
         {data?.nextClinic&& (
           <p><b>Next Clinic:</b> {data.nextClinic}</p>
