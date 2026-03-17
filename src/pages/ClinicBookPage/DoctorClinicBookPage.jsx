@@ -543,7 +543,7 @@ const handleComplete = async () => {
 
 const handleUpdate = async () => {
 
-  //  Safety check for ID
+  // 🔴 Safety check for ID
   if (!selectedPageId) {
     showMessage("Error: Page ID missing. Please reload.");
     return;
@@ -641,7 +641,7 @@ const handleUpdate = async () => {
 
               await requestEditApproval(selectedPageId);
 
-              setApprovalRequestedPageId(null);
+              setApprovalRequestedPageId(selectedPageId);
 
               showMessage("Approval request sent to patient");
 
@@ -695,9 +695,12 @@ const handleUpdate = async () => {
 
 //   }
 // };
-
-
 const handleDelete = async () => {
+
+  if (!selectedPageId) {
+    showMessage("Error: Page ID missing.");
+    return;
+  }
 
   if (approvalRequestedPageId === selectedPageId) {
     showMessage("Patient approval is pending for this page.");
@@ -718,9 +721,12 @@ const handleDelete = async () => {
 
       } catch (error) {
 
+        console.error("Delete Error:", error);
+        console.log("Error Response:", error.response?.data);
+
         if (
           error.response?.status === 403 &&
-          error.response?.data?.error === "DELETE_WINDOW_EXPIRED_REQUEST_APPROVAL"
+          error.response?.data?.message === "DELETE_WINDOW_EXPIRED_REQUEST_APPROVAL"
         ) {
 
           showConfirm(
@@ -738,7 +744,9 @@ const handleDelete = async () => {
 
         } else {
 
-          showMessage("Delete failed");
+          showMessage(
+            error.response?.data?.message || "Delete failed"
+          );
 
         }
 
@@ -747,6 +755,7 @@ const handleDelete = async () => {
     }
   );
 };
+
 
   // ================= RENDER =================
   return (
