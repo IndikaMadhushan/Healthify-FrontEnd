@@ -217,7 +217,7 @@ export default function LabReportsPage() {
       setTitleText("");
       setShowTitleModal(false);
       toast.success("File uploaded");
-      window.location.reload();
+      await loadContents(currentFolder);
     } catch (err) {
       console.error(err);
       toast.error("Upload failed. Please try again.");
