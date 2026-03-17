@@ -1,80 +1,67 @@
 import axiosInstance from "./axiosInstance";
 
-/* ================= MEDICINE ================= */
-
+// Medicine reminders for logged-in patient
 export const getMedicineRemindersApi = async () => {
-  const res = await axiosInstance.get("/api/ui/reminders/medicines");
-  return res.data;
+  try {
+    const res = await axiosInstance.get("/api/reminders/medicines");
+    return res.data || [];
+  } catch (error) {
+    console.error("Error fetching medicine reminders:", error);
+    return [];
+  }
 };
 
-export const createMedicineReminderApi = async (data) => {
-  const res = await axiosInstance.post("/api/ui/reminders/medicines", data);
-  return res.data;
-};
-
-export const updateMedicineReminderApi = async (id, data) => {
-  const res = await axiosInstance.put(`/api/ui/reminders/medicines/${id}`, data);
-  return res.data;
-};
-
-export const deleteMedicineReminderApi = async (id) => {
-  return axiosInstance.delete(`/api/ui/reminders/medicines/${id}`);
-};
-
-/* ================= APPOINTMENT ================= */
-
+// Appointment reminders for logged-in patient
 export const getAppointmentRemindersApi = async () => {
-  const res = await axiosInstance.get("/api/ui/reminders/appointments");
-  return res.data;
+  try {
+    const res = await axiosInstance.get("/api/reminders/appointments");
+    return res.data || [];
+  } catch (error) {
+    console.error("Error fetching appointment reminders:", error);
+    return [];
+  }
 };
 
-export const createAppointmentReminderApi = async (data) => {
-  const res = await axiosInstance.post("/api/ui/reminders/appointments", data);
-  return res.data;
-};
-
-export const updateAppointmentReminderApi = async (id, data) => {
-  const res = await axiosInstance.put(`/api/ui/reminders/appointments/${id}`, data);
-  return res.data;
-};
-
-export const deleteAppointmentReminderApi = async (id) => {
-  return axiosInstance.delete(`/api/ui/reminders/appointments/${id}`);
-};
-
-/* ================= OTHER ================= */
-
-export const getOtherRemindersApi = async () => {
-  const res = await axiosInstance.get("/api/ui/reminders/others");
-  return res.data;
-};
-
-export const createOtherReminderApi = async (data) => {
-  const res = await axiosInstance.post("/api/ui/reminders/others", data);
-  return res.data;
-};
-
-export const updateOtherReminderApi = async (id, data) => {
-  const res = await axiosInstance.put(`/api/ui/reminders/others/${id}`, data);
-  return res.data;
-};
-
-export const deleteOtherReminderApi = async (id) => {
-  return axiosInstance.delete(`/api/ui/reminders/others/${id}`);
-};
-
-/* ================= PERIOD ================= */
-
+// Period tracker data for logged-in patient
 export const getPeriodTrackerApi = async () => {
-  const res = await axiosInstance.get("/api/ui/reminders/period");
-  return res.data;
+  try {
+    const res = await axiosInstance.get("/api/reminders/period-tracker");
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching period tracker:", error);
+    return null;
+  }
 };
 
+// Update period tracker
 export const updatePeriodTrackerApi = async (data) => {
-  const res = await axiosInstance.post("/api/ui/reminders/period", data);
-  return res.data;
+  try {
+    const res = await axiosInstance.put("/api/reminders/period-tracker", data);
+    return res.data;
+  } catch (error) {
+    console.error("Error updating period tracker:", error);
+    throw error;
+  }
 };
 
-export const deletePeriodTrackerApi = async () => {
-  return axiosInstance.delete("/api/ui/reminders/period");
+// Delete period tracker
+export const deletePeriodTrackerApi = async (id) => {
+  try {
+    const res = await axiosInstance.delete(`/api/reminders/period-tracker/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error deleting period tracker:", error);
+    throw error;
+  }
+};
+
+// Other reminders for logged-in patient
+export const getOtherRemindersApi = async () => {
+  try {
+    const res = await axiosInstance.get("/api/reminders/other");
+    return res.data || [];
+  } catch (error) {
+    console.error("Error fetching other reminders:", error);
+    return [];
+  }
 };
