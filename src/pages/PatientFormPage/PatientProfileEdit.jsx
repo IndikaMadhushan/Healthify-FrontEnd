@@ -16,34 +16,59 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
 
     const basic = basicRef.current.getData();
     const emergency = emergencyRef.current.getData();
+    const cleanedBasic = {
+      ...basic,
+      firstName: basic.firstName.trim(),
+      secondName: basic.secondName.trim(),
+      lastName: basic.lastName.trim(),
+      email: basic.email.trim(),
+      nationalId: basic.nationalId.trim().toUpperCase(),
+      occupation: basic.occupation.trim(),
+      address: basic.address.trim(),
+      contactNumber: basic.contactNumber.trim(),
+      nationality: basic.nationality.trim(),
+      mainCity: basic.mainCity.trim(),
+    };
+    const cleanedEmergency = {
+      primary: {
+        name: emergency.primary.name.trim(),
+        phone: emergency.primary.phone.trim(),
+        relationship: emergency.primary.relationship.trim(),
+      },
+      secondary: {
+        name: emergency.secondary.name.trim(),
+        phone: emergency.secondary.phone.trim(),
+        relationship: emergency.secondary.relationship.trim(),
+      },
+    };
 
     const payload = {
-      firstName: basic.firstName || undefined,
-      secondName: basic.secondName || undefined,
-      lastName: basic.lastName || undefined,
-      email: basic.email || undefined,
-      nic: basic.nationalId || undefined,
+      firstName: cleanedBasic.firstName || undefined,
+      secondName: cleanedBasic.secondName || undefined,
+      lastName: cleanedBasic.lastName || undefined,
+      email: cleanedBasic.email || undefined,
+      nic: cleanedBasic.nationalId || undefined,
       gender: basic.gender || undefined,
       dateOfBirth: basic.dob || undefined,
-      occupation: basic.occupation || undefined,
-      district: basic.mainCity || undefined,
-      phone: basic.contactNumber || undefined,
-      address: basic.address || undefined,
-      nationality: basic.nationality || undefined,
+      occupation: cleanedBasic.occupation || undefined,
+      district: cleanedBasic.mainCity || undefined,
+      phone: cleanedBasic.contactNumber || undefined,
+      address: cleanedBasic.address || undefined,
+      nationality: cleanedBasic.nationality || undefined,
 
-      primaryContact: emergency.primary.name
+      primaryContact: cleanedEmergency.primary.name
         ? {
-          name: emergency.primary.name,
-          phoneNumber: emergency.primary.phone,
-          relationship: emergency.primary.relationship
+          name: cleanedEmergency.primary.name,
+          phoneNumber: cleanedEmergency.primary.phone,
+          relationship: cleanedEmergency.primary.relationship
         }
         : undefined,
 
-      secondaryContact: emergency.secondary.name
+      secondaryContact: cleanedEmergency.secondary.name
         ? {
-          name: emergency.secondary.name,
-          phoneNumber: emergency.secondary.phone,
-          relationship: emergency.secondary.relationship
+          name: cleanedEmergency.secondary.name,
+          phoneNumber: cleanedEmergency.secondary.phone,
+          relationship: cleanedEmergency.secondary.relationship
         }
         : undefined
     };
@@ -51,6 +76,7 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
     try {
       await updatePatientProfileApi(patient.id, payload);
       localStorage.removeItem("patient_me_cache");
+      toast.success("Profile updated successfully");
       onUpdated();
       onClose();
     } catch (err) {
