@@ -10,6 +10,10 @@ import { getNameParts } from "../../utils/nameUtils";
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -81,7 +85,7 @@ export default function PatientRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
-      sessionStorage.getItem("patientRegStep1") || "{}"
+      sessionStorage.getItem("patientRegStep1") || "{}",
     );
     const { fullName: _FULL_NAME, ...rest } = step1Data;
     const nameParts = getNameParts(step1Data);
@@ -97,7 +101,9 @@ export default function PatientRegisterPage2() {
     try {
       await registerPatientApi(payload);
 
-      console.log("Patient registered successfully. Redirecting to OTP page...");
+      console.log(
+        "Patient registered successfully. Redirecting to OTP page...",
+      );
 
       sessionStorage.removeItem("patientRegStep1");
 
@@ -193,9 +199,7 @@ export default function PatientRegisterPage2() {
             </span>
           </label>
           {errors.agreedToTerms && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.agreedToTerms}
-            </p>
+            <p className="text-xs text-red-500 mt-1">{errors.agreedToTerms}</p>
           )}
         </div>
 

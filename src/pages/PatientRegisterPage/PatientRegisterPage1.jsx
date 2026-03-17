@@ -60,11 +60,8 @@ export default function PatientRegisterPage1() {
 
     if (!formData.nic.trim()) {
       newErrors.nic = "NIC number is required";
-    } else if (
-      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())
-    ) {
-      newErrors.nic =
-        "Invalid NIC format (e.g., 123456789V or 123456789012)";
+    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())) {
+      newErrors.nic = "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
     if (!formData.email.trim()) {
