@@ -458,7 +458,8 @@ export default function DoctorNavBar({ doctor, patient }) {
   if (!doctor) return null;
   const safePatient = patient || null;
   const doctorDisplayName = getDisplayName(doctor);
-  const patientDisplayName = getDisplayName(safePatient);
+  const patientDisplayName =
+    getDisplayName(safePatient) || (safePatient?.id ? `Patient #${safePatient.id}` : "");
 
   const handleNavigation = (path) => {
     setDropdownOpen(false);
@@ -503,7 +504,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                     Viewing Patient: {patientDisplayName}
                   </p>
                   <p className="text-xs text-gray-600 truncate">
-                    {safePatient.email}
+                    {safePatient.email || safePatient.patientId || `ID ${safePatient.id}`}
                   </p>
                 </div>
               </div>
@@ -658,7 +659,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                 Patient: {patientDisplayName}
               </p>
               <p className="text-[10px] text-gray-600 truncate">
-                {safePatient.email}
+                {safePatient.email || safePatient.patientId || `ID ${safePatient.id}`}
               </p>
             </div>
           </div>
