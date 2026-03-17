@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
@@ -22,6 +22,17 @@ export default function DoctorRegisterPage1() {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const savedStep1 = sessionStorage.getItem("doctorRegStep1");
+    if (savedStep1) {
+      try {
+        setFormData(JSON.parse(savedStep1));
+      } catch (e) {
+        // ignore invalid cache
+      }
+    }
+  }, []);
 
   const SPECIALIZATIONS = [
     "Cardiology",
