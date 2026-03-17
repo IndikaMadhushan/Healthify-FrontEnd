@@ -13,6 +13,7 @@ export default function ParentMedicalForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [parentChronic, setParentChronic] = useState(initialChronic);
   const [errors, setErrors] = useState({});
@@ -70,6 +71,7 @@ export default function ParentMedicalForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (readOnly) return;
 
     const payload = validateForm();
     if (!payload) return;
@@ -91,6 +93,7 @@ export default function ParentMedicalForm({
   };
 
   const handleNextClick = () => {
+    if (readOnly) return;
     const payload = validateForm();
     if (!payload) return;
     onNext();
@@ -111,13 +114,15 @@ export default function ParentMedicalForm({
         </p>
       </div>
 
+      <fieldset disabled={readOnly}>
       <ChronicIllnessesSection
         value={parentChronic}
         onChange={handleChronicChange}
         errors={errors}
       />
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"

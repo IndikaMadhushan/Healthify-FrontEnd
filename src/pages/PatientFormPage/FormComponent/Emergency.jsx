@@ -22,7 +22,11 @@ const initialEmergency = {
   }
 };
 
-const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, ref) => {
+const EmergencyContactForm = forwardRef(({
+  showButton = false,
+  initialData,
+  readOnly = false
+}, ref) => {
   const [form, setForm] = useState(initialEmergency);
   const [errors, setErrors] = useState({});
 
@@ -171,6 +175,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={headingCss}>Emergency Contacts</h2>
 
+      <fieldset disabled={readOnly} className="space-y-6">
       <div className={sectionBox}>
         <h3 className={subHeadingCss}>
           Primary Emergency Contact <span className="text-red-500">*</span>
@@ -273,7 +278,9 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
         </div>
       </div>
 
-      {showButton && (
+      </fieldset>
+
+      {showButton && !readOnly && (
         <div className="mt-2 flex justify-end">
           <button
             type="submit"

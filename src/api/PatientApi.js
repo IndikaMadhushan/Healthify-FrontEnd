@@ -25,6 +25,10 @@ export const getPatientProfileApi = async () => {
     return res;
 }
 
+// patient profile by id
+export const getPatientProfileByIdApi = (patientId) =>
+    axiosInstance.get(`/api/patients/${patientId}`);
+
 
 // Update patient profile
 export const updatePatientProfileApi = (patientId, payload) =>

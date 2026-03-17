@@ -20,6 +20,7 @@ export default function HabitsAndAllergiesForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [form, setForm] = useState(initialHabits);
   const [errors, setErrors] = useState({});
@@ -122,6 +123,7 @@ export default function HabitsAndAllergiesForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (readOnly) return;
 
     const payload = validateForm();
     if (!payload) return;
@@ -143,6 +145,7 @@ export default function HabitsAndAllergiesForm({
   };
 
   const handleNextClick = () => {
+    if (readOnly) return;
     const payload = validateForm();
     if (!payload) return;
     onNext();
@@ -162,6 +165,8 @@ export default function HabitsAndAllergiesForm({
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Lifestyle & Habits</h2>
+
+      <fieldset disabled={readOnly} className="space-y-6">
 
       <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
         <div className={cardBox}>
@@ -483,8 +488,9 @@ export default function HabitsAndAllergiesForm({
           />
         </div>
       </div>
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"

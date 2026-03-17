@@ -93,7 +93,12 @@ function parseName(initialData) {
 
 const todayString = new Date().toISOString().split("T")[0];
 
-const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, ref) => {
+const BasicInfoForm = forwardRef(({
+  showButton = false,
+  onNext,
+  initialData,
+  readOnly = false
+}, ref) => {
   const [form, setForm] = useState(basic_form);
   const [errors, setErrors] = useState({});
 
@@ -113,9 +118,13 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       age: initialData.dateOfBirth
         ? calculateAge(initialData.dateOfBirth)
         : "",
-      gender: initialData.gender || "",
+      gender: typeof initialData.gender === "string"
+        ? initialData.gender.toLowerCase()
+        : "",
       nationality: initialData.nationality || "",
-      maritalStatus: initialData.maritalStatus || "",
+      maritalStatus: typeof initialData.maritalStatus === "string"
+        ? initialData.maritalStatus.toLowerCase()
+        : "",
       occupation: initialData.occupation || "",
       address: initialData.address || "",
       mainCity: initialData.district || "",
@@ -295,6 +304,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       <h2 className={sectionHeading}>Basic Information</h2>
 
       <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
+        <fieldset disabled={readOnly} className="grid grid-cols-1 gap-4">
 
         {/* Full name */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -558,7 +568,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
         )} */}
 
         {/* Submit */}
-        {showButton && (
+        {showButton && !readOnly && (
           <div className="px-2 mt-2 flex justify-end">
             <button
               type="button"
@@ -569,6 +579,8 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             </button>
           </div>
         )}
+
+        </fieldset>
 
       </form>
     </div>
