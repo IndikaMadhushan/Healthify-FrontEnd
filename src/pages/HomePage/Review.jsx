@@ -6,6 +6,8 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useEffect, useState } from "react";
+import { getAllReviews } from "../../api/reviewApi";
 
 import ReviewCard from "./ReviewCard";
 import { IoMdArrowDropleft } from "react-icons/io";
@@ -13,19 +15,33 @@ import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import wall from "../../assets/wall.jpg";
 
-const reviews = [
-  { id:1, name:"Parindya Hewage", image:"https://picsum.photos/seed/rev1/400/400", review:"this is very important valuable help to my healht management with my busy life easyily " },
-  { id:2, name:"Charu Silva", image:"https://picsum.photos/seed/rev2/400/400", review:"Fantastic app — reminders are lifesavers and the reports section is very organised." },
-  { id:3, name:"Samanthi", image:"https://picsum.photos/seed/rev3/400/400", review:"Very useful for busy people. Love the reminders!" },
-  { id:4, name:"Kamal", image:"https://picsum.photos/seed/rev4/400/400", review:"Good experience. Helpful notifications and clean layout." },
-  { id:5, name:"Parindya Hewage", image:"https://picsum.photos/seed/rev1/400/400", review:"this is very important valuable help to my healht management with my busy life easyily  " },
-  { id:6, name:"Charu Silva", image:"https://picsum.photos/seed/rev2/400/400", review:"Fantastic app — reminders are lifesavers and the reports section is very organised." },
-  { id:7, name:"Samanthi", image:"https://picsum.photos/seed/rev3/400/400", review:"Very useful for busy people. Love the reminders!" },
-  { id:8, name:"Kamal", image:"https://picsum.photos/seed/rev4/400/400", review:"Good experience. Helpful notifications and clean layout.this is very important valuable help to my healht management with my busy life easyily.this is very important valuable help to my healht management with my busy life easyily" },
-  
-];
+
 
 export default function TightCarousel() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    loadReviews();
+  }, []);
+
+  const loadReviews = async () => {
+    try {
+      const res = await getAllReviews();
+
+      // 🔥 map backend → frontend format
+      const formatted = res.data.map((r) => ({
+        id: r.id,
+        name: r.name,
+        image: r.imageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+        review: r.review
+      }));
+
+      setReviews(formatted);
+
+    } catch (err) {
+      console.error("Error loading reviews", err);
+    }
+  }
   return (
     <div
       className="w-full relative overflow-x-hidden p-12"
