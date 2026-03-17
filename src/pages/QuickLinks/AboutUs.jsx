@@ -18,7 +18,7 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#18AAB0] to-[#86C443] text-white py-16 sm:py-24 overflow-hidden">
+      <section className="relative bg-linear-to-br from-secondary to-[#86C443] text-white py-16 sm:py-24 overflow-hidden">
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -112,7 +112,7 @@ export default function AboutUs() {
                 key={i}
                 className="flex gap-3 p-3 rounded-lg hover:bg-teal-50 transition border border-transparent hover:border-teal-100"
               >
-                <item.icon className="w-5 h-5 text-teal-600 flex-shrink-0 mt-1" />
+                <item.icon className="w-5 h-5 text-teal-600 shrink-0 mt-1" />
                 <div>
                   <h3 className="font-semibold text-gray-800 text-sm mb-1">
                     {item.title}
@@ -128,7 +128,7 @@ export default function AboutUs() {
 
         {/* Our Mission */}
         <section className="mb-10 sm:mb-16">
-          <div className="bg-gradient-to-br from-teal-500 to-green-600 text-white rounded-xl shadow-lg p-6 sm:p-10 border border-teal-400">
+          <div className="bg-linear-to-br from-teal-500 to-green-600 text-white rounded-xl shadow-lg p-6 sm:p-10 border border-teal-400">
             <div className="flex items-center gap-3 mb-4">
               <Target className="w-8 h-8" />
               <h2 className="text-xl sm:text-2xl font-bold">Our Mission</h2>
@@ -144,7 +144,7 @@ export default function AboutUs() {
 
         {/* Our Vision */}
         <section className="mb-10 sm:mb-16">
-          <div className="bg-gradient-to-br from-[#86C443] to-[#18AAB0] text-white rounded-xl shadow-lg p-6 sm:p-10 border border-green-400">
+          <div className="bg-linear-to-br from-[#86C443] to-secondary text-white rounded-xl shadow-lg p-6 sm:p-10 border border-green-400">
             <div className="flex items-center gap-3 mb-4">
               <Shield className="w-8 h-8" />
               <h2 className="text-xl sm:text-2xl font-bold">Our Vision</h2>
@@ -156,7 +156,7 @@ export default function AboutUs() {
                 "National-level digital health platform support",
               ].map((text, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-1.5 h-1.5 bg-white rounded-full mt-2 shrink-0"></div>
                   <p className="opacity-95">{text}</p>
                 </div>
               ))}

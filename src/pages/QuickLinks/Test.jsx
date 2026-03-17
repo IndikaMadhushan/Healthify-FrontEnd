@@ -599,17 +599,17 @@ function ExpertiseTagList({ tags, onAdd, onRemove, editing }) {
 function ProfessionalDetails({ doctor, isEditing, draft, onChange }) {
   // helpers for tag arrays
   const addExpertise = (t) => onChange("expertise", [...draft.expertise, t]);
-  const rmExpertise = (t) =>
-    onChange(
-      "expertise",
-      draft.expertise.filter((x) => x !== t),
-    );
+  // const rmExpertise = (t) =>
+  //   onChange(
+  //     "expertise",
+  //     draft.expertise.filter((x) => x !== t),
+  //   );
   const addLanguage = (t) => onChange("languages", [...draft.languages, t]);
-  const rmLanguage = (t) =>
-    onChange(
-      "languages",
-      draft.languages.filter((x) => x !== t),
-    );
+  // const rmLanguage = (t) =>
+  //   onChange(
+  //     "languages",
+  //     draft.languages.filter((x) => x !== t),
+  //   );
 
   const toggleDay = (day) => {
     const days = draft.availableDays.includes(day)

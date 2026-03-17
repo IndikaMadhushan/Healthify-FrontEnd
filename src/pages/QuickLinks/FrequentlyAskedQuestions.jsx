@@ -117,7 +117,7 @@ export default function FAQPage() {
                   {faq.question}
                 </span>
                 <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openIndex === index ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-500"}`}
+                  className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openIndex === index ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-500"}`}
                 >
                   {openIndex === index ? (
                     <Minus className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function FAQPage() {
               <div
                 className={`transition-all duration-300 ease-in-out ${
                   openIndex === index
-                    ? "max-h-[500px] opacity-100"
+                    ? "max-h-125 opacity-100"
                     : "max-h-0 opacity-0"
                 } overflow-hidden`}
               >
