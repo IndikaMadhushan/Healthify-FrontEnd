@@ -1,20 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const initialHabits = {
-  smokingStatus: "",       // "never" | "current" | "stopped"
-  smokingFrequency: "",    // one of defined options
+  smokingStatus: "",
+  smokingFrequency: "",
   alcoholStatus: "",
   alcoholFrequency: "",
   drugUseStatus: "",
   drugUseFrequency: "",
-  stressLevel: "",         // "low" | "medium" | "high"
+  stressLevel: "",
   foodAllergies: "",
   drugAllergies: ""
 };
 
-export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
+export default function HabitsAndAllergiesForm({
+  showButton = false,
+  onNext,
+  initialData,
+  onSubmit,
+  isSaving = false,
+}) {
   const [form, setForm] = useState(initialHabits);
+
+  useEffect(() => {
+    if (!initialData) return;
+
+    // The form needs to rehydrate when page data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({
+      smokingStatus: initialData.smokingStatus ?? "",
+      smokingFrequency: initialData.smokingFrequency ?? "",
+      alcoholStatus: initialData.alcoholStatus ?? "",
+      alcoholFrequency: initialData.alcoholFrequency ?? "",
+      drugUseStatus: initialData.drugUseStatus ?? "",
+      drugUseFrequency: initialData.drugUseFrequency ?? "",
+      stressLevel: initialData.stressLevel ?? "",
+      foodAllergies: initialData.foodAllergies ?? "",
+      drugAllergies: initialData.drugAllergies ?? "",
+    });
+  }, [initialData]);
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({
@@ -23,13 +47,25 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Habits & Allergies:", form);
-    toast.success("Habits & allergies data saved (check console)");
+
+    try {
+      if (onSubmit) {
+        await onSubmit(form);
+      } else {
+        console.log("Habits & Allergies:", form);
+      }
+      toast.success("Lifestyle and allergy details submitted successfully");
+    } catch (error) {
+      const message =
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed to submit lifestyle information";
+      toast.error(message);
+    }
   };
 
-  // UI helper classes 
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
   const labelTitle = "text-[15px] font-semibold text-gray-700";
   const smallLabel = "text-[14px] text-gray-700 mb-1";
@@ -38,18 +74,17 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
   const textAreaBase =
     "mt-1 w-full min-h-[70px] px-3 py-2 rounded-md bg-gray-100 border text-[15px] text-gray-700 " +
     "focus:ring-2 focus:ring-secondary focus:border-secondary outline-none resize-y transition";
+  const actionButtonClass =
+    "px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold";
 
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Lifestyle & Habits</h2>
 
-      {/* TOP 3 – Smoking / Alcohol / Drug use */}
-      <div className="grid lg:grid-cols-3  grid-cols-1 gap-4">
-        {/* Smoking */}
+      <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
         <div className={cardBox}>
           <label className={labelTitle}>Smoking</label>
 
-          {/* Status */}
           <div className="mt-2 flex flex-col gap-1 ml-2">
             <label className="flex items-center gap-2 text-[14px] text-gray-700">
               <input
@@ -83,7 +118,6 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
             </label>
           </div>
 
-          {/* Frequency – only if current or stopped */}
           {(form.smokingStatus === "current" ||
             form.smokingStatus === "stopped") && (
             <div className="mt-3 ml-2">
@@ -107,7 +141,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
                     checked={form.smokingFrequency === "1-5"}
                     onChange={handleChange("smokingFrequency")}
                   />
-                  1–5 cigarettes per day
+                  1-5 cigarettes per day
                 </label>
                 <label className="flex items-center gap-2 text-[13px] text-gray-700">
                   <input
@@ -117,7 +151,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
                     checked={form.smokingFrequency === "6-10"}
                     onChange={handleChange("smokingFrequency")}
                   />
-                  6–10 cigarettes per day
+                  6-10 cigarettes per day
                 </label>
                 <label className="flex items-center gap-2 text-[13px] text-gray-700">
                   <input
@@ -134,11 +168,9 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
           )}
         </div>
 
-        {/* Alcohol Consumption */}
         <div className={cardBox}>
           <label className={labelTitle}>Alcohol Consumption</label>
 
-          {/* Status */}
           <div className="mt-2 flex flex-col gap-1 ml-2">
             <label className="flex items-center gap-2 text-[14px] text-gray-700">
               <input
@@ -172,7 +204,6 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
             </label>
           </div>
 
-          {/* Frequency – only if drinks now or stopped */}
           {(form.alcoholStatus === "current" ||
             form.alcoholStatus === "stopped") && (
             <div className="mt-3 ml-2">
@@ -196,7 +227,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
                     checked={form.alcoholFrequency === "1-3-month"}
                     onChange={handleChange("alcoholFrequency")}
                   />
-                  1–3 times per month
+                  1-3 times per month
                 </label>
                 <label className="flex items-center gap-2 text-[13px] text-gray-700">
                   <input
@@ -206,7 +237,7 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
                     checked={form.alcoholFrequency === "1-2-week"}
                     onChange={handleChange("alcoholFrequency")}
                   />
-                  1–2 times per week
+                  1-2 times per week
                 </label>
                 <label className="flex items-center gap-2 text-[13px] text-gray-700">
                   <input
@@ -223,11 +254,9 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
           )}
         </div>
 
-        {/* Drug Use */}
         <div className={cardBox}>
           <label className={labelTitle}>Drug Use</label>
 
-          {/* Status */}
           <div className="mt-2 flex flex-col gap-1 ml-2">
             <label className="flex items-center gap-2 text-[14px] text-gray-700">
               <input
@@ -261,7 +290,6 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
             </label>
           </div>
 
-          {/* Frequency – only if current or stopped */}
           {(form.drugUseStatus === "current" ||
             form.drugUseStatus === "stopped") && (
             <div className="mt-3 ml-2">
@@ -303,7 +331,6 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
         </div>
       </div>
 
-      {/* Stress Level */}
       <div className={cardBox}>
         <label className={labelTitle}>Stress Level</label>
         <div className="mt-2 flex gap-6 items-center ml-2 text-[14px] text-gray-700">
@@ -340,11 +367,9 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
         </div>
       </div>
 
-      {/* Allergies Section */}
       <div className={cardBox}>
         <h3 className="text-[16px] font-bold text-mainblack mb-1">Allergies</h3>
 
-        {/* Food allergies */}
         <div className="mt-2">
           <label className={labelTitle}>Food allergies</label>
           <textarea
@@ -355,7 +380,6 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
           />
         </div>
 
-        {/* Drug allergies */}
         <div className="mt-4">
           <label className={labelTitle}>Drug allergies</label>
           <textarea
@@ -366,20 +390,30 @@ export default function HabitsAndAllergiesForm({ showButton=false,onNext }) {
           />
         </div>
       </div>
-    {showButton && (
-      <div className="mt-2 flex justify-end">
-        <button
-        type="button"
-        className="px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold"
-        onClick={() => {
-          // if you want validation later, put it here
-          onNext(); // ✅ GO TO NEXT PAGE
-        }}
-      >
-        Next
-      </button>
-      </div>
-    )}
+
+      {showButton ? (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="button"
+            className={actionButtonClass}
+            onClick={() => {
+              onNext();
+            }}
+          >
+            Next
+          </button>
+        </div>
+      ) : (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={actionButtonClass}
+          >
+            {isSaving ? "Saving..." : "Submit Lifestyle Info"}
+          </button>
+        </div>
+      )}
     </form>
   );
 }
