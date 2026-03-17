@@ -409,16 +409,6 @@ export default function PatientFormDoctorView() {
         </div>
 
         <div className="w-full md:w-2/3 lg:w-3/4 mx-2 border2 border-gray-300 bg-white shadow-md p-4">
-          <div className="mb-4 rounded-xl border border-secondary/20 bg-secondary/5 px-4 py-3">
-            <p className="text-sm font-semibold text-secondary">
-              Doctor view only
-            </p>
-            <p className="text-sm text-gray-600">
-              Patient details are loaded from the database and cannot be edited
-              from this page.
-            </p>
-          </div>
-
           {isLoading ? (
             <p className="text-sm text-gray-500">Loading patient details...</p>
           ) : loadError ? (
