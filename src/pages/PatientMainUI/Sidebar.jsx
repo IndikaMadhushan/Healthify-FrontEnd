@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   FaHome,
   FaNotesMedical,
@@ -15,24 +16,32 @@ import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
 import MedicalReportsPage from "../MedicalReportsPage/MedicalReportsPage";
 import SummaryPage from "./SummaryPage";
 
+const PATIENT_DASHBOARD_ACTIVE_KEY = "patient_dashboard_active_section";
 
+const getRouteActiveSection = (pathname) => {
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const medicalReportsIndex = pathSegments.lastIndexOf("medical-reports");
 
+  if (
+    medicalReportsIndex !== -1 &&
+    medicalReportsIndex < pathSegments.length - 1
+  ) {
+    return "Upload Report";
+  }
+
+  return null;
+};
 export default function Dashboard() {
-  const [active, setActive] = useState("Summary");
-  const [uploadCategory, setUploadCategory] = useState(null);
-  const [userId] = useState("user_123"); // Replace with actual user ID from auth
+  const location = useLocation();
+  const [storedActive, setStoredActive] = useState(() => {
+    return localStorage.getItem(PATIENT_DASHBOARD_ACTIVE_KEY) || "Summary";
+  });
 
-  // Handle navigation to upload from Medical Reports page
-  const handleNavigateToUpload = (category) => {
-    setUploadCategory(category);
-    setActive("Upload Report");
-  };
+  const active = getRouteActiveSection(location.pathname) || storedActive;
 
-  // Handle back from upload to Medical Reports
-  const handleBackToReports = () => {
-    setUploadCategory(null);
-    setActive("Medical Reports");
-  };
+  useEffect(() => {
+    localStorage.setItem(PATIENT_DASHBOARD_ACTIVE_KEY, active);
+  }, [active]);
 
   return (
     <div className="h-screen bg-[#F2FBFA] flex flex-col">
@@ -48,31 +57,31 @@ export default function Dashboard() {
             text="Summary"
             icon={<FaHome />}
             active={active}
-            setActive={setActive}
+            setActive={setStoredActive}
           />
           <SidebarButton
             text="My Profile"
             icon={<FaUser />}
             active={active}
-            setActive={setActive}
+            setActive={setStoredActive}
           />
           <SidebarButton
             text="Medical Info"
             icon={<FaNotesMedical />}
             active={active}
-            setActive={setActive}
+            setActive={setStoredActive}
           />
           <SidebarButton
             text="Upload Report"
             icon={<FaFileUpload />}
             active={active}
-            setActive={setActive}
+            setActive={setStoredActive}
           />
           <SidebarButton
             text="Reminders"
             icon={<FaBell />}
             active={active}
-            setActive={setActive}
+            setActive={setStoredActive}
           />
         </div>
 
@@ -88,31 +97,31 @@ export default function Dashboard() {
           icon={<FaHome />}
           text="Summary"
           active={active}
-          setActive={setActive}
+          setActive={setStoredActive}
         />
         <MobileNavButton
           icon={<FaUser />}
           text="My Profile"
           active={active}
-          setActive={setActive}
+          setActive={setStoredActive}
         />
         <MobileNavButton
           icon={<FaNotesMedical />}
           text="Medical Info"
           active={active}
-          setActive={setActive}
+          setActive={setStoredActive}
         />
         <MobileNavButton
           icon={<FaFileUpload />}
           text="Reports"
           active={active === "Medical Reports" || active === "Upload Report"}
-          setActive={() => setActive("Medical Reports")}
+          setActive={() => setStoredActive("Upload Report")}
         />
         <MobileNavButton
           icon={<FaBell />}
           text="Reminders"
           active={active}
-          setActive={setActive}
+          setActive={setStoredActive}
         />
       </div>
     </div>
@@ -166,16 +175,13 @@ function MobileNavButton({ icon, text, active, setActive }) {
 
 function renderContent(
   active,
-  // handleNavigateToUpload,
-  // uploadCategory,
-  // handleBackToReports,
-  // userId,
 ) {
   switch (active) {
     case "Summary":
       return <SummaryPage />;
     case "My Profile":
       return <MyProfile />;
+    case "Medical Reports":
      case "Upload Report":
        return <MedicalReportsPage />;
 
