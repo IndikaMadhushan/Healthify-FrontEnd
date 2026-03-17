@@ -339,11 +339,6 @@ export default function SummaryPage() {
             </div>
           )}
 
-          {bmiInfo?.healthTip && (
-            <div className="mt-6 rounded-xl p-4 bg-white/20 border border-white/30">
-              <p className="text-sm">{bmiInfo.healthTip}</p>
-            </div>
-          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
