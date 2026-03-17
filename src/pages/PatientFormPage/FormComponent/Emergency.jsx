@@ -22,6 +22,8 @@ const initialEmergency = {
   }
 };
 
+const RELATIONSHIP_OPTIONS = ["Mother", "Father", "Sister", "Brother"];
+
 const EmergencyContactForm = forwardRef(({
   showButton = false,
   initialData,
@@ -171,6 +173,14 @@ const EmergencyContactForm = forwardRef(({
 
   const subHeadingCss = "font-semibold text-[17px] mb-3 text-mainblack";
 
+  const getRelationshipOptions = (value) => {
+    if (value && !RELATIONSHIP_OPTIONS.includes(value)) {
+      return [value, ...RELATIONSHIP_OPTIONS];
+    }
+
+    return RELATIONSHIP_OPTIONS;
+  };
+
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={headingCss}>Emergency Contacts</h2>
@@ -214,14 +224,18 @@ const EmergencyContactForm = forwardRef(({
 
         <div>
           <label className={labelCss}>Relationship to Patient (optional)</label>
-          <input
-            type="text"
+          <select
             value={form.primary.relationship}
             onChange={handleChange("primary", "relationship")}
-            maxLength={50}
             className={inputBase + " " + withError(errors.primaryRelationship)}
-            placeholder="Mother, Father, Spouse, Friend"
-          />
+          >
+            <option value="">Select relationship</option>
+            {getRelationshipOptions(form.primary.relationship).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           {errors.primaryRelationship && (
             <p className="text-xs text-red-500 mt-1">{errors.primaryRelationship}</p>
           )}
@@ -264,14 +278,18 @@ const EmergencyContactForm = forwardRef(({
 
         <div>
           <label className={labelCss}>Relationship to Patient</label>
-          <input
-            type="text"
+          <select
             value={form.secondary.relationship}
             onChange={handleChange("secondary", "relationship")}
-            maxLength={50}
             className={inputBase + " " + withError(errors.secondaryRelationship)}
-            placeholder="Sibling, Friend, Neighbour"
-          />
+          >
+            <option value="">Select relationship</option>
+            {getRelationshipOptions(form.secondary.relationship).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           {errors.secondaryRelationship && (
             <p className="text-xs text-red-500 mt-1">{errors.secondaryRelationship}</p>
           )}

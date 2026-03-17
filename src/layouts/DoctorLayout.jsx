@@ -125,8 +125,9 @@ export default function DoctorLayout() {
   const isDashboard =
     location.pathname === "/doctor/dashboard" ||
     location.pathname === "/doctor/dashboard/";
-
-  const fromNav = location.state?.fromNav;
+  const isDoctorProfile =
+    location.pathname === "/doctor/doctor-profile" ||
+    location.pathname === "/doctor/doctor-profile/";
 
   if (!doctor) {
     return (
@@ -138,11 +139,10 @@ export default function DoctorLayout() {
 
   return (
     <>
-      {isDashboard ||
-      (location.pathname === "/doctor/doctor-profile" && fromNav === "NAV1") ? (
-        <DoctorNavBar doctor={doctor} />
+      {isDashboard || isDoctorProfile ? (
+        <DoctorNavBar key={location.pathname} doctor={doctor} />
       ) : (
-        <DoctorNavBar2 doctor={doctor} patient={patient} />
+        <DoctorNavBar2 key={location.pathname} doctor={doctor} patient={patient} />
       )}
 
       <div className="lg:px-14 px-6 bg-gray-50 pb-[100px]">
