@@ -11,20 +11,26 @@ import { getAllPatients } from "../api/PatientApi";
 import Footer from "../components/footer";
 
 function getStoredPatient(patientId, locationPatient) {
-  if (locationPatient && String(locationPatient.id) === String(patientId)) {
+  if (
+    locationPatient &&
+    (String(locationPatient.id) === String(patientId) ||
+      String(locationPatient.patientId) === String(patientId))
+  ) {
     return locationPatient;
   }
 
-  const storedPatientId = localStorage.getItem("selectedPatientId");
   const storedPatientRaw = localStorage.getItem("selectedPatient");
 
-  if (!storedPatientRaw || String(storedPatientId) !== String(patientId)) {
+  if (!storedPatientRaw) {
     return null;
   }
 
   try {
     const storedPatient = JSON.parse(storedPatientRaw);
-    return String(storedPatient?.id) === String(patientId) ? storedPatient : null;
+    return String(storedPatient?.id) === String(patientId) ||
+      String(storedPatient?.patientId) === String(patientId)
+      ? storedPatient
+      : null;
   } catch (error) {
     console.error("Failed to parse stored patient", error);
     return null;
@@ -95,7 +101,9 @@ export default function DoctorLayout() {
       try {
         const res = await getAllPatients();
         const matchedPatient = res.data?.find(
-          (item) => String(item.id) === String(patientId),
+          (item) =>
+            String(item.id) === String(patientId) ||
+            String(item.patientId) === String(patientId),
         );
 
         if (!matchedPatient) {

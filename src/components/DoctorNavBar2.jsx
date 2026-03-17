@@ -470,6 +470,15 @@ export default function DoctorNavBar({ doctor, patient }) {
     navigate(path);
   };
 
+  const handlePatientProfileNavigation = () => {
+    if (!safePatient) return;
+
+    setDropdownOpen(false);
+    navigate(`/doctor/${safePatient.patientId || safePatient.id}/profile`, {
+      state: { patient: safePatient },
+    });
+  };
+
   const handleLogout = () => {
     setDropdownOpen(false);
     localStorage.clear();
@@ -578,7 +587,7 @@ export default function DoctorNavBar({ doctor, patient }) {
                       </p>
                     </div>
                     <button
-                      onClick={() => handleNavigation(`/doctor/${safePatient.id}/profile`)}
+                      onClick={handlePatientProfileNavigation}
                       className="w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                     >
                       👤 Profile
