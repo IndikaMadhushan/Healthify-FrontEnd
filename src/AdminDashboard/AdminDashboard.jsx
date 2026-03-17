@@ -11,6 +11,11 @@ import {
   togglePatientStatusApi,
   getAdminProfileApi
 } from '../api/AdminApi';
+import {
+  approveSiteReviewApi,
+  getPendingSiteReviewsApi,
+  rejectSiteReviewApi,
+} from "../api/SiteReviewApi";
 import { getDisplayName } from '../utils/nameUtils';
 
 export default function AdminDashboard() {
@@ -23,6 +28,7 @@ export default function AdminDashboard() {
 
   // Data states
   const [pendingDoctors, setPendingDoctors] = useState([]);
+  const [pendingSiteReviews, setPendingSiteReviews] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [showPatientModal, setShowPatientModal] = useState(false);
@@ -32,6 +38,7 @@ export default function AdminDashboard() {
   // Loading states
   const [loading, setLoading] = useState(false);
   const [pendingLoading, setPendingLoading] = useState(true);
+  const [reviewLoading, setReviewLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -44,6 +51,7 @@ export default function AdminDashboard() {
     // Fetch pending doctors on mount
     fetchPendingDoctors();
     fetchAdminProfile();
+    fetchPendingReviews();
   }, []);
 
   const fetchAdminProfile = async () => {
@@ -74,6 +82,19 @@ export default function AdminDashboard() {
       setError('Failed to load pending doctors');
     } finally {
       setPendingLoading(false);
+    }
+  };
+
+  const fetchPendingReviews = async () => {
+    try {
+      setReviewLoading(true);
+      const data = await getPendingSiteReviewsApi();
+      setPendingSiteReviews(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching pending site reviews:', error);
+      toast.error('Failed to load pending site reviews');
+    } finally {
+      setReviewLoading(false);
     }
   };
 
@@ -157,6 +178,36 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleApproveSiteReview = async (reviewId) => {
+    try {
+      setLoading(true);
+      await approveSiteReviewApi(reviewId);
+      toast.success("Review approved successfully.");
+      await fetchPendingReviews();
+    } catch (error) {
+      console.error('Error approving site review:', error);
+      const message = error.response?.data?.message || 'Failed to approve review';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRejectSiteReview = async (reviewId) => {
+    try {
+      setLoading(true);
+      await rejectSiteReviewApi(reviewId);
+      toast.success("Review rejected successfully.");
+      await fetchPendingReviews();
+    } catch (error) {
+      console.error('Error rejecting site review:', error);
+      const message = error.response?.data?.message || 'Failed to reject review';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleToggleDoctorStatus = async (doctorId, currentStatus) => {
     const action = currentStatus === 'ACTIVE' ? 'disable' : 'activate';
     
@@ -210,6 +261,8 @@ export default function AdminDashboard() {
     }
   };
 
+  const pendingActionCount = pendingDoctors.length + pendingSiteReviews.length;
+
   return (
     <div className="min-h-screen bg-[#F2FBFA]">
       {/* Header */}
@@ -238,9 +291,9 @@ export default function AdminDashboard() {
                 className="relative p-3 bg-[#18AAB0] text-white rounded-full hover:bg-[#86C443] transition-colors"
               >
                 <span className="text-xl">🔔</span>
-                {pendingDoctors.length > 0 && (
+                {pendingActionCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                    {pendingDoctors.length}
+                    {pendingActionCount}
                   </span>
                 )}
               </button>
@@ -270,6 +323,13 @@ export default function AdminDashboard() {
             📋 Pending Approvals
           </TabButton>
           <TabButton
+            active={activeTab === 'reviews'}
+            onClick={() => setActiveTab('reviews')}
+            badge={pendingSiteReviews.length}
+          >
+            Pending Reviews
+          </TabButton>
+          <TabButton
             active={activeTab === 'doctors'}
             onClick={() => setActiveTab('doctors')}
           >
@@ -290,6 +350,13 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {reviewLoading && activeTab === 'reviews' && (
+          <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+            <div className="inline-block w-8 h-8 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-gray-500 mt-4">Loading pending reviews...</p>
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
             <p className="text-red-600 text-sm">❌ {error}</p>
@@ -301,6 +368,15 @@ export default function AdminDashboard() {
             doctors={pendingDoctors}
             onApprove={handleApproveDoctor}
             onReject={handleRejectDoctor}
+            loading={loading}
+          />
+        )}
+
+        {!reviewLoading && activeTab === 'reviews' && (
+          <PendingSiteReviewsSection
+            reviews={pendingSiteReviews}
+            onApprove={handleApproveSiteReview}
+            onReject={handleRejectSiteReview}
             loading={loading}
           />
         )}
@@ -467,6 +543,96 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
   );
 }
 
+function PendingSiteReviewsSection({ reviews, onApprove, onReject, loading = false }) {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
+        Pending Site Reviews
+      </h2>
+
+      {reviews.length === 0 ? (
+        <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+          <span className="text-6xl">⭐</span>
+          <p className="text-gray-500 mt-4">No pending reviews</p>
+        </div>
+      ) : (
+        reviews.map((review) => (
+          <div
+            key={review.id}
+            className="bg-white rounded-2xl p-6 border border-[#D3F0ED] shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex flex-col gap-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  {review.patientPhotoUrl ? (
+                    <img
+                      src={review.patientPhotoUrl}
+                      alt={review.patientName}
+                      className="w-14 h-14 rounded-full object-cover border border-[#D3F0ED]"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-[#EAF7F6] text-[#18AAB0] font-semibold flex items-center justify-center border border-[#D3F0ED]">
+                      {review.patientName?.charAt(0)?.toUpperCase() || "P"}
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="text-lg font-bold text-[#0F4F52]">
+                      {review.patientName}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {review.patientEmail || review.patientId}
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
+                  Pending
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-6 text-sm">
+                <InfoItem label="Patient ID" value={review.patientId} />
+                <InfoItem
+                  label="Submitted"
+                  value={new Date(review.createdAt).toLocaleString()}
+                />
+                <div>
+                  <span className="text-gray-500 text-xs block mb-1">
+                    Rating
+                  </span>
+                  <ReviewStars rating={review.rating} />
+                </div>
+              </div>
+
+              <div className="bg-[#F7FCFB] border border-[#D3F0ED] rounded-xl p-4">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {review.review}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => onApprove(review.id)}
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Approve Review
+                </button>
+                <button
+                  onClick={() => onReject(review.id)}
+                  disabled={loading}
+                  className="flex-1 px-6 py-3 bg-red-50 text-red-600 border-2 border-red-200 rounded-xl font-semibold hover:bg-red-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Reject Review
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
 // Doctor Search Section
 function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
   return (
@@ -564,6 +730,21 @@ function InfoItem({ label, value }) {
     <div>
       <span className="text-gray-500 text-xs block mb-1">{label}</span>
       <span className="text-[#0F4F52] font-medium block truncate">{value}</span>
+    </div>
+  );
+}
+
+function ReviewStars({ rating }) {
+  return (
+    <div className="flex items-center gap-1 text-amber-400">
+      {Array.from({ length: 5 }, (_, index) => (
+        <span
+          key={`review-star-${rating}-${index}`}
+          className={index < rating ? "opacity-100" : "opacity-25"}
+        >
+          ★
+        </span>
+      ))}
     </div>
   );
 }

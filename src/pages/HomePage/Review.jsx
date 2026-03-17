@@ -1,47 +1,36 @@
-// TightCarousel.jsx
-import React from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { useEffect, useState } from "react";
-import { getAllReviews } from "../../api/reviewApi";
 
 import ReviewCard from "./ReviewCard";
-import { IoMdArrowDropleft } from "react-icons/io";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import wall from "../../assets/wall.jpg";
-
-
+import { getPublicSiteReviewsApi } from "../../api/SiteReviewApi";
 
 export default function TightCarousel() {
   const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadReviews();
+    const loadPublicReviews = async () => {
+      try {
+        const data = await getPublicSiteReviewsApi();
+        setReviews(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to load public site reviews", error);
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPublicReviews();
   }, []);
 
-  const loadReviews = async () => {
-    try {
-      const res = await getAllReviews();
-
-      // 🔥 map backend → frontend format
-      const formatted = res.data.map((r) => ({
-        id: r.id,
-        name: r.name,
-        image: r.imageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-        review: r.review
-      }));
-
-      setReviews(formatted);
-
-    } catch (err) {
-      console.error("Error loading reviews", err);
-    }
-  }
   return (
     <div
       className="w-full relative overflow-x-hidden p-12"
@@ -50,64 +39,83 @@ export default function TightCarousel() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        
       }}
     >
       <div className="flex flex-row justify-center">
-          <h1 className="sm:text-3xl text-2xl font-bold text-secondary text-center ">Why Patients Love Healthify</h1>
-          
+        <h1 className="sm:text-3xl text-2xl font-bold text-secondary text-center">
+          Why Patients Love Healthify
+        </h1>
       </div>
-      <h1 className="sm:text-sm text-[10px] text-[#454545] text-center mb-8 px-3 ">Discover how we make personal healthcare simple, secure, and effortless.</h1>
-      <Swiper
-        modules={[EffectCoverflow, Navigation, Pagination]}
-        effect="coverflow"
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView="3"
-        loop={true}
-        navigation={{ nextEl: ".next-arrow", prevEl: ".prev-arrow" }}
-        pagination={{ clickable: true }}
-        spaceBetween={20}
-         breakpoints={{
-          0:{ slidesPerView: 1 },   // mobile
-          600:{ slidesPerView: 2 },
-          900:{ slidesPerView: 3 },    // sm+
-  }}
-        coverflowEffect={{
-          rotate: 0,
-          stretch: -20,
-          depth: 120,
-          modifier: 1.05,
-          slideShadows: false,
-        }}
-        className="w-full"
-      >
-        {reviews.map((r) => (
-          <SwiperSlide
-            key={r.id}
-            style={{
-              width: "42vw",        /* ← card width; change if needed */
-              maxWidth: "700px",
-              display: "flex",
-              justifyContent: "center",
-              padding: 0,           /* remove extra padding */
-            }}
-          >
-            <ReviewCard name={r.name} image={r.image} review={r.review} />
-          </SwiperSlide>
-        ))}
+      <h1 className="sm:text-sm text-[10px] text-[#454545] text-center mb-8 px-3">
+        Discover how we make personal healthcare simple, secure, and effortless.
+      </h1>
 
-        {/* single arrow pair */}
-        <div className="prev-arrow absolute left-3 top-1/2  bg-white  shadow p-1  rounded-full cursor-pointer z-40 swiper-button-prev "><IoIosArrowBack className="text-secondary hover:text-white"/></div>
-        <div className="next-arrow absolute right-3 top-1/4  bg-white  shadow p-1 rounded-full cursor-pointer z-40 swiper-button-next "><IoIosArrowForward  className="text-secondary hover:text-white"/></div>
-      </Swiper>
+      {loading ? (
+        <div className="text-center py-12 text-gray-500">Loading reviews...</div>
+      ) : reviews.length === 0 ? (
+        <div className="mx-auto max-w-3xl rounded-3xl bg-white/80 backdrop-blur border border-white/60 p-10 text-center text-gray-600 shadow-sm">
+          No approved reviews yet.
+        </div>
+      ) : (
+        <Swiper
+          modules={[EffectCoverflow, Navigation, Pagination]}
+          effect="coverflow"
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView="3"
+          loop={reviews.length > 2}
+          navigation={{ nextEl: ".next-arrow", prevEl: ".prev-arrow" }}
+          pagination={{ clickable: true }}
+          spaceBetween={20}
+          breakpoints={{
+            0: { slidesPerView: 1 },
+            600: { slidesPerView: 2 },
+            900: { slidesPerView: 3 },
+          }}
+          coverflowEffect={{
+            rotate: 0,
+            stretch: -20,
+            depth: 120,
+            modifier: 1.05,
+            slideShadows: false,
+          }}
+          className="w-full"
+        >
+          {reviews.map((reviewItem) => (
+            <SwiperSlide
+              key={reviewItem.id}
+              style={{
+                width: "42vw",
+                maxWidth: "700px",
+                display: "flex",
+                justifyContent: "center",
+                padding: 0,
+              }}
+            >
+              <ReviewCard
+                name={reviewItem.patientName}
+                image={reviewItem.patientPhotoUrl}
+                rating={reviewItem.rating}
+                review={reviewItem.review}
+              />
+            </SwiperSlide>
+          ))}
+
+          <div className="prev-arrow absolute left-3 top-1/2 bg-white shadow p-1 rounded-full cursor-pointer z-40 swiper-button-prev">
+            <IoIosArrowBack className="text-secondary hover:text-white" />
+          </div>
+          <div className="next-arrow absolute right-3 top-1/4 bg-white shadow p-1 rounded-full cursor-pointer z-40 swiper-button-next">
+            <IoIosArrowForward className="text-secondary hover:text-white" />
+          </div>
+        </Swiper>
+      )}
 
       <style>{`
         .swiper { overflow: visible; padding: 10px 0; }
         .swiper-slide { transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s; }
         .swiper-slide { opacity: 0.92; }
         .swiper-slide-active {
-          transform: scale(1.06) translateY(-10px);   /* subtle pop */
+          transform: scale(1.06) translateY(-10px);
           z-index: 60;
           opacity: 1;
           box-shadow: 0 24px 44px rgba(15,23,42,0.18);
@@ -116,7 +124,6 @@ export default function TightCarousel() {
           transform: scale(0.96);
           z-index: 50;
         }
-        /* remove default slide margin if any */
         .swiper-slide > * { margin: 0; width: 100%; }
       `}</style>
     </div>

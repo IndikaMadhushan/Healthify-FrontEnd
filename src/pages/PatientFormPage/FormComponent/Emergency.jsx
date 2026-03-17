@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
-import toast from "react-hot-toast";
 import {
   isValidPersonName,
+  isValidRelationship,
   isValidSriLankanPhoneNumber,
   sanitizePersonName,
   sanitizePhoneNumber,
+  sanitizeRelationship,
 } from "../../../utils/patientProfileValidation";
 
 const initialEmergency = {
@@ -30,10 +31,12 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
       primary: {
         name: "primaryName",
         phone: "primaryPhone",
+        relationship: "primaryRelationship",
       },
       secondary: {
         name: "secondaryName",
         phone: "secondaryPhone",
+        relationship: "secondaryRelationship",
       },
     };
 
@@ -58,6 +61,10 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
 
     if (field === "name") {
       value = sanitizePersonName(value);
+    }
+
+    if (field === "relationship") {
+      value = sanitizeRelationship(value);
     }
 
     setForm((prev) => ({
@@ -93,11 +100,11 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
   const validate = () => {
     const newErrors = {};
 
-    const validateContactSection = (sectionKey, errorPrefix) => {
+    const validateContactSection = (sectionKey, errorPrefix, isRequired = false) => {
       const section = form[sectionKey];
       const hasAnyValue = Object.values(section).some((item) => item.trim());
 
-      if (!hasAnyValue) return;
+      if (!hasAnyValue && !isRequired) return;
 
       if (!section.name.trim()) {
         newErrors[`${errorPrefix}Name`] = "Emergency contact person is required";
@@ -114,9 +121,17 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
       } else if (!isValidSriLankanPhoneNumber(section.phone)) {
         newErrors[`${errorPrefix}Phone`] = "Invalid Sri Lanka contact number";
       }
+
+      if (
+        section.relationship.trim() &&
+        !isValidRelationship(section.relationship)
+      ) {
+        newErrors[`${errorPrefix}Relationship`] =
+          "Relationship can contain only letters, spaces, apostrophes, hyphens, and slashes";
+      }
     };
 
-    validateContactSection("primary", "primary");
+    validateContactSection("primary", "primary", true);
     validateContactSection("secondary", "secondary");
 
     setErrors(newErrors);
@@ -132,8 +147,6 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
     e.preventDefault();
     if (!validate()) return;
 
-    console.log("Emergency contacts:", form);
-    toast.success("Emergency contact details saved (check console)");
   };
 
   const inputBase =
@@ -169,6 +182,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.primary.name}
             onChange={handleChange("primary", "name")}
+            maxLength={50}
             className={inputBase + " " + withError(errors.primaryName)}
             placeholder="Enter full name"
           />
@@ -199,9 +213,13 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.primary.relationship}
             onChange={handleChange("primary", "relationship")}
-            className={inputBase + " border-gray-300"}
+            maxLength={50}
+            className={inputBase + " " + withError(errors.primaryRelationship)}
             placeholder="Mother, Father, Spouse, Friend"
           />
+          {errors.primaryRelationship && (
+            <p className="text-xs text-red-500 mt-1">{errors.primaryRelationship}</p>
+          )}
         </div>
       </div>
 
@@ -214,6 +232,7 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.secondary.name}
             onChange={handleChange("secondary", "name")}
+            maxLength={50}
             className={inputBase + " " + withError(errors.secondaryName)}
             placeholder="Enter full name"
           />
@@ -244,9 +263,13 @@ const EmergencyContactForm = forwardRef(({ showButton = false, initialData }, re
             type="text"
             value={form.secondary.relationship}
             onChange={handleChange("secondary", "relationship")}
-            className={inputBase + " border-gray-300"}
+            maxLength={50}
+            className={inputBase + " " + withError(errors.secondaryRelationship)}
             placeholder="Sibling, Friend, Neighbour"
           />
+          {errors.secondaryRelationship && (
+            <p className="text-xs text-red-500 mt-1">{errors.secondaryRelationship}</p>
+          )}
         </div>
       </div>
 

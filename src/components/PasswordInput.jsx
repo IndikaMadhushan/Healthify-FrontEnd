@@ -11,6 +11,7 @@ export default function PasswordInput({
   error,
   placeholder,
   required = false,
+  ...inputProps
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,6 +32,7 @@ export default function PasswordInput({
           onChange={onChange}
           placeholder={placeholder}
           className={`${inputBase} pr-12 ${error ? "border-red-500" : "border-gray-300"}`}
+          {...inputProps}
         />
         <button
           type="button"

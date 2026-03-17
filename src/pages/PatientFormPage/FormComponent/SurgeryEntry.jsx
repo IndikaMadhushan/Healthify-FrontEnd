@@ -1,15 +1,29 @@
-import { useState } from "react";
+import {
+  sanitizeMultilineText,
+  sanitizeSingleLineText,
+} from "../../../utils/patientProfileValidation";
 
-const emptySurgery = {
-  surgeonName: "",
-  surgeryDate: "",
-  hospital: "",
-  complications: ""
-};
+const todayString = new Date().toISOString().split("T")[0];
 
-export default function SurgeryEntry({ index, value, onChange, onRemove }) {
+export default function SurgeryEntry({
+  index,
+  value,
+  onChange,
+  onRemove,
+  errors = {},
+}) {
   const handleFieldChange = (field) => (e) => {
-    onChange(index, { ...value, [field]: e.target.value });
+    let nextValue = e.target.value;
+
+    if (field === "surgeonName" || field === "hospital") {
+      nextValue = sanitizeSingleLineText(nextValue, 100);
+    }
+
+    if (field === "complications") {
+      nextValue = sanitizeMultilineText(nextValue, 250);
+    }
+
+    onChange(index, { ...value, [field]: nextValue });
   };
 
   const labelCss = "text-[15px] font-semibold text-gray-700";
@@ -42,6 +56,7 @@ export default function SurgeryEntry({ index, value, onChange, onRemove }) {
           type="text"
           value={value.surgeonName}
           onChange={handleFieldChange("surgeonName")}
+          maxLength={100}
           className={inputBase}
           placeholder="Why was the surgery done?"
         />
@@ -54,8 +69,12 @@ export default function SurgeryEntry({ index, value, onChange, onRemove }) {
           type="date"
           value={value.surgeryDate}
           onChange={handleFieldChange("surgeryDate")}
+          max={todayString}
           className={inputBase}
         />
+        {errors.surgeryDate && (
+          <p className="text-xs text-red-500 mt-1">{errors.surgeryDate}</p>
+        )}
       </div>
 
       {/* Hospital / Surgeon */}
@@ -65,6 +84,7 @@ export default function SurgeryEntry({ index, value, onChange, onRemove }) {
           type="text"
           value={value.hospital}
           onChange={handleFieldChange("hospital")}
+          maxLength={100}
           className={inputBase}
           placeholder="Enter hospital or surgeon name"
         />
@@ -76,6 +96,7 @@ export default function SurgeryEntry({ index, value, onChange, onRemove }) {
         <textarea
           value={value.complications}
           onChange={handleFieldChange("complications")}
+          maxLength={250}
           className={textAreaBase}
           placeholder="Describe any complications or write 'None'"
         />
