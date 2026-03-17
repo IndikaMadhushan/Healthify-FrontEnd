@@ -10,6 +10,9 @@ export default function DoctorInfoCard({ doctor }) {
   }
 
   const doctorDisplayName = getDisplayName(doctor);
+  const doctorHeadingName = /^dr\.?\s/i.test(doctorDisplayName)
+    ? doctorDisplayName
+    : `Dr. ${doctorDisplayName}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
@@ -24,7 +27,7 @@ export default function DoctorInfoCard({ doctor }) {
 
         <div className="flex-1 text-center sm:text-left">
           <h1 className="text-3xl font-bold text-secondary mb-2">
-            {doctorDisplayName}
+            {doctorHeadingName}
           </h1>
 
           <p className="text-gray-600 text-sm mb-1">
