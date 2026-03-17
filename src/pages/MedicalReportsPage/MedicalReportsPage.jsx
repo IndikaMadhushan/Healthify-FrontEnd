@@ -3,6 +3,15 @@
 import { useNavigate, useParams, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
+import { getMyLabContents, getPatientLabContents } from "../../api/LabReportApi";
+import {
+  getConsultCardByDoctor,
+  getConsultCardByPatient,
+} from "../../api/ConsultationApi";
+import {
+  getClinicBooksByPatientId,
+  getMyClinicBooks,
+} from "../../api/ClinicBookApi";
 
 const CATEGORIES = {
   LAB_REPORTS: "lab-reports",
@@ -17,17 +26,16 @@ export default function MedicalReportsPage() {
   const navigate = useNavigate();
   const { patientId } = useParams(); // 👈 IMPORTANT
 
-  const _role = localStorage.getItem("role"); // "DOCTOR" | "PATIENT"
   const userId = "user_123"; // replace later with auth user id
 
   const [loading, setLoading] = useState(true);
-
-  const [labReports, setLabReports] = useState([]);
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [_vaccines, setVaccines] = useState([]);
-  const [clinicBook, setClinicBook] = useState([]);
-  const [surgeries, setSurgeries] = useState([]);
-  const [customFolders, setCustomFolders] = useState([]);
+  const [counts, setCounts] = useState({
+    labReports: 0,
+    prescriptions: 0,
+    clinicBook: 0,
+    surgeries: 0,
+    customFolders: 0,
+  });
 
   const loadFromStorage = async (user, category) => {
     try {
@@ -47,30 +55,80 @@ export default function MedicalReportsPage() {
     }
   };
 
+  const getLabItemCount = (data) => {
+    const totalFiles = data?.totalFiles ?? data?.files?.length ?? 0;
+    const totalFolders = data?.totalFolders ?? data?.folders?.length ?? 0;
+    return totalFiles + totalFolders;
+  };
+
   const loadAllData = useCallback(async () => {
     setLoading(true);
-    const [lab, pres, vacc, clinic, surg, custom] = await Promise.all([
-      loadFromStorage(userId, CATEGORIES.LAB_REPORTS),
-      loadFromStorage(userId, CATEGORIES.PRESCRIPTIONS),
-      loadFromStorage(userId, CATEGORIES.VACCINES),
-      loadFromStorage(userId, CATEGORIES.CLINIC_BOOK),
+    const role = localStorage.getItem("role")?.toUpperCase();
+    const isDoctor = role === "DOCTOR";
+    const emptyLabResponse = {
+      data: { files: [], folders: [], totalFiles: 0, totalFolders: 0 },
+    };
+    const emptyListResponse = { data: [] };
+
+    const [lab, pres, clinic, surg, custom] = await Promise.allSettled([
+      isDoctor
+        ? patientId
+          ? getPatientLabContents(patientId)
+          : Promise.resolve(emptyLabResponse)
+        : getMyLabContents(),
+      isDoctor
+        ? patientId
+          ? getConsultCardByDoctor(patientId)
+          : Promise.resolve(emptyListResponse)
+        : getConsultCardByPatient(),
+      isDoctor
+        ? patientId
+          ? getClinicBooksByPatientId(patientId)
+          : Promise.resolve(emptyListResponse)
+        : getMyClinicBooks(),
       loadFromStorage(userId, CATEGORIES.SURGERIES),
       loadFromStorage(userId, CATEGORIES.CUSTOM),
     ]);
 
-    setLabReports(lab);
-    setPrescriptions(pres);
-    setVaccines(vacc);
-    setClinicBook(clinic);
-    setSurgeries(surg);
-    setCustomFolders(custom);
+    if (lab.status === "rejected") {
+      console.error("Failed to load lab report counts", lab.reason);
+    }
+    if (pres.status === "rejected") {
+      console.error("Failed to load prescription counts", pres.reason);
+    }
+    if (clinic.status === "rejected") {
+      console.error("Failed to load clinic book counts", clinic.reason);
+    }
+    if (surg.status === "rejected") {
+      console.error("Failed to load surgery counts", surg.reason);
+    }
+    if (custom.status === "rejected") {
+      console.error("Failed to load doctor note counts", custom.reason);
+    }
+
+    setCounts({
+      labReports:
+        lab.status === "fulfilled" ? getLabItemCount(lab.value.data) : 0,
+      prescriptions:
+        pres.status === "fulfilled" && Array.isArray(pres.value.data)
+          ? pres.value.data.length
+          : 0,
+      clinicBook:
+        clinic.status === "fulfilled" && Array.isArray(clinic.value.data)
+          ? clinic.value.data.length
+          : 0,
+      surgeries:
+        surg.status === "fulfilled" && Array.isArray(surg.value)
+          ? surg.value.length
+          : 0,
+      customFolders:
+        custom.status === "fulfilled" && Array.isArray(custom.value)
+          ? custom.value.length
+          : 0,
+    });
 
     setLoading(false);
-  }, [userId]);
-
-  useEffect(() => {
-    loadAllData();
-  }, [loadAllData]);
+  }, [patientId, userId]);
 
   // ✅ SINGLE navigation function (correct)
   // const goToCategory = (categoryId) => {
@@ -104,14 +162,14 @@ export default function MedicalReportsPage() {
     {
       id: CATEGORIES.LAB_REPORTS,
       title: "Lab Reports",
-      count: labReports.length,
+      count: counts.labReports,
       icon: "🧪",
       color: "bg-blue-100",
     },
     {
       id: CATEGORIES.PRESCRIPTIONS,
       title: "Prescriptions",
-      count: prescriptions.length,
+      count: counts.prescriptions,
       icon: "💊",
       color: "bg-green-100",
     },
@@ -119,21 +177,21 @@ export default function MedicalReportsPage() {
     {
       id: CATEGORIES.CLINIC_BOOK,
       title: "Clinic Book",
-      count: clinicBook.length,
+      count: counts.clinicBook,
       icon: "📋",
       color: "bg-orange-100",
     },
     {
       id: CATEGORIES.SURGERIES,
       title: "Surgeries",
-      count: surgeries.length,
+      count: counts.surgeries,
       icon: "🩺",
       color: "bg-red-100",
     },
     {
       id: CATEGORIES.CUSTOM,
       title: "Doctor Notes",
-      count: customFolders.length,
+      count: counts.customFolders,
       icon: "📝",
       color: "bg-purple-100",
     },
@@ -143,6 +201,16 @@ export default function MedicalReportsPage() {
 
   // if path is exactly /medical-reports OR /doctor/:id/medical-reports
   const isRootMedicalReports = location.pathname.endsWith("/medical-reports");
+
+  useEffect(() => {
+    if (!isRootMedicalReports) return undefined;
+
+    const frameId = window.requestAnimationFrame(() => {
+      void loadAllData();
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isRootMedicalReports, loadAllData]);
 
   if (loading) {
     return <div className="flex justify-center p-10">Loading...</div>;
@@ -161,7 +229,7 @@ export default function MedicalReportsPage() {
               >
                 <div className="text-4xl">{c.icon}</div>
                 <h3 className="text-xl font-bold mt-2">{c.title}</h3>
-                <p className="text-sm text-gray-600">{c.count} files</p>
+                <p className="text-sm text-gray-600">{c.count} items</p>
 
                 <button
                   onClick={() => goToCategory(c.id)}
