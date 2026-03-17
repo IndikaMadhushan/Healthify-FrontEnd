@@ -1,48 +1,97 @@
-
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import DoctorNavBar from "../components/DoctorNavBar";
 import DoctorNavBar2 from "../components/DoctorNavBar2";
 import { getDoctorProfileApi } from "../api/DoctorApi";
+import { getAllPatients } from "../api/PatientApi";
 import Footer from "../components/footer";
-import { useParams } from "react-router-dom";
 
+function getStoredPatient(patientId, locationPatient) {
+  if (locationPatient && String(locationPatient.id) === String(patientId)) {
+    return locationPatient;
+  }
+
+  const storedPatientId = localStorage.getItem("selectedPatientId");
+  const storedPatientRaw = localStorage.getItem("selectedPatient");
+
+  if (!storedPatientRaw || String(storedPatientId) !== String(patientId)) {
+    return null;
+  }
+
+  try {
+    const storedPatient = JSON.parse(storedPatientRaw);
+    return String(storedPatient?.id) === String(patientId) ? storedPatient : null;
+  } catch (error) {
+    console.error("Failed to parse stored patient", error);
+    return null;
+  }
+}
 
 export default function DoctorLayout() {
   const [doctor, setDoctor] = useState(null);
   const [patient, setPatient] = useState(null);
   const { patientId } = useParams();
-
-
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-  const loadDoctor = async () => {
-    try {
-      const res = await getDoctorProfileApi();
-      setDoctor(res.data);
-
-      if (patientId) {
-        setPatient({ id: patientId });
+    const loadDoctor = async () => {
+      try {
+        const res = await getDoctorProfileApi();
+        setDoctor(res.data);
+      } catch (err) {
+        console.error("Failed to load doctor profile", err);
+        navigate("/login");
       }
+    };
 
-    } catch (err) {
-      console.error("Failed to load doctor profile", err);
-      navigate("/login");
+    void loadDoctor();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!patientId) {
+      const resetFrame = window.requestAnimationFrame(() => {
+        setPatient(null);
+      });
+      return () => window.cancelAnimationFrame(resetFrame);
     }
-  };
 
-  loadDoctor();
-}, [navigate, patientId]);
+    const storedPatient = getStoredPatient(patientId, location.state?.patient);
+    const patientForView = storedPatient || {
+      id: patientId,
+      fullName: `Patient #${patientId}`,
+    };
+    const frameId = window.requestAnimationFrame(() => {
+      setPatient(patientForView);
+    });
 
+    const loadSelectedPatient = async () => {
+      try {
+        const res = await getAllPatients();
+        const matchedPatient = res.data?.find(
+          (item) => String(item.id) === String(patientId),
+        );
 
-  // 🔹 ONLY dashboard gets NavBar 1
+        if (!matchedPatient) {
+          return;
+        }
+
+        setPatient(matchedPatient);
+        localStorage.setItem("selectedPatientId", String(matchedPatient.id));
+        localStorage.setItem("selectedPatient", JSON.stringify(matchedPatient));
+      } catch (err) {
+        console.error("Failed to load selected patient details", err);
+      }
+    };
+
+    void loadSelectedPatient();
+    return () => window.cancelAnimationFrame(frameId);
+  }, [location.state, patientId]);
+
   const isDashboard =
     location.pathname === "/doctor/dashboard" ||
     location.pathname === "/doctor/dashboard/";
 
-  // ✅ NEW: detect where doctor-profile navigation came from
   const fromNav = location.state?.fromNav;
 
   if (!doctor) {
@@ -56,18 +105,16 @@ export default function DoctorLayout() {
   return (
     <>
       {isDashboard ||
-      (location.pathname === "/doctor/doctor-profile" &&
-        fromNav === "NAV1") ? (
+      (location.pathname === "/doctor/doctor-profile" && fromNav === "NAV1") ? (
         <DoctorNavBar doctor={doctor} />
       ) : (
         <DoctorNavBar2 doctor={doctor} patient={patient} />
       )}
 
-      {/* 🔹 Middle content changes by URL */}
       <div className="lg:px-14 px-6 bg-gray-50 pb-[100px]">
         <Outlet />
       </div>
-      <div className="">
+      <div>
         <Footer />
       </div>
     </>
