@@ -108,6 +108,7 @@
 
 
 import { useState } from "react";
+import { addReview } from "../api/reviewApi";
 
 const MAX_CHARS = 200;
 
@@ -124,15 +125,22 @@ export default function AddReviewModal({ isOpen, onClose }) {
     }
   };
 
-  const handleSubmit = () => {
-    if (!review.trim()) return;
+ const handleSubmit = async () => {
+  if (!review.trim()) return;
 
-    // frontend only
+  try {
+    await addReview({ review });
+
+    // keep your existing logic
     localStorage.setItem("reviewStatus", "PENDING");
 
     setSubmitted(true);
-  };
 
+  } catch (error) {
+    console.error("Error submitting review", error);
+    alert("Failed to submit review");
+  }
+};
   const handleClose = () => {
     setReview("");
     setSubmitted(false);

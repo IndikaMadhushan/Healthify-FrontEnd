@@ -24,12 +24,12 @@ export default function ReviewCard({ name, image, review }) {
       {/* content */}
       <div className="flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900">
+          <h3 className="text-md sm:text-xl font-semibold text-gray-900">
             {name}
           </h3>
         </div>
 
-        <p className="mt-2 text-sm sm:text-[14px] text-gray-600 leading-relaxed">
+        <p className="mt-2 text-sm sm:text-[16px] text-gray-600 leading-relaxed">
           {review}
         </p>
 
