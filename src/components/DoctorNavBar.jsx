@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDisplayName, getInitial } from "../utils/nameUtils";
+import { MdDashboard } from "react-icons/md";
+import { FaUserDoctor } from "react-icons/fa6";
 
 export default function DoctorNavBar({ doctor }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -97,16 +99,18 @@ export default function DoctorNavBar({ doctor }) {
                 {isProfilePage && (
                   <button
                     onClick={() => handleNavigation("/doctor/dashboard")}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm hover:bg-gray-100"
                   >
+                    <MdDashboard className="text-base" />
                     Dashboard
                   </button>
                 )}
                 {isDashboardPage && (
                   <button
                     onClick={goToProfile}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                    className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm hover:bg-gray-100"
                   >
+                    <FaUserDoctor className="text-base" />
                     My Profile
                   </button>
                 )}
