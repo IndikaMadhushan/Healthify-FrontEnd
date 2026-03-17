@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import DoctorNavBar from "../components/DoctorNavBar";
 import DoctorNavBar2 from "../components/DoctorNavBar2";
-import { getDoctorProfileApi } from "../api/DoctorApi";
+import {
+  DOCTOR_PROFILE_UPDATED,
+  getCachedDoctorProfile,
+  getDoctorProfileApi,
+} from "../api/DoctorApi";
 import { getAllPatients } from "../api/PatientApi";
 import Footer from "../components/footer";
 
@@ -28,7 +32,7 @@ function getStoredPatient(patientId, locationPatient) {
 }
 
 export default function DoctorLayout() {
-  const [doctor, setDoctor] = useState(null);
+  const [doctor, setDoctor] = useState(() => getCachedDoctorProfile());
   const [patient, setPatient] = useState(null);
   const { patientId } = useParams();
   const navigate = useNavigate();
@@ -47,6 +51,28 @@ export default function DoctorLayout() {
 
     void loadDoctor();
   }, [navigate]);
+
+  useEffect(() => {
+    const handleDoctorProfileUpdated = (event) => {
+      if (event.detail) {
+        setDoctor(event.detail);
+        return;
+      }
+
+      const cachedDoctor = getCachedDoctorProfile();
+      if (cachedDoctor) {
+        setDoctor(cachedDoctor);
+      }
+    };
+
+    window.addEventListener(DOCTOR_PROFILE_UPDATED, handleDoctorProfileUpdated);
+    return () => {
+      window.removeEventListener(
+        DOCTOR_PROFILE_UPDATED,
+        handleDoctorProfileUpdated,
+      );
+    };
+  }, []);
 
   useEffect(() => {
     if (!patientId) {

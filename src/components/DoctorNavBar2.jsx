@@ -462,6 +462,8 @@ export default function DoctorNavBar({ doctor, patient }) {
     getDisplayName(safePatient) || (safePatient?.id ? `Patient #${safePatient.id}` : "");
   const patientPhotoUrl =
     safePatient?.photoUrl || safePatient?.profilePic || "/profilePic.png";
+  const doctorPhotoUrl =
+    doctor?.photoUrl || doctor?.profilePic || "/profilePic.png";
 
   const handleNavigation = (path) => {
     setDropdownOpen(false);
@@ -518,9 +520,9 @@ export default function DoctorNavBar({ doctor, patient }) {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-100 transition"
               >
-                {doctor.photoUrl ? (
+                {doctor.photoUrl || doctor.profilePic ? (
                   <img
-                    src={doctor.photoUrl}
+                    src={doctorPhotoUrl}
                     alt={doctorDisplayName}
                     className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border object-cover"
                   />

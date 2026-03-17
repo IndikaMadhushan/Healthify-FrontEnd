@@ -24,6 +24,8 @@ export default function DoctorNavBar({ doctor }) {
     navigate("/");
   };
   const doctorDisplayName = getDisplayName(doctor);
+  const doctorPhotoUrl =
+    doctor?.photoUrl || doctor?.profilePic || "/profilePic.png";
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -47,9 +49,9 @@ export default function DoctorNavBar({ doctor }) {
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
             >
               {/* PROFILE IMAGE */}
-              {doctor.photoUrl ? (
+              {doctor.photoUrl || doctor.profilePic ? (
                 <img
-                  src={doctor.photoUrl}
+                  src={doctorPhotoUrl}
                   alt={doctorDisplayName}
                   className="w-10 h-10 rounded-full border object-cover"
                 />
