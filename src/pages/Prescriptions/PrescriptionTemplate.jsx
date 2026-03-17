@@ -416,7 +416,7 @@ export default function PrescriptionTemplate({ data }) {
       marginBottom: 10
     }}>
       <div>
-        <img src="/logo.png" alt="logo" style={{ height: 60 }} />
+        <img src="/logo.png" alt="logo" style={{ height: 80 }} />
         <p style={{ fontSize: 12, color: "#4c4b4b" }}>Digital Prescription</p>
       </div>
 
@@ -433,7 +433,8 @@ export default function PrescriptionTemplate({ data }) {
       background: "#F8FAFB",
       padding: 10,
       borderRadius: 8,
-      marginBottom: 10
+      marginBottom: 10,
+      fontSize: 16
     }}>
       <div>
         <p><b>Doctor:</b> Dr.{data.createdDoctor}</p>
@@ -465,7 +466,8 @@ export default function PrescriptionTemplate({ data }) {
       background: "#F9FDFD",
       padding: 10,
       borderRadius: 8,
-      marginBottom: 10
+      marginBottom: 10,
+      fontSize: 14
     }}>
       {vitals?.BLOOD_PRESSURE_SYSTOLIC !== undefined && (
         <p><b>BP:</b> {vitals.BLOOD_PRESSURE_SYSTOLIC}/{vitals.BLOOD_PRESSURE_DIASTOLIC}</p>
