@@ -18,7 +18,6 @@ const CATEGORIES = {
   PRESCRIPTIONS: "prescriptions",
   VACCINES: "vaccines",
   CLINIC_BOOK: "clinic-book",
-  SURGERIES: "surgeries",
   CUSTOM: "drnote",
 };
 
@@ -33,7 +32,6 @@ export default function MedicalReportsPage() {
     labReports: 0,
     prescriptions: 0,
     clinicBook: 0,
-    surgeries: 0,
     customFolders: 0,
   });
 
@@ -70,7 +68,7 @@ export default function MedicalReportsPage() {
     };
     const emptyListResponse = { data: [] };
 
-    const [lab, pres, clinic, surg, custom] = await Promise.allSettled([
+    const [lab, pres, clinic, custom] = await Promise.allSettled([
       isDoctor
         ? patientId
           ? getPatientLabContents(patientId)
@@ -86,7 +84,6 @@ export default function MedicalReportsPage() {
           ? getClinicBooksByPatientId(patientId)
           : Promise.resolve(emptyListResponse)
         : getMyClinicBooks(),
-      loadFromStorage(userId, CATEGORIES.SURGERIES),
       loadFromStorage(userId, CATEGORIES.CUSTOM),
     ]);
 
@@ -98,9 +95,6 @@ export default function MedicalReportsPage() {
     }
     if (clinic.status === "rejected") {
       console.error("Failed to load clinic book counts", clinic.reason);
-    }
-    if (surg.status === "rejected") {
-      console.error("Failed to load surgery counts", surg.reason);
     }
     if (custom.status === "rejected") {
       console.error("Failed to load doctor note counts", custom.reason);
@@ -116,10 +110,6 @@ export default function MedicalReportsPage() {
       clinicBook:
         clinic.status === "fulfilled" && Array.isArray(clinic.value.data)
           ? clinic.value.data.length
-          : 0,
-      surgeries:
-        surg.status === "fulfilled" && Array.isArray(surg.value)
-          ? surg.value.length
           : 0,
       customFolders:
         custom.status === "fulfilled" && Array.isArray(custom.value)
@@ -181,13 +171,13 @@ export default function MedicalReportsPage() {
       icon: "📋",
       color: "bg-orange-100",
     },
-    {
-      id: CATEGORIES.SURGERIES,
-      title: "Surgeries",
-      count: counts.surgeries,
-      icon: "🩺",
-      color: "bg-red-100",
-    },
+    // {
+    //   id: CATEGORIES.SURGERIES,
+    //   title: "Surgeries",
+    //   count: counts.surgeries,
+    //   icon: "🩺",
+    //   color: "bg-red-100",
+    // },
     {
       id: CATEGORIES.CUSTOM,
       title: "Doctor Notes",
@@ -221,11 +211,11 @@ export default function MedicalReportsPage() {
       {isRootMedicalReports && (
         <div>
           <h1 className="text-3xl font-bold mb-6">Medical Reports</h1>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {categories.map((c) => (
               <div
                 key={c.id}
-                className={`${c.color} p-6 h-[240px] relative rounded-xl shadow flex flex-col`}
+                className={`${c.color} min-h-[240px] rounded-xl shadow p-6 flex flex-col`}
               >
                 <div className="text-4xl">{c.icon}</div>
                 <h3 className="text-xl font-bold mt-2">{c.title}</h3>
@@ -233,7 +223,7 @@ export default function MedicalReportsPage() {
 
                 <button
                   onClick={() => goToCategory(c.id)}
-                  className="mt-4 w-full items-center justify-center bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg mt-[50px]"
+                  className="mt-auto w-full bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg"
                 >
                   View Files
                 </button>
