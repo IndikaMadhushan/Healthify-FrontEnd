@@ -49,12 +49,6 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
       </div>
 
       <div className="space-y-3 max-h-96 overflow-y-auto">
-        {searchQuery.trim() === "" && (
-          <p className="text-sm text-gray-500 text-center py-4">
-            Enter a patient ID, NIC, or name
-          </p>
-        )}
-
         {searchQuery.trim() !== "" && filteredPatients.length === 0 && (
           <p className="text-sm text-gray-500 text-center py-4">
             No patients found

@@ -48,7 +48,7 @@ export default function DoctorProfilePage() {
   return (
     <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <DoctorInfoCard doctor={doctor} onProfileUpdate={setDoctor} />
+        <DoctorInfoCard doctor={doctor} />
 
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
