@@ -8,6 +8,7 @@ import {
 } from "../../api/DoctorApi";
 import DoctorProfileEditModal from "./DoctorProfileEditModal";
 import { getDisplayName } from "../../utils/nameUtils";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const showValue = (value) =>
   value === null || value === undefined || value === "" ? "-" : value;
@@ -91,6 +92,9 @@ export default function DoctorProfile() {
           <div className="bg-white p-2 rounded-full shadow-xl">
             <ProfileImageCropper
               imageUrl={doctor.photoUrl || doctor.profilePic}
+              fallbackIcon={
+                <FaUserDoctor className="text-4xl text-[#7AA7A3]" />
+              }
               onCropped={handleDoctorImageCropped}
             />
           </div>
