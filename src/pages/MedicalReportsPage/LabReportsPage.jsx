@@ -156,19 +156,6 @@ export default function LabReportsPage() {
     loadPatientId();
   }, []);
 
-  // Save items to localStorage
-  const saveItems = (newItems) => {
-    const storageKey = `medical_${userId}_${category}`;
-    setItems(newItems);
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newItems));
-      return true;
-    } catch (error) {
-      console.error("Error saving lab reports locally:", error);
-      return false;
-    }
-  };
-
   const handleBack = () => {
     if (currentFolder !== null) {
       setCurrentFolder(null);
@@ -217,34 +204,20 @@ export default function LabReportsPage() {
         titleText.trim() || "Untitled",
         currentFolder,
       );
-      toast.success("File uploaded");
 
       const reportDate = new Date().toISOString().slice(0, 10);
-      const response = await uploadPatientReportApi(
+      await uploadPatientReportApi(
         resolvedPatientId,
         "LAB_REPORT",
         pendingFile,
         reportDate,
       );
 
-      const newFile = {
-        id: response.data?.id || Date.now().toString(),
-        title: titleText.trim() || "Untitled",
-        name: pendingFile.name,
-        fileUrl: response.data?.fileUrl,
-        type: pendingFile.type,
-        uploadedAt: response.data?.uploadedAt || new Date().toISOString(),
-        folderId: currentFolder,
-        isFolder: false,
-      };
-
-      const updated = [newFile, ...items];
-      saveItems(updated);
-
       setPendingFile(null);
       setTitleText("");
       setShowTitleModal(false);
-      loadContents(currentFolder);
+      toast.success("File uploaded");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Upload failed. Please try again.");
