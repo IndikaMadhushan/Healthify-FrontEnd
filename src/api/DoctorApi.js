@@ -104,3 +104,6 @@ export const uploadMyDoctorProfileImage = async (file) => {
 export const getDoctorProfileApi = getMyDoctorProfile;
 export const updateMyProfile = updateMyDoctorProfile;
 export const uploadDoctorProfileImageApi = uploadMyDoctorProfileImage;
+
+export const getDoctorPatientProfileApi = (patientId) =>
+  axiosInstance.get(`/api/doctors/patients/${patientId}`);
