@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import './HealthifyPreloader.css';
 
-const HealthifyPreloader = () => {
+const HealthifyPreloader = ({ durationMs = 2000 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 2000);
+    }, durationMs);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [durationMs]);
 
   if (!isVisible) return null;
 
