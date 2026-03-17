@@ -282,6 +282,7 @@ const closeModal = () => {
 
 
 const handleComplete = async () => {
+  console.log("subReason:", formData.subReason);
   if (!formData.subReason.trim()) {
     toast.error("Please fill required fields");
     return;
@@ -430,7 +431,123 @@ const handleComplete = async () => {
 //   );
 // };
 
+// const handleUpdate = async () => {
+
+//   if (approvalRequestedPageId === selectedPageId) {
+//     showMessage("Patient approval is pending for this page.");
+//     return;
+//   }
+
+//   showConfirm(
+//     "Do you want to update this clinic page?",
+//     async () => {
+
+//       try {
+
+//         const requestBody = {
+//           subReason: formData.subReason,
+//           clinicExaming: formData.clinicExaming,
+//           clinicSuggestTest: formData.clinicSuggestTest,
+//           clinicDoctorNote: formData.clinicDoctorNote,
+//           nextClinic: formData.nextClinic,
+//           medication: formData.medication.map((med) => ({
+//             drugName: med.medicine,
+//             dosage: med.dose,
+//             frequency: med.frequency,
+//             duration: med.duration,
+//             instruction: med.timing,
+//           })),
+//         };
+
+//         // ================= METRICS =================
+//         const metrics = {};
+
+//         const pulse = Number(formData.mediMessure?.pulse);
+//         if (!isNaN(pulse) && pulse > 0) {
+//           metrics["HEART_RATE"] = pulse;
+//         }
+
+//         const temperature = Number(formData.mediMessure?.temperature);
+//         if (!isNaN(temperature) && temperature > 0) {
+//           metrics["TEMPERATURE"] = temperature;
+//         }
+
+//         const weight = Number(formData.mediMessure?.weight);
+//         if (!isNaN(weight) && weight > 0) {
+//           metrics["WEIGHT"] = weight;
+//         }
+
+//         const bloodSugar = Number(formData.mediMessure?.bloodSugar);
+//         if (!isNaN(bloodSugar) && bloodSugar > 0) {
+//           metrics["BLOOD_SUGAR"] = bloodSugar;
+//         }
+
+//         const cholesterol = Number(formData.mediMessure?.cholesterol);
+//         if (!isNaN(cholesterol) && cholesterol > 0) {
+//           metrics["CHOLESTEROL"] = cholesterol;
+//         }
+
+//         const bp = formData.mediMessure?.BP;
+
+//         if (bp && bp.includes("/")) {
+//           const [sys, dia] = bp.split("/");
+
+//           const sysVal = Number(sys);
+//           const diaVal = Number(dia);
+
+//           if (!isNaN(sysVal) && !isNaN(diaVal)) {
+//             metrics["BLOOD_PRESSURE_SYSTOLIC"] = sysVal;
+//             metrics["BLOOD_PRESSURE_DIASTOLIC"] = diaVal;
+//           }
+//         }
+
+//         if (Object.keys(metrics).length > 0) {
+//           requestBody.healthMetricRequestSetDTO = { metrics };
+//         }
+
+//         await updateClinicPage(selectedPageId, requestBody);
+
+//         showMessage("Clinic page updated successfully");
+
+//       } catch (error) {
+
+//         if (
+//           error.response?.status === 403 &&
+//           error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
+//         ) {
+
+//           showConfirm(
+//             "Edit time expired. Do you want to request approval from the patient?",
+//             async () => {
+
+//               await requestEditApproval(selectedPageId);
+
+//               setApprovalRequestedPageId(selectedPageId);
+
+//               showMessage("Approval request sent to patient");
+
+//             }
+//           );
+
+//         } else {
+
+//           showMessage("Update failed");
+
+//         }
+
+//       }
+
+//     }
+//   );
+// };                       
+
 const handleUpdate = async () => {
+
+  //  Safety check for ID
+  if (!selectedPageId) {
+    showMessage("Error: Page ID missing. Please reload.");
+    return;
+  }
 
   if (approvalRequestedPageId === selectedPageId) {
     showMessage("Patient approval is pending for this page.");
@@ -449,6 +566,7 @@ const handleUpdate = async () => {
           clinicSuggestTest: formData.clinicSuggestTest,
           clinicDoctorNote: formData.clinicDoctorNote,
           nextClinic: formData.nextClinic,
+
           medication: formData.medication.map((med) => ({
             drugName: med.medicine,
             dosage: med.dose,
@@ -458,51 +576,50 @@ const handleUpdate = async () => {
           })),
         };
 
-        // ================= METRICS =================
+        // ================= METRICS (FINAL FIX) =================
         const metrics = {};
 
-        const pulse = Number(formData.mediMessure?.pulse);
-        if (!isNaN(pulse) && pulse > 0) {
-          metrics["HEART_RATE"] = pulse;
+        if (formData.mediMessure?.pulse) {
+          metrics["HEART_RATE"] = Number(formData.mediMessure.pulse);
         }
 
-        const temperature = Number(formData.mediMessure?.temperature);
-        if (!isNaN(temperature) && temperature > 0) {
-          metrics["TEMPERATURE"] = temperature;
+        if (formData.mediMessure?.temperature) {
+          metrics["TEMPERATURE"] = Number(formData.mediMessure.temperature);
         }
 
-        const weight = Number(formData.mediMessure?.weight);
-        if (!isNaN(weight) && weight > 0) {
-          metrics["WEIGHT"] = weight;
+        if (formData.mediMessure?.weight) {
+          metrics["WEIGHT"] = Number(formData.mediMessure.weight);
         }
 
-        const bloodSugar = Number(formData.mediMessure?.bloodSugar);
-        if (!isNaN(bloodSugar) && bloodSugar > 0) {
-          metrics["BLOOD_SUGAR"] = bloodSugar;
+        if (formData.mediMessure?.bloodSugar) {
+          metrics["BLOOD_SUGAR"] = Number(formData.mediMessure.bloodSugar);
         }
 
-        const cholesterol = Number(formData.mediMessure?.cholesterol);
-        if (!isNaN(cholesterol) && cholesterol > 0) {
-          metrics["CHOLESTEROL"] = cholesterol;
+        if (formData.mediMessure?.cholesterol) {
+          metrics["CHOLESTEROL"] = Number(formData.mediMessure.cholesterol);
         }
 
+        // 🔥 Blood Pressure
         const bp = formData.mediMessure?.BP;
 
         if (bp && bp.includes("/")) {
           const [sys, dia] = bp.split("/");
 
-          const sysVal = Number(sys);
-          const diaVal = Number(dia);
-
-          if (!isNaN(sysVal) && !isNaN(diaVal)) {
-            metrics["BLOOD_PRESSURE_SYSTOLIC"] = sysVal;
-            metrics["BLOOD_PRESSURE_DIASTOLIC"] = diaVal;
+          if (sys && dia) {
+            metrics["BLOOD_PRESSURE_SYSTOLIC"] = Number(sys);
+            metrics["BLOOD_PRESSURE_DIASTOLIC"] = Number(dia);
           }
         }
 
+        // ✅ Attach only if exists
         if (Object.keys(metrics).length > 0) {
-          requestBody.healthMetricRequestSetDTO = { metrics };
+          requestBody.healthMetricRequestSetDTO = {
+            metrics: metrics
+          };
         }
+
+        console.log("Updating ID:", selectedPageId);
+        console.log("Final Request Body:", requestBody);
 
         await updateClinicPage(selectedPageId, requestBody);
 
@@ -510,9 +627,12 @@ const handleUpdate = async () => {
 
       } catch (error) {
 
+        console.error("Update Error:", error);
+        console.log("Error Response:", error.response?.data);
+
         if (
           error.response?.status === 403 &&
-          error.response?.data?.error === "EDIT_WINDOW_EXPIRED"
+          error.response?.data?.message === "EDIT_WINDOW_EXPIRED"
         ) {
 
           showConfirm(
@@ -521,7 +641,7 @@ const handleUpdate = async () => {
 
               await requestEditApproval(selectedPageId);
 
-              setApprovalRequestedPageId(selectedPageId);
+              setApprovalRequestedPageId(null);
 
               showMessage("Approval request sent to patient");
 
@@ -530,7 +650,9 @@ const handleUpdate = async () => {
 
         } else {
 
-          showMessage("Update failed");
+          showMessage(
+            error.response?.data?.message || "Update failed"
+          );
 
         }
 
@@ -538,7 +660,8 @@ const handleUpdate = async () => {
 
     }
   );
-};                                         
+};
+
 
 
 // const handleDelete = async () => {
