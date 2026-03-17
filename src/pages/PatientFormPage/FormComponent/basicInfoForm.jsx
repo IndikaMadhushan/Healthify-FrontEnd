@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { forwardRef, useImperativeHandle } from "react";
+import {
+  isValidNic,
+  isValidPersonName,
+  isValidSriLankanPhoneNumber,
+  sanitizeNic,
+  sanitizePersonName,
+  sanitizePhoneNumber,
+} from "../../../utils/patientProfileValidation";
 
 const basic_form = {
-  fullName: "",
+  firstName: "",
+  secondName: "",
+  lastName: "",
   dob: "",
   age: "",
   gender: "",
@@ -47,6 +57,40 @@ function calculateAge(dobString) {
   return `${years} years ${months} months`;
 }
 
+function parseName(initialData) {
+  if (
+    initialData?.firstName !== undefined ||
+    initialData?.secondName !== undefined ||
+    initialData?.lastName !== undefined
+  ) {
+    return {
+      firstName: initialData.firstName || "",
+      secondName: initialData.secondName || "",
+      lastName: initialData.lastName || "",
+    };
+  }
+
+  const parts = (initialData?.fullName || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return { firstName: "", secondName: "", lastName: "" };
+  }
+
+  if (parts.length === 1) {
+    return { firstName: parts[0], secondName: "", lastName: "" };
+  }
+
+  return {
+    firstName: parts[0],
+    secondName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
+    lastName: parts[parts.length - 1],
+  };
+}
+
+const todayString = new Date().toISOString().split("T")[0];
 
 const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, ref) => {
   const [form, setForm] = useState(basic_form);
@@ -56,8 +100,14 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
   useEffect(() => {
     if (!initialData) return;
 
+    const nameData = parseName(initialData);
+
+    // The form needs to rehydrate when profile data is loaded or refreshed.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({
-      fullName: initialData.fullName || "",
+      firstName: nameData.firstName,
+      secondName: nameData.secondName,
+      lastName: nameData.lastName,
       dob: initialData.dateOfBirth || "",
       age: initialData.dateOfBirth
         ? calculateAge(initialData.dateOfBirth)
@@ -80,17 +130,36 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
     const newErrors = {};
 
 
-    if (form.fullName !== "" && !form.fullName.trim()) {
-      newErrors["basic.fullName"] = "Full name is required";
+    if (!form.firstName.trim()) {
+      newErrors["basic.firstName"] = "First name is required";
+    } else if (!isValidPersonName(form.firstName)) {
+      newErrors["basic.firstName"] =
+        "First name can contain only letters, spaces, apostrophes, and hyphens";
+    }
+
+    if (form.secondName.trim() && !isValidPersonName(form.secondName)) {
+      newErrors["basic.secondName"] =
+        "Second name can contain only letters, spaces, apostrophes, and hyphens";
+    }
+
+    if (!form.lastName.trim()) {
+      newErrors["basic.lastName"] = "Last name is required";
+    } else if (!isValidPersonName(form.lastName)) {
+      newErrors["basic.lastName"] =
+        "Last name can contain only letters, spaces, apostrophes, and hyphens";
     }
 
     if (!form.dob) {
       newErrors["basic.dob"] = "Date of birth is required";
     } else {
-      const dob = new Date(form.dob);
+      const dob = new Date(`${form.dob}T00:00:00`);
       const today = new Date();
-      const age = today.getFullYear() - dob.getFullYear();
-      if (age < 0 || age > 150) {
+      today.setHours(0, 0, 0, 0);
+
+      const maxPastDate = new Date(today);
+      maxPastDate.setFullYear(today.getFullYear() - 150);
+
+      if (Number.isNaN(dob.getTime()) || dob > today || dob < maxPastDate) {
         newErrors["basic.dob"] = "Please enter a valid date of birth";
       }
     }
@@ -105,85 +174,26 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
 
     if (!form.nationalId.trim()) {
       newErrors["basic.nationalId"] = "NIC number is required";
-    } else if (
-      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(form.nationalId.trim())
-    ) {
+    } else if (!isValidNic(form.nationalId)) {
       newErrors["basic.nationalId"] =
         "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
     // EMAIL REQUIRED + FORMAT
-    if (!form.email) {
+    if (!form.email.trim()) {
       newErrors["basic.email"] = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+    } else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) {
       newErrors["basic.email"] = "Invalid email address";
     }
 
     //contact validation
     if (!form.contactNumber) {
       newErrors["basic.contactNumber"] = "Contact number is required";
-    } else {
-      const number = form.contactNumber;
-
-      // Must be exactly 10 digits
-      if (!/^\d{10}$/.test(number)) {
-        newErrors["basic.contactNumber"] = "Contact number must have exactly 10 digits";
-      } else {
-        // Allowed Sri Lanka prefixes
-        const validPrefixes = [
-          // Colombo
-          "011",
-
-          // Gampaha
-          "031", "033",
-
-          // Kalutara
-          "034", "038",
-
-          // Avissawella
-          "036",
-
-          // Central
-          "054", "081",
-
-          // Nuwara Eliya
-          "051", "052",
-
-          // Matale
-          "066",
-
-          // Southern
-          "091", "041", "047",
-
-          // North Western
-          "032", "037",
-
-          // Northern
-          "021", "023", "024",
-
-          // Eastern
-          "063", "067", "065", "026",
-
-          // North Central
-          "025", "027",
-
-          // Uva
-          "055", "057",
-
-          // Sabaragamuwa
-          "045", "035",
-
-          // Mobile
-          "070", "071", "072", "074",
-          "075", "076", "077", "078"
-        ];
-
-        const prefix = number.substring(0, 3);
-
-        if (!validPrefixes.includes(prefix)) {
-          newErrors["basic.contactNumber"] = "Invalid Sri Lanka contact number";
-        }
-      }
+    } else if (form.contactNumber.length !== 10) {
+      newErrors["basic.contactNumber"] =
+        "Contact number must have exactly 10 digits";
+    } else if (!isValidSriLankanPhoneNumber(form.contactNumber)) {
+      newErrors["basic.contactNumber"] = "Invalid Sri Lanka contact number";
     }
 
     setErrors(newErrors);
@@ -195,15 +205,36 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
     getData: () => form
   }));
 
-  // const handleChange = (field) => (e) => {
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     [field]: e.target.value
-  //   }));
-  // };
+  const clearFieldError = (field) => {
+    const errorKey = `basic.${field}`;
+
+    setErrors((prev) => {
+      if (!prev[errorKey]) return prev;
+
+      const nextErrors = { ...prev };
+      delete nextErrors[errorKey];
+      return nextErrors;
+    });
+  };
 
   const handleChange = (field) => (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+
+    if (["firstName", "secondName", "lastName"].includes(field)) {
+      value = sanitizePersonName(value);
+    }
+
+    if (field === "contactNumber") {
+      value = sanitizePhoneNumber(value);
+    }
+
+    if (field === "nationalId") {
+      value = sanitizeNic(value);
+    }
+
+    if (field === "email") {
+      value = value.trimStart();
+    }
 
     setForm((prev) => {
       if (field === "dob") {
@@ -215,6 +246,8 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       }
       return { ...prev, [field]: value };
     });
+
+    clearFieldError(field);
   };
 
   const handleSubmit = (e) => {
@@ -249,16 +282,44 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
       <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
 
         {/* Full name */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="px-2">
+            <label className={labelCss}>First Name *</label>
+            <input
+              type="text"
+              value={form.firstName}
+              onChange={handleChange("firstName")}
+              className={inputBase + " " + withError("basic.firstName")}
+            />
+            {errors["basic.firstName"] && (
+              <p className="text-red-500 text-xs mt-1">{errors["basic.firstName"]}</p>
+            )}
+          </div>
+
+          <div className="px-2">
+            <label className={labelCss}>Second Name</label>
+            <input
+              type="text"
+              value={form.secondName}
+              onChange={handleChange("secondName")}
+              className={inputBase + " " + withError("basic.secondName")}
+            />
+            {errors["basic.secondName"] && (
+              <p className="text-red-500 text-xs mt-1">{errors["basic.secondName"]}</p>
+            )}
+          </div>
+        </div>
+
         <div className="px-2">
-          <label className={labelCss}>Full Name *</label>
+          <label className={labelCss}>Last Name *</label>
           <input
             type="text"
-            value={form.fullName}
-            onChange={handleChange("fullName")}
-            className={inputBase + " " + withError("basic.fullName")}
+            value={form.lastName}
+            onChange={handleChange("lastName")}
+            className={inputBase + " " + withError("basic.lastName")}
           />
-          {errors["basic.fullName"] && (
-            <p className="text-red-500 text-xs mt-1">{errors["basic.fullName"]}</p>
+          {errors["basic.lastName"] && (
+            <p className="text-red-500 text-xs mt-1">{errors["basic.lastName"]}</p>
           )}
         </div>
 
@@ -267,6 +328,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
           <label className={labelCss}>Date of Birth *</label>
           <input
             type="date"
+            max={todayString}
             value={form.dob}
             onChange={handleChange("dob")}
             className={inputBase + " " + withError("basic.dob")}
@@ -345,6 +407,11 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
                 onChange={handleChange("maritalStatus")} /> Unmarried
             </label>
           </div>
+          {errors["basic.maritalStatus"] && (
+            <p className="text-red-500 text-xs mt-1 ml-4">
+              {errors["basic.maritalStatus"]}
+            </p>
+          )}
         </div>
 
         {/* NIC */}
@@ -354,6 +421,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="text"
             value={form.nationalId}
             onChange={handleChange("nationalId")}
+            maxLength={12}
             className={inputBase + " " + withError("basic.nationalId")}
           />
           {errors["basic.nationalId"] && (
@@ -409,6 +477,11 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
               <option key={dist} value={dist}>{dist}</option>
             ))}
           </select>
+          {errors["basic.mainCity"] && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors["basic.mainCity"]}
+            </p>
+          )}
         </div>
 
         {/* Contact */}
@@ -418,6 +491,8 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
             type="text"
             value={form.contactNumber}
             onChange={handleChange("contactNumber")}
+            inputMode="numeric"
+            maxLength={10}
             className={inputBase + " " + withError("basic.contactNumber")}
           />
           {errors["basic.contactNumber"] && (
@@ -431,7 +506,7 @@ const BasicInfoForm = forwardRef(({ showButton = false, onNext, initialData }, r
         <div className="px-2">
           <label className={labelCss}>EMAIL *</label>
           <input
-            type="text"
+            type="email"
             value={form.email}
             onChange={handleChange("email")}
             className={inputBase + " " + withError("basic.email")}

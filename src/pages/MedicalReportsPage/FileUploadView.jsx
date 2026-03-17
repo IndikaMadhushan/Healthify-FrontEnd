@@ -6,16 +6,20 @@ import {
   saveToStorage,
   loadFromStorage,
   validateFile,
-  fileToBase64,
   formatDate,
 } from "../../utils/medicalStorage";
 import FileViewerModal from "../../components/MedicalReports/FileViewerModal";
 import toast from "react-hot-toast";
+import { getPatientProfileApi } from "../../api/PatientApi";
+import { uploadPatientReportApi } from "../../api/ReportsApi";
+import { getSignedUrlApi } from "../../api/FilesApi";
 
 export default function FileUploadView({
   userId,
   category,
   categoryTitle,
+  patientId,
+  reportType,
   onBack,
 }) {
   const [files, setFiles] = useState([]);
@@ -24,6 +28,7 @@ export default function FileUploadView({
   const [titleText, setTitleText] = useState("");
   const [viewing, setViewing] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [resolvedPatientId, setResolvedPatientId] = useState(patientId || null);
 
   const fileInputRef = useRef(null);
   //from- set React Hook useEffect has a missing dependency 'loadFiles'. Either include it or remove the dependency array. You can also do a functional update 'setFiles(f => ...)' if you only need 'files' in the 'loadFiles' function. (react-hooks/exhaustive-deps)  error is ignored because loadFiles is defined with useCallback and has the correct dependencies.
@@ -37,6 +42,28 @@ export default function FileUploadView({
     loadFiles();
   }, [loadFiles]);
   //to here.....
+
+  useEffect(() => {
+    if (patientId) return;
+
+    const loadPatientId = async () => {
+      const role = localStorage.getItem("role")?.toUpperCase();
+      if (role === "DOCTOR") {
+        const selectedPatientId = localStorage.getItem("selectedPatientId");
+        setResolvedPatientId(selectedPatientId || null);
+        return;
+      }
+
+      try {
+        const profileRes = await getPatientProfileApi();
+        setResolvedPatientId(profileRes.data?.id || null);
+      } catch (error) {
+        console.error("Failed to load patient profile", error);
+      }
+    };
+
+    loadPatientId();
+  }, [patientId]);
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -57,18 +84,29 @@ export default function FileUploadView({
   const handleConfirmUpload = async () => {
     if (!pendingFile) return;
 
+    if (!resolvedPatientId) {
+      toast.error("Patient not selected");
+      return;
+    }
+
     setUploading(true);
 
     try {
-      const base64Data = await fileToBase64(pendingFile);
+      const reportDate = new Date().toISOString().slice(0, 10);
+      const response = await uploadPatientReportApi(
+        resolvedPatientId,
+        reportType || category,
+        pendingFile,
+        reportDate
+      );
 
       const newFile = {
-        id: Date.now().toString(),
+        id: response.data?.id || Date.now().toString(),
         title: titleText.trim() || "Untitled",
         name: pendingFile.name,
-        data: base64Data,
+        fileUrl: response.data?.fileUrl,
         type: pendingFile.type,
-        uploadedAt: new Date().toISOString(),
+        uploadedAt: response.data?.uploadedAt || new Date().toISOString(),
       };
 
       const updated = [newFile, ...files];
@@ -101,12 +139,26 @@ export default function FileUploadView({
   };
 
   const handleDownload = (file) => {
-    const link = document.createElement("a");
-    link.href = file.data;
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    resolveFileUrl(file)
+      .then((url) => {
+        if (!url) throw new Error("Missing file URL");
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => {
+        console.error("Failed to download file", error);
+        toast.error("Failed to download file");
+      });
+  };
+
+  const resolveFileUrl = async (file) => {
+    if (file.data) return file.data;
+    if (!file.fileUrl) return "";
+    return getSignedUrlApi("medical-files", file.fileUrl);
   };
 
   return (
@@ -174,11 +226,18 @@ export default function FileUploadView({
               >
                 {/* Thumbnail */}
                 <button
-                  onClick={() => setViewing(file)}
+                  onClick={async () => {
+                    const url = await resolveFileUrl(file);
+                    if (!url) {
+                      toast.error("File unavailable");
+                      return;
+                    }
+                    setViewing({ ...file, data: url });
+                  }}
                   className="w-full block"
                 >
                   <div className="h-40 bg-gray-100 flex items-center justify-center">
-                    {file.type.startsWith("image/") ? (
+                    {file.type.startsWith("image/") && file.data ? (
                       <img
                         src={file.data}
                         alt={file.title}
@@ -205,7 +264,14 @@ export default function FileUploadView({
                 {/* Actions */}
                 <div className="flex border-t p-2 gap-2">
                   <button
-                    onClick={() => setViewing(file)}
+                    onClick={async () => {
+                      const url = await resolveFileUrl(file);
+                      if (!url) {
+                        toast.error("File unavailable");
+                        return;
+                      }
+                      setViewing({ ...file, data: url });
+                    }}
                     className="flex-1 text-sm py-1.5 bg-gray-100 rounded hover:bg-gray-200 transition"
                   >
                     View

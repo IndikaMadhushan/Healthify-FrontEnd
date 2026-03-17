@@ -9,18 +9,18 @@ import {
   getPatientByIdApi,
   toggleDoctorStatusApi,
   togglePatientStatusApi,
-  buildAdminFileUrl,
   getAdminProfileApi
 } from '../api/AdminApi';
+import { getDisplayName } from '../utils/nameUtils';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState('');
   const [activeTab, setActiveTab] = useState('pending');
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState('doctorId');
-  const [patientSearchType, setPatientSearchType] = useState('patientId');
-  
+  const [_SEARCH_TYPE] = useState('doctorId');
+  const [_PATIENT_SEARCH_TYPE] = useState('patientId');
+
   // Data states
   const [pendingDoctors, setPendingDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -29,12 +29,6 @@ export default function AdminDashboard() {
   const [patientData, setPatientData] = useState(null);
   const [adminProfile, setAdminProfile] = useState({ id: 'ADMIN', email: '', name: 'Admin' });
   const [adminLoading, setAdminLoading] = useState(true);
-  
-  // Document viewer states
-  const [showDocumentModal, setShowDocumentModal] = useState(false);
-  const [currentDocumentUrl, setCurrentDocumentUrl] = useState('');
-  const [documentLoading, setDocumentLoading] = useState(false);
-  
   // Loading states
   const [loading, setLoading] = useState(false);
   const [pendingLoading, setPendingLoading] = useState(true);
@@ -125,26 +119,6 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleViewDocument = (documentUrl) => {
-    if (!documentUrl) {
-      toast.error('No verification document available');
-      return;
-    }
-    setCurrentDocumentUrl(buildAdminFileUrl(documentUrl));
-    setShowDocumentModal(true);
-  };
-
-  const handleDownloadDocument = (documentUrl) => {
-    if (!documentUrl) {
-      toast.error('No verification document available');
-      return;
-    }
-    
-    // Convert view URL to download URL
-    const downloadUrl = buildAdminFileUrl(documentUrl.replace('/uploads/', '/uploads/download/'));
-    window.open(downloadUrl, '_blank');
   };
 
   const handleApproveDoctor = async (userId) => {
@@ -327,8 +301,6 @@ export default function AdminDashboard() {
             doctors={pendingDoctors}
             onApprove={handleApproveDoctor}
             onReject={handleRejectDoctor}
-            onViewDocument={handleViewDocument}
-            onDownloadDocument={handleDownloadDocument}
             loading={loading}
           />
         )}
@@ -337,8 +309,7 @@ export default function AdminDashboard() {
           <DoctorSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            searchType={searchType}
-            setSearchType={setSearchType}
+            searchType={_SEARCH_TYPE}
             onSearch={handleDoctorSearch}
             loading={loading}
           />
@@ -348,25 +319,12 @@ export default function AdminDashboard() {
           <PatientSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            searchType={patientSearchType}
-            setSearchType={setPatientSearchType}
+            searchType={_PATIENT_SEARCH_TYPE}
             onSearch={handlePatientSearch}
             loading={loading}
           />
         )}
       </div>
-
-      {/* Document Viewer Modal */}
-      {showDocumentModal && (
-        <DocumentViewerModal
-          documentUrl={currentDocumentUrl}
-          onClose={() => {
-            setShowDocumentModal(false);
-            setCurrentDocumentUrl('');
-          }}
-          onDownload={() => handleDownloadDocument(currentDocumentUrl)}
-        />
-      )}
 
       {/* Doctor Details Modal */}
       {showDoctorModal && selectedDoctor && (
@@ -374,7 +332,6 @@ export default function AdminDashboard() {
           doctor={selectedDoctor}
           onClose={() => setShowDoctorModal(false)}
           onToggleStatus={handleToggleDoctorStatus}
-          onViewDocument={handleViewDocument}
         />
       )}
 
@@ -393,109 +350,6 @@ export default function AdminDashboard() {
   );
 }
 
-// Document Viewer Modal Component
-function DocumentViewerModal({ documentUrl, onClose, onDownload }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const fileExtension = documentUrl.split('.').pop().toLowerCase();
-  const isPDF = fileExtension === 'pdf';
-  const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
-
-  return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-2xl font-bold text-[#0F4F52]">Verification Document</h2>
-            <p className="text-sm text-gray-500 mt-1">Review the doctor's credentials</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onDownload}
-              className="px-4 py-2 bg-[#18AAB0] text-white rounded-lg hover:bg-[#86C443] transition-colors flex items-center gap-2"
-            >
-              <span>📥</span>
-              <span>Download</span>
-            </button>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-3xl w-10 h-10 flex items-center justify-center"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-
-        {/* Document Content */}
-        <div className="flex-1 overflow-auto p-6 bg-gray-50">
-          {loading && (
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="w-12 h-12 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-500 mt-4">Loading document...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="flex flex-col items-center justify-center h-full">
-              <span className="text-6xl mb-4">⚠️</span>
-              <p className="text-red-600 font-semibold">Failed to load document</p>
-              <p className="text-gray-500 text-sm mt-2">The document may be corrupted or unavailable</p>
-              <button
-                onClick={onDownload}
-                className="mt-4 px-6 py-2 bg-[#18AAB0] text-white rounded-lg hover:bg-[#86C443] transition-colors"
-              >
-                Try Downloading Instead
-              </button>
-            </div>
-          )}
-
-          {isPDF && !error && (
-            <iframe
-              src={documentUrl}
-              className="w-full h-full min-h-[600px] rounded-lg border-2 border-gray-300"
-              onLoad={() => setLoading(false)}
-              onError={() => {
-                setLoading(false);
-                setError(true);
-              }}
-            />
-          )}
-
-          {isImage && !error && (
-            <div className="flex items-center justify-center">
-              <img
-                src={documentUrl}
-                alt="Verification Document"
-                className="max-w-full h-auto rounded-lg shadow-lg"
-                onLoad={() => setLoading(false)}
-                onError={() => {
-                  setLoading(false);
-                  setError(true);
-                }}
-              />
-            </div>
-          )}
-
-          {!isPDF && !isImage && !error && (
-            <div className="flex flex-col items-center justify-center h-full">
-              <span className="text-6xl mb-4">📄</span>
-              <p className="text-gray-700 font-semibold">Document Preview Not Available</p>
-              <p className="text-gray-500 text-sm mt-2">File type: .{fileExtension}</p>
-              <button
-                onClick={onDownload}
-                className="mt-4 px-6 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-lg hover:shadow-lg transition-all"
-              >
-                Download to View
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // Tab Button Component
 function TabButton({ active, onClick, children, badge }) {
@@ -519,7 +373,7 @@ function TabButton({ active, onClick, children, badge }) {
 }
 
 // Pending Approvals Section
-function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument, onDownloadDocument, loading }) {
+function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
@@ -542,7 +396,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument,
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-[#0F4F52]">
-                    {doctor.firstName} {doctor.lastName}
+                    {getDisplayName(doctor)}
                   </h3>
                   <p className="text-sm text-[#18AAB0] font-medium">{doctor.specialization || 'N/A'}</p>
                 </div>
@@ -561,30 +415,30 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument,
               </div>
 
               {/* Document Actions */}
-              {doctor.verificationDocUrl && (
+              {doctor.verificationDocUrl ? (
                 <div className="flex flex-wrap gap-3 pt-2 border-t border-gray-100">
-                  <button
-                    onClick={() => onViewDocument(doctor.verificationDocUrl)}
+                  <a
+                    href={doctor.verificationDocUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors font-medium"
                   >
                     <span>👁️</span>
-                    <span>View Document</span>
-                  </button>
-                  <button
-                    onClick={() => onDownloadDocument(doctor.verificationDocUrl)}
+                    <span>View Verification Document</span>
+                  </a>
+                  <a
+                    href={doctor.verificationDocUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors font-medium"
                   >
-                    <span>📥</span>
-                    <span>Download</span>
-                  </button>
+                    <span>📄</span>
+                    <span>Open Document</span>
+                  </a>
                 </div>
-              )}
-
-              {!doctor.verificationDocUrl && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <p className="text-sm text-amber-800">
-                    ⚠️ No verification document uploaded
-                  </p>
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                  <p className="text-sm text-gray-500">No verification document</p>
                 </div>
               )}
 
@@ -614,7 +468,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument,
 }
 
 // Doctor Search Section
-function DoctorSearchSection({ searchQuery, setSearchQuery, searchType, setSearchType, onSearch, loading }) {
+function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Doctor</h2>
@@ -656,7 +510,7 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, searchType, setSearc
 }
 
 // Patient Search Section
-function PatientSearchSection({ searchQuery, setSearchQuery, searchType, setSearchType, onSearch, loading }) {
+function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Patient</h2>
@@ -715,7 +569,7 @@ function InfoItem({ label, value }) {
 }
 
 // Doctor Details Modal
-function DoctorDetailsModal({ doctor, onClose, onToggleStatus, onViewDocument }) {
+function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
   const isEnabled = doctor.user?.enabled ?? doctor.enabled ?? true;
   const accountStatus = isEnabled ? 'ACTIVE' : 'DISABLED';
   
@@ -733,7 +587,7 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus, onViewDocument })
         </div>
 
         <div className="space-y-4">
-          <DetailRow label="Name" value={doctor.fullName} />
+          <DetailRow label="Name" value={getDisplayName(doctor)} />
           <DetailRow label="Doctor ID" value={doctor.doctorId} />
           <DetailRow label="License Number" value={doctor.licenseNumber || 'N/A'} />
           <DetailRow label="NIC" value={doctor.nic || 'N/A'} />
@@ -755,15 +609,21 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus, onViewDocument })
             }
           />
 
-          {doctor.verificationDocUrl && (
+          {doctor.verificationDocUrl ? (
             <div className="pt-4 border-t">
-              <button
-                onClick={() => onViewDocument(doctor.verificationDocUrl)}
+              <a
+                href={doctor.verificationDocUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full px-4 py-3 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors font-medium flex items-center justify-center gap-2"
               >
                 <span>📄</span>
                 <span>View Verification Document</span>
-              </button>
+              </a>
+            </div>
+          ) : (
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">No verification document</p>
             </div>
           )}
         </div>

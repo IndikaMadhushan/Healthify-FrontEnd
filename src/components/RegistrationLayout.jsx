@@ -18,10 +18,10 @@ export default function RegistrationLayout({
       <div className="sticky top-0 z-50 bg-white shadow-sm">
         <Header />
       </div>
-
       {/* Main Content */}
+
       <div className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8 pt-20">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
             {/* Form Area - Left Side */}
             <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 lg:max-w-xl mx-auto w-full">
@@ -40,10 +40,8 @@ export default function RegistrationLayout({
           </div>
         </div>
       </div>
-
       {/* Footer */}
       <Footer />
-
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }

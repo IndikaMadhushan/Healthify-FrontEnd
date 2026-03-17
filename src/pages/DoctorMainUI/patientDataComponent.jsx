@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPatientProfileApi } from "../../api/PatientApi";
 import { User, X } from "lucide-react";
+import { getDisplayName } from "../../utils/nameUtils";
 
 /* ---------- DUMMY DATA ---------- */
 const DUMMY_PATIENT = {
@@ -39,6 +40,7 @@ export default function PatientDataComponent() {
   }, []);
 
   if (!patient) return null;
+  const patientDisplayName = getDisplayName(patient);
 
   return (
     <>
@@ -80,7 +82,7 @@ export default function PatientDataComponent() {
         <div className="flex flex-col items-center text-center mb-10">
           <img
             src={patient.photoUrl || "/profilePic.png"}
-            alt={patient.fullName}
+            alt={patientDisplayName}
             className="w-24 h-24 rounded-full object-cover border border-gray-300"
           />
 
@@ -89,7 +91,7 @@ export default function PatientDataComponent() {
           </h3>
 
           <p className="text-xs text-gray-500 mt-1 tracking-wide">
-            {patient.fullName}
+            {patientDisplayName}
           </p>
 
           <p className="text-xs text-gray-500 mt-1 tracking-wide break-all">
@@ -104,7 +106,7 @@ export default function PatientDataComponent() {
           </h2>
 
           <div className="space-y-4">
-            <Info label="Full Name" value={patient.fullName} />
+            <Info label="Full Name" value={patientDisplayName} />
             <Info label="Date of Birth" value={patient.dateOfBirth} />
             <Info label="Age" value={patient.age} />
             <Info label="Gender" value={patient.gender} />

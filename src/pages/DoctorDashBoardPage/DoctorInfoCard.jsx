@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { getDisplayName } from "../../utils/nameUtils";
 
 export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
   const fileInputRef = useRef(null);
@@ -25,6 +26,7 @@ export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
     };
     reader.readAsDataURL(file);
   };
+  const doctorDisplayName = getDisplayName(doctor);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mb-6 border border-gray-100">
@@ -34,7 +36,7 @@ export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
         <div className="relative">
           <img
             src={doctor.photoUrl || "/profilePic.png"}
-            alt={doctor.fullName}
+            alt={doctorDisplayName}
             className="w-32 h-32 rounded-full object-cover border-4 border-secondary shadow-lg"
           />
 
@@ -57,7 +59,7 @@ export default function DoctorInfoCard({ doctor, onProfileUpdate }) {
         {/* DOCTOR INFO */}
         <div className="flex-1 text-center sm:text-left">
           <h1 className="text-3xl font-bold text-secondary mb-2">
-            {doctor.fullName}
+            {doctorDisplayName}
           </h1>
 
           <p className="text-gray-600 text-sm mb-1">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
@@ -9,7 +9,9 @@ export default function DoctorRegisterPage1() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    secondName: "",
+    lastName: "",
     gender: "",
     email: "",
     nic: "",
@@ -20,6 +22,17 @@ export default function DoctorRegisterPage1() {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const savedStep1 = sessionStorage.getItem("doctorRegStep1");
+    if (savedStep1) {
+      try {
+        setFormData(JSON.parse(savedStep1));
+      } catch (e) {
+        // ignore invalid cache
+      }
+    }
+  }, []);
 
   const SPECIALIZATIONS = [
     "Cardiology",
@@ -44,14 +57,18 @@ export default function DoctorRegisterPage1() {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     if (!formData.nic.trim()) newErrors.nic = "NIC is required";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth required";
-    if (!formData.specialization) newErrors.specialization = "Specialization required";
+    if (!formData.specialization)
+      newErrors.specialization = "Specialization required";
     if (!formData.hospital.trim()) newErrors.hospital = "Hospital required";
-    if (!formData.licenseNumber.trim()) newErrors.licenseNumber = "SLMC number required";
+    if (!formData.licenseNumber.trim())
+      newErrors.licenseNumber = "SLMC number required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -61,10 +78,7 @@ export default function DoctorRegisterPage1() {
     e.preventDefault();
     if (!validate()) return;
 
-    sessionStorage.setItem(
-      "doctorRegStep1",
-      JSON.stringify(formData)
-    );
+    sessionStorage.setItem("doctorRegStep1", JSON.stringify(formData));
 
     navigate("/doctor-register-2");
   };
@@ -76,12 +90,32 @@ export default function DoctorRegisterPage1() {
       </h1>
 
       <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            label="First Name"
+            value={formData.firstName}
+            onChange={handleChange("firstName")}
+            error={errors.firstName}
+            placeholder="Enter your first name"
+            required
+          />
+
+          <FormField
+            label="Second Name"
+            value={formData.secondName}
+            onChange={handleChange("secondName")}
+            error={errors.secondName}
+            placeholder="Enter your second name"
+            required={false}
+          />
+        </div>
+
         <FormField
-          label="Full Name"
-          value={formData.fullName}
-          onChange={handleChange("fullName")}
-          error={errors.fullName}
-          placeholder="Enter your full name"
+          label="Last Name"
+          value={formData.lastName}
+          onChange={handleChange("lastName")}
+          error={errors.lastName}
+          placeholder="Enter your last name"
           required
         />
 
@@ -132,9 +166,13 @@ export default function DoctorRegisterPage1() {
             onChange={handleChange("specialization")}
             className="w-full px-4 py-3 rounded-lg border border-gray-300"
           >
-            <option value="" disabled>Select specialization</option>
+            <option value="" disabled>
+              Select specialization
+            </option>
             {SPECIALIZATIONS.map((spec) => (
-              <option key={spec} value={spec}>{spec}</option>
+              <option key={spec} value={spec}>
+                {spec}
+              </option>
             ))}
           </select>
           {errors.specialization && (

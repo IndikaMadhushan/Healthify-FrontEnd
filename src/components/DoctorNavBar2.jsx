@@ -434,6 +434,7 @@
 //parindya
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getDisplayName, getInitial } from "../utils/nameUtils";
 
 export default function DoctorNavBar({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -447,6 +448,8 @@ export default function DoctorNavBar({ doctor, patient }) {
 
   if (!doctor) return null;
   const safePatient = patient || null;
+  const doctorDisplayName = getDisplayName(doctor);
+  const patientDisplayName = getDisplayName(safePatient);
 
   const handleNavigation = (path) => {
     setDropdownOpen(false);
@@ -480,12 +483,12 @@ export default function DoctorNavBar({ doctor, patient }) {
               <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-lg">
                 <img
                   src={safePatient.profilePic || "/profilePic.png"}
-                  alt={safePatient.fullName}
+                  alt={patientDisplayName}
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="leading-tight max-w-[200px]">
                   <p className="text-sm font-semibold text-gray-800 truncate">
-                    Viewing Patient: {safePatient.fullName}
+                    Viewing Patient: {patientDisplayName}
                   </p>
                   <p className="text-xs text-gray-600 truncate">
                     {safePatient.email}
@@ -503,18 +506,18 @@ export default function DoctorNavBar({ doctor, patient }) {
                 {doctor.photoUrl ? (
                   <img
                     src={doctor.photoUrl}
-                    alt={doctor.fullName}
+                    alt={doctorDisplayName}
                     className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border object-cover"
                   />
                 ) : (
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                    {doctor.fullName?.charAt(0)}
+                    {getInitial(doctor)}
                   </div>
                 )}
 
                 <div className="hidden sm:block text-left max-w-[160px]">
                   <p className="text-sm font-semibold text-gray-800 truncate">
-                    {doctor.fullName}
+                    {doctorDisplayName}
                   </p>
                   <p className="text-xs text-gray-600 truncate">
                     {doctor.email}
@@ -641,12 +644,12 @@ export default function DoctorNavBar({ doctor, patient }) {
           <div className="md:hidden flex items-center gap-3 px-3 py-2 mb-2 bg-secondary/5 rounded-lg">
             <img
               src={safePatient.profilePic || "/profilePic.png"}
-              alt={safePatient.fullName}
+              alt={patientDisplayName}
               className="w-8 h-8 rounded-full object-cover"
             />
             <div className="truncate">
               <p className="text-xs font-semibold truncate">
-                Patient: {safePatient.fullName}
+                Patient: {patientDisplayName}
               </p>
               <p className="text-[10px] text-gray-600 truncate">
                 {safePatient.email}
