@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import ProfileImageCropper from "../../components/profileImageCropper";
 import {
-  getDoctorProfileApi,
-  uploadDoctorProfileImageApi,
+  getCachedDoctorProfile,
+  getMyDoctorProfile,
+  uploadMyDoctorProfileImage,
 } from "../../api/DoctorApi";
 import DoctorProfileEditModal from "./DoctorProfileEditModal";
 import { getDisplayName } from "../../utils/nameUtils";
@@ -11,13 +12,22 @@ import { getDisplayName } from "../../utils/nameUtils";
 const showValue = (value) =>
   value === null || value === undefined || value === "" ? "-" : value;
 
+function getDoctorHeadingName(doctor) {
+  const displayName = getDisplayName(doctor);
+  if (!displayName) {
+    return "-";
+  }
+
+  return /^dr\.?\s/i.test(displayName) ? displayName : `Dr. ${displayName}`;
+}
+
 export default function DoctorProfile() {
-  const [doctor, setDoctor] = useState(null);
+  const [doctor, setDoctor] = useState(() => getCachedDoctorProfile());
   const [editOpen, setEditOpen] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  const refreshDoctorProfile = async () => {
-    const res = await getDoctorProfileApi();
+  const refreshDoctorProfile = async (force = false) => {
+    const res = await getMyDoctorProfile({ force });
     setDoctor(res.data);
     return res.data;
   };
@@ -25,7 +35,7 @@ export default function DoctorProfile() {
   useEffect(() => {
     const loadDoctor = async () => {
       try {
-        await refreshDoctorProfile();
+        await refreshDoctorProfile(!getCachedDoctorProfile());
       } catch (err) {
         console.error("Failed to load doctor profile", err);
       }
@@ -37,25 +47,34 @@ export default function DoctorProfile() {
   const handleDoctorImageCropped = async (file) => {
     try {
       setIsUploadingImage(true);
-      const res = await uploadDoctorProfileImageApi(file);
-      if (res?.data && typeof res.data === "object") {
-        setDoctor(res.data);
+      await uploadMyDoctorProfileImage(file);
+      const cachedDoctor = getCachedDoctorProfile();
+      if (cachedDoctor) {
+        setDoctor(cachedDoctor);
       } else {
-        await refreshDoctorProfile();
+        await refreshDoctorProfile(true);
       }
       toast.success("Profile photo updated");
     } catch (err) {
       console.error("Doctor image upload failed", err);
       toast.error("Failed to upload profile photo");
       try {
-        await refreshDoctorProfile();
+        await refreshDoctorProfile(true);
       } catch (refreshError) {
-        console.error("Failed to reload doctor profile after image error", refreshError);
+        console.error(
+          "Failed to reload doctor profile after image error",
+          refreshError,
+        );
       }
     } finally {
       setIsUploadingImage(false);
     }
   };
+
+  const doctorHeadingName = useMemo(
+    () => getDoctorHeadingName(doctor || {}),
+    [doctor],
+  );
 
   if (!doctor) {
     return (
@@ -64,8 +83,6 @@ export default function DoctorProfile() {
       </div>
     );
   }
-
-  const doctorDisplayName = getDisplayName(doctor);
 
   return (
     <div className="w-full">
@@ -84,7 +101,7 @@ export default function DoctorProfile() {
         <div className="flex justify-between items-center flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
-              Dr. {showValue(doctorDisplayName)}
+              {showValue(doctorHeadingName)}
             </h1>
 
             <p className="text-secondary font-medium mt-1">
@@ -128,6 +145,16 @@ export default function DoctorProfile() {
 
             <div className="space-y-3">
               <div>
+                <p className="text-sm text-gray-500">Doctor ID</p>
+                <p className="font-medium">{showValue(doctor.doctorId)}</p>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">NIC</p>
+                <p className="font-medium">{showValue(doctor.nic)}</p>
+              </div>
+
+              <div>
                 <p className="text-sm text-gray-500">Gender</p>
                 <p className="font-medium">{showValue(doctor.gender)}</p>
               </div>
@@ -153,6 +180,11 @@ export default function DoctorProfile() {
               <div>
                 <p className="text-sm text-gray-500">Email</p>
                 <p className="font-medium">{showValue(doctor.email)}</p>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="font-medium">{showValue(doctor.phone)}</p>
               </div>
 
               <div>

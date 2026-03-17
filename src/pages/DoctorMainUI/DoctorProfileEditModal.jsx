@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { updateMyProfile } from "../../api/DoctorApi";
+import { updateMyDoctorProfile } from "../../api/DoctorApi";
+import {
+  isValidPersonName,
+  isValidSriLankanPhoneNumber,
+  sanitizePersonName,
+  sanitizePhoneNumber,
+} from "../../utils/patientProfileValidation";
 
 const SPECIALIZATIONS = [
   "General Practice",
@@ -39,13 +45,22 @@ const SPECIALIZATIONS = [
   "Rehabilitation Medicine",
 ];
 
-function splitFullName(fullName) {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  return {
-    firstName: parts[0] || "",
-    secondName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
-    lastName: parts.length > 1 ? parts[parts.length - 1] : "",
-  };
+const GENDER_OPTIONS = ["Male", "Female"];
+
+function ReadOnlyField({ label, value }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 mb-1">
+        {label}
+      </label>
+      <input
+        value={value || "-"}
+        readOnly
+        disabled
+        className="w-full border border-gray-200 rounded-lg p-2 bg-gray-100 text-gray-500"
+      />
+    </div>
+  );
 }
 
 export default function DoctorProfileEditModal({
@@ -54,11 +69,14 @@ export default function DoctorProfileEditModal({
   onUpdated,
 }) {
   const [formData, setFormData] = useState({
-    fullName: doctor.fullName || "",
-    dateOfBirth: doctor.dateOfBirth || "",
+    firstName: doctor.firstName || "",
+    secondName: doctor.secondName || "",
+    lastName: doctor.lastName || "",
+    phone: doctor.phone || "",
     hospital: doctor.hospital || "",
     specialization: doctor.specialization || "",
-    licenseNumber: doctor.licenseNumber || "",
+    gender: doctor.gender || "",
+    dateOfBirth: doctor.dateOfBirth || "",
   });
   const [errors, setErrors] = useState({});
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -68,9 +86,18 @@ export default function DoctorProfileEditModal({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    let nextValue = value;
+    if (["firstName", "secondName", "lastName"].includes(name)) {
+      nextValue = sanitizePersonName(value);
+    }
+    if (name === "phone") {
+      nextValue = sanitizePhoneNumber(value);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: nextValue,
     }));
 
     if (errors[name]) {
@@ -83,23 +110,30 @@ export default function DoctorProfileEditModal({
 
   const validate = () => {
     const nextErrors = {};
-    const trimmedFullName = formData.fullName.trim();
-    const trimmedHospital = formData.hospital.trim();
-    const trimmedLicense = formData.licenseNumber.trim();
 
-    if (!trimmedFullName) {
-      nextErrors.fullName = "Full name is required";
-    } else if (trimmedFullName.split(/\s+/).length < 2) {
-      nextErrors.fullName = "Enter at least first and last name";
+    if (!formData.firstName.trim()) {
+      nextErrors.firstName = "First name is required";
+    } else if (!isValidPersonName(formData.firstName)) {
+      nextErrors.firstName = "Use letters and basic name characters only";
     }
 
-    if (!formData.dateOfBirth) {
-      nextErrors.dateOfBirth = "Date of birth is required";
-    } else if (formData.dateOfBirth > today) {
-      nextErrors.dateOfBirth = "Date of birth cannot be in the future";
+    if (formData.secondName.trim() && !isValidPersonName(formData.secondName)) {
+      nextErrors.secondName = "Use letters and basic name characters only";
     }
 
-    if (!trimmedHospital) {
+    if (!formData.lastName.trim()) {
+      nextErrors.lastName = "Last name is required";
+    } else if (!isValidPersonName(formData.lastName)) {
+      nextErrors.lastName = "Use letters and basic name characters only";
+    }
+
+    if (!formData.phone.trim()) {
+      nextErrors.phone = "Phone number is required";
+    } else if (!isValidSriLankanPhoneNumber(formData.phone)) {
+      nextErrors.phone = "Enter a valid 10-digit Sri Lankan phone number";
+    }
+
+    if (!formData.hospital.trim()) {
       nextErrors.hospital = "Hospital or clinic is required";
     }
 
@@ -107,8 +141,14 @@ export default function DoctorProfileEditModal({
       nextErrors.specialization = "Specialization is required";
     }
 
-    if (!trimmedLicense) {
-      nextErrors.licenseNumber = "SLMC number is required";
+    if (!formData.gender) {
+      nextErrors.gender = "Gender is required";
+    }
+
+    if (!formData.dateOfBirth) {
+      nextErrors.dateOfBirth = "Date of birth is required";
+    } else if (formData.dateOfBirth > today) {
+      nextErrors.dateOfBirth = "Date of birth cannot be in the future";
     }
 
     setErrors(nextErrors);
@@ -124,26 +164,21 @@ export default function DoctorProfileEditModal({
   };
 
   const handleConfirmUpdate = async () => {
-    const nameParts = splitFullName(formData.fullName);
-    const dataToSend = {
-      firstName: nameParts.firstName,
-      secondName: nameParts.secondName || undefined,
-      lastName: nameParts.lastName,
+    const payload = {
+      firstName: formData.firstName.trim(),
+      secondName: formData.secondName.trim() || undefined,
+      lastName: formData.lastName.trim(),
+      phone: formData.phone,
       hospital: formData.hospital.trim(),
       specialization: formData.specialization,
+      gender: formData.gender,
       dateOfBirth: formData.dateOfBirth,
-      licenseNumber: formData.licenseNumber.trim(),
     };
 
     try {
       setIsSaving(true);
-      const res = await updateMyProfile(dataToSend);
-      const updatedDoctor = {
-        ...doctor,
-        ...res.data,
-      };
-
-      onUpdated(updatedDoctor);
+      const res = await updateMyDoctorProfile(payload);
+      onUpdated(res.data);
       toast.success("Doctor profile updated");
       setConfirmOpen(false);
       onClose();
@@ -167,52 +202,122 @@ export default function DoctorProfileEditModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
           <h2 className="text-lg font-semibold text-secondary mb-4">
             Edit Profile
           </h2>
 
+          <div className="grid md:grid-cols-3 gap-4 mb-6">
+            <ReadOnlyField label="Doctor ID" value={doctor.doctorId} />
+            <ReadOnlyField label="Email" value={doctor.email} />
+            <ReadOnlyField label="SLMC Number" value={doctor.licenseNumber} />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                placeholder="Full Name"
-                className={inputClassName("fullName")}
-              />
-              {errors.fullName && (
-                <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>
-              )}
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <input
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="First Name"
+                  className={inputClassName("firstName")}
+                />
+                {errors.firstName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  name="secondName"
+                  value={formData.secondName}
+                  onChange={handleChange}
+                  placeholder="Second Name"
+                  className={inputClassName("secondName")}
+                />
+                {errors.secondName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.secondName}</p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Last Name"
+                  className={inputClassName("lastName")}
+                />
+                {errors.lastName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <input
-                type="date"
-                name="dateOfBirth"
-                max={today}
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                className={inputClassName("dateOfBirth")}
-              />
-              {errors.dateOfBirth && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.dateOfBirth}
-                </p>
-              )}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
+                  className={inputClassName("phone")}
+                />
+                {errors.phone && (
+                  <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
+                )}
+              </div>
+
+              <div>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className={inputClassName("gender")}
+                >
+                  <option value="">Select Gender</option>
+                  {GENDER_OPTIONS.map((gender) => (
+                    <option key={gender} value={gender}>
+                      {gender}
+                    </option>
+                  ))}
+                </select>
+                {errors.gender && (
+                  <p className="text-xs text-red-500 mt-1">{errors.gender}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <input
-                name="hospital"
-                value={formData.hospital}
-                onChange={handleChange}
-                placeholder="Hospital / Clinic"
-                className={inputClassName("hospital")}
-              />
-              {errors.hospital && (
-                <p className="text-xs text-red-500 mt-1">{errors.hospital}</p>
-              )}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  max={today}
+                  value={formData.dateOfBirth}
+                  onChange={handleChange}
+                  className={inputClassName("dateOfBirth")}
+                />
+                {errors.dateOfBirth && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.dateOfBirth}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <input
+                  name="hospital"
+                  value={formData.hospital}
+                  onChange={handleChange}
+                  placeholder="Hospital / Clinic"
+                  className={inputClassName("hospital")}
+                />
+                {errors.hospital && (
+                  <p className="text-xs text-red-500 mt-1">{errors.hospital}</p>
+                )}
+              </div>
             </div>
 
             <div>
@@ -236,26 +341,12 @@ export default function DoctorProfileEditModal({
               )}
             </div>
 
-            <div>
-              <input
-                name="licenseNumber"
-                value={formData.licenseNumber}
-                onChange={handleChange}
-                placeholder="SLMC Number"
-                className={inputClassName("licenseNumber")}
-              />
-              {errors.licenseNumber && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.licenseNumber}
-                </p>
-              )}
-            </div>
-
             <div className="flex justify-end gap-3 pt-2">
               <button
                 type="button"
                 onClick={onClose}
                 className="px-4 py-2 rounded-lg bg-gray-200"
+                disabled={isSaving}
               >
                 Cancel
               </button>
@@ -263,8 +354,9 @@ export default function DoctorProfileEditModal({
               <button
                 type="submit"
                 className="px-4 py-2 rounded-lg bg-secondary text-white"
+                disabled={isSaving}
               >
-                Update
+                Save Changes
               </button>
             </div>
           </form>
