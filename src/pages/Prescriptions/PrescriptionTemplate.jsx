@@ -239,7 +239,7 @@ export default function PrescriptionTemplate({ data }) {
 
       {/* HEADER */}
       <div style={{ borderBottom: "2px solid #18AAB0", paddingBottom: 8 }}>
-        <img src="logo.png" alt="Healthify Logo" style={{ height: 70 }} />
+        <img src="/logo.png" alt="Healthify Logo" style={{ height: 70 }} />
         <p style={{ fontSize: 12 }}>Digital Prescription</p>
       </div>
 
