@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getDoctorPatientProfileApi } from "../../api/DoctorApi";
 import { getDisplayName, getNameParts } from "../../utils/nameUtils";
+import ProfileAvatar from "../../components/ProfileAvatar";
+import { FaUser } from "react-icons/fa";
 
 function showValue(value) {
   return value === null || value === undefined || value === ""
@@ -152,10 +154,13 @@ export default function DoctorPatientProfile() {
         <div className="bg-white border border-[#D3F0ED] rounded-2xl px-8 py-6 mb-10 shadow-sm">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
             <div className="relative flex items-center justify-center">
-              <img
-                src={patient?.photoUrl || "/profilePic.png"}
+              <ProfileAvatar
+                src={patient?.photoUrl}
                 alt={patient?.fullName || patientDisplayName || "Patient"}
-                className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
+                className="w-28 h-28 rounded-full border-4 border-white shadow-lg"
+                imageClassName="w-full h-full rounded-full object-cover"
+                fallbackClassName="bg-[#F7FCFB]"
+                fallbackIcon={<FaUser className="text-4xl text-[#7AA7A3]" />}
               />
             </div>
 
