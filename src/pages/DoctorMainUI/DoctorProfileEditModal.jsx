@@ -288,7 +288,19 @@ const DoctorProfileEditModal = ({ doctor, onClose, onUpdated }) => {
 
   const handleConfirmUpdate = async () => {
     try {
-      const res = await updateMyProfile(formData);
+      const parts = formData.fullName.trim().split(" ");
+
+      const dataToSend = {
+        firstName: parts[0] || "",
+        secondName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
+        lastName: parts.length > 1 ? parts[parts.length - 1] : "",
+        phone: formData.phone || "",
+        hospital: formData.hospital,
+        specialization: formData.specialization,
+        dateOfBirth: formData.dateOfBirth
+      };
+
+      const res = await updateMyProfile(dataToSend);
 
       // update profile in parent
       onUpdated(res.data);
