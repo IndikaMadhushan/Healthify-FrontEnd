@@ -159,8 +159,14 @@ export default function LabReportsPage() {
   // Save items to localStorage
   const saveItems = (newItems) => {
     const storageKey = `medical_${userId}_${category}`;
-    localStorage.setItem(storageKey, JSON.stringify(newItems));
     setItems(newItems);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(newItems));
+      return true;
+    } catch (error) {
+      console.error("Error saving lab reports locally:", error);
+      return false;
+    }
   };
 
   const handleBack = () => {
