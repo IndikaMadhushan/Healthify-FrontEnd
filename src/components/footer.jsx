@@ -21,7 +21,7 @@ export default function Footer() {
 
         {/* Logo + Description */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <img src="logo.png" className="w-[160px] md:w-[200px] mb-3" alt="Logo" />
+          <img src="/logo.png" className="w-[160px] md:w-[200px] mb-3" alt="Logo" />
           <p className="text-[12px] md:text-[14px] leading-relaxed font-light">
             Healthify makes tracking your health simple and secure.
             <br />
@@ -32,13 +32,13 @@ export default function Footer() {
         {/* Contact Info */}
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center mb-4 md:mb-6">
-            <img src="Phone.png" className="w-[30px] md:w-[40px] mb-1" alt="Phone" />
+            <img src="/Phone.png" className="w-[30px] md:w-[40px] mb-1" alt="Phone" />
             <p className="text-[12px] md:text-[14px] font-light">Have a question?</p>
             <p className="text-[12px] md:text-[14px] font-medium">+94 114545678</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <img src="Email.png" className="w-[30px] md:w-[40px] mb-1" alt="Email" />
+            <img src="/Email.png" className="w-[30px] md:w-[40px] mb-1" alt="Email" />
             <p className="text-[12px] md:text-[14px] font-light">Email us</p>
             <p className="text-[12px] md:text-[14px] font-medium">healthify@gmail.com</p>
           </div>

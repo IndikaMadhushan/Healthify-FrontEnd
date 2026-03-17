@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import RegistrationLayout from "../../components/RegistrationLayout";
@@ -21,6 +21,17 @@ export default function PatientRegisterPage1() {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const savedStep1 = sessionStorage.getItem("patientRegStep1");
+    if (savedStep1) {
+      try {
+        setFormData(JSON.parse(savedStep1));
+      } catch (e) {
+        // ignore invalid cache
+      }
+    }
+  }, []);
 
   const handleChange = (field) => (e) => {
     setFormData((prev) => ({
@@ -60,11 +71,8 @@ export default function PatientRegisterPage1() {
 
     if (!formData.nic.trim()) {
       newErrors.nic = "NIC number is required";
-    } else if (
-      !/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())
-    ) {
-      newErrors.nic =
-        "Invalid NIC format (e.g., 123456789V or 123456789012)";
+    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic.trim())) {
+      newErrors.nic = "Invalid NIC format (e.g., 123456789V or 123456789012)";
     }
 
     if (!formData.email.trim()) {
@@ -90,6 +98,7 @@ export default function PatientRegisterPage1() {
   const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
+      console.log("Step 1 data:", formData);
       sessionStorage.setItem("patientRegStep1", JSON.stringify(formData));
       navigate("/patient-register-2");
     }

@@ -11,6 +11,10 @@ import { getNameParts } from "../../utils/nameUtils";
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [verificationDoc, setVerificationDoc] = useState(null);
@@ -62,8 +66,7 @@ export default function DoctorRegisterPage2() {
     }
 
     if (!agreedToApproval) {
-      newErrors.agreedToApproval =
-        "You must acknowledge the approval process";
+      newErrors.agreedToApproval = "You must acknowledge the approval process";
     }
 
     setErrors(newErrors);
@@ -76,7 +79,7 @@ export default function DoctorRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
-      sessionStorage.getItem("doctorRegStep1") || "{}"
+      sessionStorage.getItem("doctorRegStep1") || "{}",
     );
     const { fullName: _FULL_NAME, ...rest } = step1Data;
     const nameParts = getNameParts(step1Data);
@@ -190,9 +193,8 @@ export default function DoctorRegisterPage2() {
               className="mt-1 w-4 h-4 text-secondary focus:ring-secondary rounded"
             />
             <span className="text-sm text-gray-700">
-              I understand that my account will remain{" "}
-              <strong>inactive</strong> until verified and approved by the
-              administrator.
+              I understand that my account will remain <strong>inactive</strong>{" "}
+              until verified and approved by the administrator.
             </span>
           </label>
 
