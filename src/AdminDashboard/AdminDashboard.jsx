@@ -9,18 +9,18 @@ import {
   getPatientByIdApi,
   toggleDoctorStatusApi,
   togglePatientStatusApi,
-  buildAdminFileUrl,
   getAdminProfileApi
 } from '../api/AdminApi';
+import { getDisplayName } from '../utils/nameUtils';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [greeting, setGreeting] = useState('');
   const [activeTab, setActiveTab] = useState('pending');
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchType, setSearchType] = useState('doctorId');
-  const [patientSearchType, setPatientSearchType] = useState('patientId');
-  
+  const [_SEARCH_TYPE] = useState('doctorId');
+  const [_PATIENT_SEARCH_TYPE] = useState('patientId');
+
   // Data states
   const [pendingDoctors, setPendingDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -33,8 +33,6 @@ export default function AdminDashboard() {
   // Document viewer states
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [currentDocumentUrl, setCurrentDocumentUrl] = useState('');
-  const [documentLoading, setDocumentLoading] = useState(false);
-  
   // Loading states
   const [loading, setLoading] = useState(false);
   const [pendingLoading, setPendingLoading] = useState(true);
@@ -127,24 +125,21 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleViewDocument = (documentUrl) => {
+  const handleViewDocument = async (documentUrl) => {
     if (!documentUrl) {
       toast.error('No verification document available');
       return;
     }
-    setCurrentDocumentUrl(buildAdminFileUrl(documentUrl));
+    setCurrentDocumentUrl(documentUrl);
     setShowDocumentModal(true);
   };
 
-  const handleDownloadDocument = (documentUrl) => {
+  const handleDownloadDocument = async (documentUrl) => {
     if (!documentUrl) {
       toast.error('No verification document available');
       return;
     }
-    
-    // Convert view URL to download URL
-    const downloadUrl = buildAdminFileUrl(documentUrl.replace('/uploads/', '/uploads/download/'));
-    window.open(downloadUrl, '_blank');
+    window.open(documentUrl, '_blank');
   };
 
   const handleApproveDoctor = async (userId) => {
@@ -337,8 +332,7 @@ export default function AdminDashboard() {
           <DoctorSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            searchType={searchType}
-            setSearchType={setSearchType}
+            searchType={_SEARCH_TYPE}
             onSearch={handleDoctorSearch}
             loading={loading}
           />
@@ -348,8 +342,7 @@ export default function AdminDashboard() {
           <PatientSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            searchType={patientSearchType}
-            setSearchType={setPatientSearchType}
+            searchType={_PATIENT_SEARCH_TYPE}
             onSearch={handlePatientSearch}
             loading={loading}
           />
@@ -542,7 +535,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument,
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-[#0F4F52]">
-                    {doctor.firstName} {doctor.lastName}
+                    {getDisplayName(doctor)}
                   </h3>
                   <p className="text-sm text-[#18AAB0] font-medium">{doctor.specialization || 'N/A'}</p>
                 </div>
@@ -614,7 +607,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, onViewDocument,
 }
 
 // Doctor Search Section
-function DoctorSearchSection({ searchQuery, setSearchQuery, searchType, setSearchType, onSearch, loading }) {
+function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Doctor</h2>
@@ -656,7 +649,7 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, searchType, setSearc
 }
 
 // Patient Search Section
-function PatientSearchSection({ searchQuery, setSearchQuery, searchType, setSearchType, onSearch, loading }) {
+function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Patient</h2>
@@ -733,7 +726,7 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus, onViewDocument })
         </div>
 
         <div className="space-y-4">
-          <DetailRow label="Name" value={doctor.fullName} />
+          <DetailRow label="Name" value={getDisplayName(doctor)} />
           <DetailRow label="Doctor ID" value={doctor.doctorId} />
           <DetailRow label="License Number" value={doctor.licenseNumber || 'N/A'} />
           <DetailRow label="NIC" value={doctor.nic || 'N/A'} />
@@ -854,6 +847,12 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
                 }`}
               >
                 {isEnabled ? 'Disable Account' : 'Activate Account'}
+              </button>
+              <button
+                onClick={onClose}
+                className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 border-2 border-gray-200 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+              >
+                ✕ Cancel
               </button>
             </div>
           </div>

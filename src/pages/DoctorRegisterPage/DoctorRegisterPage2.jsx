@@ -6,6 +6,7 @@ import FileUpload from "../../components/FileUpload";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerDoctorApi } from "../../api/authApi";
 import toast from "react-hot-toast";
+import { getNameParts } from "../../utils/nameUtils";
 
 export default function DoctorRegisterPage2() {
   const navigate = useNavigate();
@@ -80,11 +81,27 @@ export default function DoctorRegisterPage2() {
     const step1Data = JSON.parse(
       sessionStorage.getItem("doctorRegStep1") || "{}",
     );
+    const { fullName: _FULL_NAME, ...rest } = step1Data;
+    const nameParts = getNameParts(step1Data);
+    const payload = {
+      ...rest,
+      firstName: nameParts.firstName,
+      secondName: nameParts.secondName || undefined,
+      lastName: nameParts.lastName,
+    };
 
     const formData = new FormData();
+<<<<<<< HEAD
     Object.entries(step1Data).forEach(([key, value]) =>
       formData.append(key, value),
     );
+=======
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     formData.append("password", password);
     formData.append("verificationDoc", verificationDoc);
 
@@ -93,18 +110,19 @@ export default function DoctorRegisterPage2() {
 
       console.log("Doctor registered successfully. Redirecting to OTP page...");
 
-      // Get email from step1 data
       const userEmail = step1Data.email;
 
-      // Clean step1 data
       sessionStorage.removeItem("doctorRegStep1");
 
-      // Redirect to OTP page with email and userType
       navigate("/verify-otp", {
         replace: true,
         state: {
           email: userEmail,
+<<<<<<< HEAD
           userType: "doctor", // Add userType to differentiate
+=======
+          userType: "doctor",
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
         },
       });
     } catch (error) {
@@ -176,7 +194,6 @@ export default function DoctorRegisterPage2() {
           required
         />
 
-        {/* APPROVAL CONFIRMATION */}
         <div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -211,9 +228,7 @@ export default function DoctorRegisterPage2() {
             type="button"
             onClick={handleFinish}
             disabled={loading || !agreedToApproval}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold
-                       hover:bg-secondary/90 transition transform hover:scale-105
-                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {loading ? "Processing..." : "Finish"}
           </button>

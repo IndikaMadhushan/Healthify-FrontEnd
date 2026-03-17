@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getDisplayName, getInitial } from "../utils/nameUtils";
 
 export default function DoctorNavBar({ doctor }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function DoctorNavBar({ doctor }) {
     localStorage.removeItem("doctor_me_cache");
     navigate("/");
   };
+  const doctorDisplayName = getDisplayName(doctor);
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
@@ -48,18 +50,18 @@ export default function DoctorNavBar({ doctor }) {
               {doctor.photoUrl ? (
                 <img
                   src={doctor.photoUrl}
-                  alt={doctor.fullName}
+                  alt={doctorDisplayName}
                   className="w-10 h-10 rounded-full border object-cover"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-[#18AAB0] text-white flex items-center justify-center font-bold">
-                  {doctor.fullName?.charAt(0)}
+                  {getInitial(doctor)}
                 </div>
               )}
 
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-semibold text-gray-800">
-                  {doctor.fullName}
+                  {doctorDisplayName}
                 </p>
                 <p className="text-xs text-gray-600">
                   {doctor.email}

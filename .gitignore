@@ -17,8 +17,18 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+#Environment variables
+.env
+.env.production
+.env.development
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+#Environment variables
+.env
+.env.production
+.env.development

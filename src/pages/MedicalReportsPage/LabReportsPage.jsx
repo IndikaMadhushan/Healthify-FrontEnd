@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+<<<<<<< HEAD
 import {
   getMyLabContents,
   getPatientLabContents,
@@ -10,6 +11,11 @@ import {
   deleteLabFolder,
   deleteLabFile,
 } from "../../api/LabReportApi";
+=======
+import { getPatientProfileApi } from "../../api/PatientApi";
+import { uploadPatientReportApi } from "../../api/ReportsApi";
+import { getSignedUrlApi } from "../../api/FilesApi";
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const validateFile = (file) => {
@@ -27,8 +33,14 @@ const validateFile = (file) => {
   return { valid: true };
 };
 
+<<<<<<< HEAD
 const formatDate = (dateString) =>
   new Date(dateString).toLocaleDateString("en-US", {
+=======
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -98,6 +110,11 @@ export default function LabReportsPage() {
   const [titleText, setTitleText] = useState("");
   const [folderName, setFolderName] = useState("");
   const [viewing, setViewing] = useState(null);
+<<<<<<< HEAD
+=======
+  const [uploading, setUploading] = useState(false);
+  const [resolvedPatientId, setResolvedPatientId] = useState(null);
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
 
   const fileInputRef = useRef(null);
 
@@ -110,6 +127,7 @@ export default function LabReportsPage() {
           ? await getPatientLabContents(patientId, folderId)
           : await getMyLabContents(folderId);
 
+<<<<<<< HEAD
         const data = res.data;
         setFolders(data.folders || []);
         setFiles(data.files || []);
@@ -130,6 +148,34 @@ export default function LabReportsPage() {
   }, [currentFolder, loadContents]);
 
   // ── navigation ──────────────────────────────────────────────────────────────
+=======
+  useEffect(() => {
+    const loadPatientId = async () => {
+      const role = localStorage.getItem("role")?.toUpperCase();
+      if (role === "DOCTOR") {
+        const selectedPatientId = localStorage.getItem("selectedPatientId");
+        setResolvedPatientId(selectedPatientId || null);
+        return;
+      }
+
+      try {
+        const profileRes = await getPatientProfileApi();
+        setResolvedPatientId(profileRes.data?.id || null);
+      } catch (error) {
+        console.error("Failed to load patient profile", error);
+      }
+    };
+
+    loadPatientId();
+  }, []);
+
+  // Save items to localStorage
+  const saveItems = (newItems) => {
+    const storageKey = `medical_${userId}_${category}`;
+    localStorage.setItem(storageKey, JSON.stringify(newItems));
+    setItems(newItems);
+  };
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
   const handleBack = () => {
     if (currentFolder !== null) {
       setCurrentFolder(null);
@@ -165,14 +211,48 @@ export default function LabReportsPage() {
   // ── confirm upload ──────────────────────────────────────────────────────────
   const handleConfirmUpload = async () => {
     if (!pendingFile) return;
+<<<<<<< HEAD
+=======
+
+    if (!resolvedPatientId) {
+      toast.error("Patient not selected");
+      return;
+    }
+
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     setUploading(true);
     try {
+<<<<<<< HEAD
       await uploadLabFile(
         pendingFile,
         titleText.trim() || "Untitled",
         currentFolder,
       );
       toast.success("File uploaded");
+=======
+      const reportDate = new Date().toISOString().slice(0, 10);
+      const response = await uploadPatientReportApi(
+        resolvedPatientId,
+        "LAB_REPORT",
+        pendingFile,
+        reportDate
+      );
+
+      const newFile = {
+        id: response.data?.id || Date.now().toString(),
+        title: titleText.trim() || "Untitled",
+        name: pendingFile.name,
+        fileUrl: response.data?.fileUrl,
+        type: pendingFile.type,
+        uploadedAt: response.data?.uploadedAt || new Date().toISOString(),
+        folderId: currentFolder,
+        isFolder: false,
+      };
+
+      const updated = [newFile, ...items];
+      saveItems(updated);
+
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       setPendingFile(null);
       setTitleText("");
       setShowTitleModal(false);
@@ -209,6 +289,7 @@ export default function LabReportsPage() {
     }
   };
 
+<<<<<<< HEAD
   // ── delete ──────────────────────────────────────────────────────────────────
   const handleDeleteFolder = async (folderId) => {
     if (!confirm("Delete this folder and all its contents?")) return;
@@ -237,6 +318,29 @@ export default function LabReportsPage() {
   // ── download (open URL in new tab) ──────────────────────────────────────────
   const handleDownload = (file) => {
     window.open(file.fileUrl, "_blank");
+=======
+  const resolveFileUrl = async (file) => {
+    if (file.data) return file.data;
+    if (!file.fileUrl) return "";
+    return getSignedUrlApi("medical-files", file.fileUrl);
+  };
+
+  const handleDownload = (file) => {
+    resolveFileUrl(file)
+      .then((url) => {
+        if (!url) throw new Error("Missing file URL");
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => {
+        console.error("Failed to download file", error);
+        toast.error("Failed to download file");
+      });
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
   };
 
   // ── render ───────────────────────────────────────────────────────────────────
@@ -395,6 +499,7 @@ export default function LabReportsPage() {
             ))}
 
             {/* Files */}
+<<<<<<< HEAD
             {files.map((file) => {
               const isImage = file.fileType?.startsWith("image/");
               return (
@@ -405,6 +510,65 @@ export default function LabReportsPage() {
                   <button
                     onClick={() => setViewing(file)}
                     className="w-full block"
+=======
+            {currentFiles.map((file) => (
+              <div
+                key={file.id}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden"
+              >
+                <button
+                  onClick={async () => {
+                    const url = await resolveFileUrl(file);
+                    if (!url) {
+                      toast.error("File unavailable");
+                      return;
+                    }
+                    setViewing({ ...file, data: url });
+                  }}
+                  className="w-full block"
+                >
+                  <div className="h-40 bg-gray-50 flex items-center justify-center">
+                    {file.type.startsWith("image/") && file.data ? (
+                      <img
+                        src={file.data}
+                        alt={file.title}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-center p-4">
+                        <div className="text-5xl mb-2">📄</div>
+                        <p className="text-sm font-semibold text-gray-600">
+                          PDF Document
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4 border-t">
+                    <p className="font-bold text-lg truncate text-gray-800">
+                      {file.title}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1 truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      📅 {formatDate(file.uploadedAt)}
+                    </p>
+                  </div>
+                </button>
+
+                <div className="flex border-t p-3 gap-2">
+                  <button
+                    onClick={async () => {
+                      const url = await resolveFileUrl(file);
+                      if (!url) {
+                        toast.error("File unavailable");
+                        return;
+                      }
+                      setViewing({ ...file, data: url });
+                    }}
+                    className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
                   >
                     <div className="h-40 bg-gray-50 flex items-center justify-center">
                       {isImage ? (

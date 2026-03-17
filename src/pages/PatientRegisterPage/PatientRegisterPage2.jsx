@@ -5,6 +5,7 @@ import PasswordInput from "../../components/PasswordInput";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerPatientApi } from "../../api/authApi";
 import toast from "react-hot-toast";
+import { getNameParts } from "../../utils/nameUtils";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
@@ -84,17 +85,31 @@ export default function PatientRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
+<<<<<<< HEAD
       sessionStorage.getItem("patientRegStep1") || "{}",
     );
 
     const payload = {
       ...step1Data,
+=======
+      sessionStorage.getItem("patientRegStep1") || "{}"
+    );
+    const { fullName: _FULL_NAME, ...rest } = step1Data;
+    const nameParts = getNameParts(step1Data);
+
+    const payload = {
+      ...rest,
+      firstName: nameParts.firstName,
+      secondName: nameParts.secondName || undefined,
+      lastName: nameParts.lastName,
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       password: formData.password,
     };
 
     try {
       await registerPatientApi(payload);
 
+<<<<<<< HEAD
       console.log(
         "Patient registered successfully. Redirecting to OTP page...",
       );
@@ -106,6 +121,15 @@ export default function PatientRegisterPage2() {
       navigate("/verify-otp", {
         replace: true,
         state: { email: payload.email }, // ← ADD THIS LINE
+=======
+      console.log("Patient registered successfully. Redirecting to OTP page...");
+
+      sessionStorage.removeItem("patientRegStep1");
+
+      navigate("/verify-otp", {
+        replace: true,
+        state: { email: payload.email },
+>>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       });
     } catch (error) {
       const message = getApiErrorMessage(error, "Patient registration failed!");

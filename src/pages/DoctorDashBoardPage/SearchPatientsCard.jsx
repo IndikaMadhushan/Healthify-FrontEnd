@@ -82,6 +82,7 @@
 
 
 import { useState, useMemo } from "react";
+import { getDisplayName } from "../../utils/nameUtils";
 
 export default function SearchPatientsCard({ patients, onViewProfile }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -135,7 +136,7 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
             className="bg-gray-50 rounded-lg p-3 border border-gray-200"
           >
             <p className="font-semibold text-gray-900 text-sm">
-              {patient.fullName}
+              {getDisplayName(patient)}
             </p>
 
             <p className="text-xs text-gray-600">
