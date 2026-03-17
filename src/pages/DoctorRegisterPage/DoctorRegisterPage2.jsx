@@ -91,17 +91,11 @@ export default function DoctorRegisterPage2() {
     };
 
     const formData = new FormData();
-<<<<<<< HEAD
-    Object.entries(step1Data).forEach(([key, value]) =>
-      formData.append(key, value),
-    );
-=======
     Object.entries(payload).forEach(([key, value]) => {
       if (value !== undefined) {
         formData.append(key, value);
       }
     });
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     formData.append("password", password);
     formData.append("verificationDoc", verificationDoc);
 
@@ -118,11 +112,7 @@ export default function DoctorRegisterPage2() {
         replace: true,
         state: {
           email: userEmail,
-<<<<<<< HEAD
-          userType: "doctor", // Add userType to differentiate
-=======
           userType: "doctor",
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
         },
       });
     } catch (error) {

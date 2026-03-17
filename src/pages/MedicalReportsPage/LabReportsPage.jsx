@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-<<<<<<< HEAD
 import {
   getMyLabContents,
   getPatientLabContents,
@@ -11,11 +10,9 @@ import {
   deleteLabFolder,
   deleteLabFile,
 } from "../../api/LabReportApi";
-=======
 import { getPatientProfileApi } from "../../api/PatientApi";
 import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const validateFile = (file) => {
@@ -33,20 +30,16 @@ const validateFile = (file) => {
   return { valid: true };
 };
 
-<<<<<<< HEAD
-const formatDate = (dateString) =>
-  new Date(dateString).toLocaleDateString("en-US", {
-=======
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", {
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   });
+};
 
 // ── File viewer modal ─────────────────────────────────────────────────────────
 function FileViewerModal({ file, onClose }) {
@@ -90,7 +83,7 @@ function FileViewerModal({ file, onClose }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function LabReportsPage() {
   const navigate = useNavigate();
-  const { patientId } = useParams(); // present when doctor views a patient
+  const { patientId } = useParams();
 
   const role = localStorage.getItem("role")?.toUpperCase();
   const isDoctor = role === "DOCTOR";
@@ -99,7 +92,7 @@ export default function LabReportsPage() {
   const [files, setFiles] = useState([]);
   const [totalFiles, setTotalFiles] = useState(0);
   const [totalFolders, setTotalFolders] = useState(0);
-  const [currentFolder, setCurrentFolder] = useState(null); // null = root
+  const [currentFolder, setCurrentFolder] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -110,11 +103,7 @@ export default function LabReportsPage() {
   const [titleText, setTitleText] = useState("");
   const [folderName, setFolderName] = useState("");
   const [viewing, setViewing] = useState(null);
-<<<<<<< HEAD
-=======
-  const [uploading, setUploading] = useState(false);
   const [resolvedPatientId, setResolvedPatientId] = useState(null);
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
 
   const fileInputRef = useRef(null);
 
@@ -127,7 +116,6 @@ export default function LabReportsPage() {
           ? await getPatientLabContents(patientId, folderId)
           : await getMyLabContents(folderId);
 
-<<<<<<< HEAD
         const data = res.data;
         setFolders(data.folders || []);
         setFiles(data.files || []);
@@ -148,7 +136,6 @@ export default function LabReportsPage() {
   }, [currentFolder, loadContents]);
 
   // ── navigation ──────────────────────────────────────────────────────────────
-=======
   useEffect(() => {
     const loadPatientId = async () => {
       const role = localStorage.getItem("role")?.toUpperCase();
@@ -175,7 +162,7 @@ export default function LabReportsPage() {
     localStorage.setItem(storageKey, JSON.stringify(newItems));
     setItems(newItems);
   };
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
+
   const handleBack = () => {
     if (currentFolder !== null) {
       setCurrentFolder(null);
@@ -211,31 +198,27 @@ export default function LabReportsPage() {
   // ── confirm upload ──────────────────────────────────────────────────────────
   const handleConfirmUpload = async () => {
     if (!pendingFile) return;
-<<<<<<< HEAD
-=======
 
     if (!resolvedPatientId) {
       toast.error("Patient not selected");
       return;
     }
 
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
     setUploading(true);
     try {
-<<<<<<< HEAD
       await uploadLabFile(
         pendingFile,
         titleText.trim() || "Untitled",
         currentFolder,
       );
       toast.success("File uploaded");
-=======
+
       const reportDate = new Date().toISOString().slice(0, 10);
       const response = await uploadPatientReportApi(
         resolvedPatientId,
         "LAB_REPORT",
         pendingFile,
-        reportDate
+        reportDate,
       );
 
       const newFile = {
@@ -252,7 +235,6 @@ export default function LabReportsPage() {
       const updated = [newFile, ...items];
       saveItems(updated);
 
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       setPendingFile(null);
       setTitleText("");
       setShowTitleModal(false);
@@ -289,7 +271,6 @@ export default function LabReportsPage() {
     }
   };
 
-<<<<<<< HEAD
   // ── delete ──────────────────────────────────────────────────────────────────
   const handleDeleteFolder = async (folderId) => {
     if (!confirm("Delete this folder and all its contents?")) return;
@@ -315,10 +296,6 @@ export default function LabReportsPage() {
     }
   };
 
-  // ── download (open URL in new tab) ──────────────────────────────────────────
-  const handleDownload = (file) => {
-    window.open(file.fileUrl, "_blank");
-=======
   const resolveFileUrl = async (file) => {
     if (file.data) return file.data;
     if (!file.fileUrl) return "";
@@ -340,14 +317,12 @@ export default function LabReportsPage() {
         console.error("Failed to download file", error);
         toast.error("Failed to download file");
       });
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
   };
 
   // ── render ───────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Back */}
         <button
           onClick={handleBack}
           className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition flex items-center gap-2"
@@ -355,7 +330,6 @@ export default function LabReportsPage() {
           <span>←</span> Back
         </button>
 
-        {/* Header card */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-gray-900">Lab Reports</h1>
@@ -370,7 +344,6 @@ export default function LabReportsPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Action buttons — hidden for doctor (read-only) */}
             {!isDoctor && (
               <div className="flex gap-3 flex-wrap">
                 <button
@@ -395,7 +368,6 @@ export default function LabReportsPage() {
               </div>
             )}
 
-            {/* Totals */}
             <div className="flex gap-4">
               <div className="text-right bg-gray-50 px-6 py-3 rounded-lg">
                 <p className="text-sm text-gray-600 font-medium">Total Files</p>
@@ -421,7 +393,6 @@ export default function LabReportsPage() {
           )}
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="text-center py-20">
             <div className="text-4xl mb-3 animate-pulse">📂</div>
@@ -429,7 +400,6 @@ export default function LabReportsPage() {
           </div>
         )}
 
-        {/* Empty */}
         {!loading && folders.length === 0 && files.length === 0 && (
           <div className="text-center py-20 bg-white rounded-xl shadow">
             <div className="text-6xl mb-4">📂</div>
@@ -446,10 +416,8 @@ export default function LabReportsPage() {
           </div>
         )}
 
-        {/* Grid */}
         {!loading && (folders.length > 0 || files.length > 0) && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Folders */}
             {folders.map((folder) => (
               <div
                 key={folder.id}
@@ -498,20 +466,7 @@ export default function LabReportsPage() {
               </div>
             ))}
 
-            {/* Files */}
-<<<<<<< HEAD
-            {files.map((file) => {
-              const isImage = file.fileType?.startsWith("image/");
-              return (
-                <div
-                  key={file.id}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden"
-                >
-                  <button
-                    onClick={() => setViewing(file)}
-                    className="w-full block"
-=======
-            {currentFiles.map((file) => (
+            {files.map((file) => (
               <div
                 key={file.id}
                 className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden"
@@ -528,7 +483,7 @@ export default function LabReportsPage() {
                   className="w-full block"
                 >
                   <div className="h-40 bg-gray-50 flex items-center justify-center">
-                    {file.type.startsWith("image/") && file.data ? (
+                    {file.type?.startsWith("image/") && file.data ? (
                       <img
                         src={file.data}
                         alt={file.title}
@@ -549,7 +504,7 @@ export default function LabReportsPage() {
                       {file.title}
                     </p>
                     <p className="text-xs text-gray-500 mt-1 truncate">
-                      {file.name}
+                      {file.name || file.originalName}
                     </p>
                     <p className="text-xs text-gray-400 mt-2">
                       📅 {formatDate(file.uploadedAt)}
@@ -568,66 +523,30 @@ export default function LabReportsPage() {
                       setViewing({ ...file, data: url });
                     }}
                     className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
                   >
-                    <div className="h-40 bg-gray-50 flex items-center justify-center">
-                      {isImage ? (
-                        <img
-                          src={file.fileUrl}
-                          alt={file.title}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-center p-4">
-                          <div className="text-5xl mb-2">📄</div>
-                          <p className="text-sm font-semibold text-gray-600">
-                            PDF Document
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4 border-t">
-                      <p className="font-bold text-lg truncate text-gray-800">
-                        {file.title}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1 truncate">
-                        {file.originalName}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-2">
-                        📅 {formatDate(file.uploadedAt)}
-                      </p>
-                    </div>
+                    View
                   </button>
-                  <div className="flex border-t p-3 gap-2">
+                  <button
+                    onClick={() => handleDownload(file)}
+                    className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
+                  >
+                    Download
+                  </button>
+                  {!isDoctor && (
                     <button
-                      onClick={() => setViewing(file)}
-                      className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
+                      onClick={() => handleDeleteFile(file.id)}
+                      className="px-3 text-sm py-2 text-red-600 bg-red-50 font-medium rounded-lg hover:bg-red-100 transition"
                     >
-                      View
+                      Delete
                     </button>
-                    <button
-                      onClick={() => handleDownload(file)}
-                      className="flex-1 text-sm py-2 bg-gray-50 font-medium rounded-lg hover:bg-gray-100 transition"
-                    >
-                      Download
-                    </button>
-                    {!isDoctor && (
-                      <button
-                        onClick={() => handleDeleteFile(file.id)}
-                        className="px-3 text-sm py-2 text-red-600 bg-red-50 font-medium rounded-lg hover:bg-red-100 transition"
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Title Modal */}
       {showTitleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">
@@ -666,7 +585,6 @@ export default function LabReportsPage() {
         </div>
       )}
 
-      {/* Folder Modal */}
       {showFolderModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">
