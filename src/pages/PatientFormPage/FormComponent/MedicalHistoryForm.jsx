@@ -28,6 +28,7 @@ export default function PatientMedicalForm({
   initialData,
   onSubmit,
   isSaving = false,
+  readOnly = false,
 }) {
   const [patientChronic, setPatientChronic] = useState(initialChronic);
   const [vaccineData, setVaccineData] = useState(vaccineInitial);
@@ -210,6 +211,7 @@ export default function PatientMedicalForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (readOnly) return;
 
     const payload = validateForm();
     if (!payload) return;
@@ -231,6 +233,7 @@ export default function PatientMedicalForm({
   };
 
   const handleNextClick = () => {
+    if (readOnly) return;
     const payload = validateForm();
     if (!payload) return;
     onNext();
@@ -243,6 +246,8 @@ export default function PatientMedicalForm({
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
       <h2 className={sectionHeading}>Medical Information</h2>
+
+      <fieldset disabled={readOnly} className="space-y-6">
 
       <ChronicIllnessesSection
         value={patientChronic}
@@ -290,8 +295,9 @@ export default function PatientMedicalForm({
           ))}
         </div>
       </div>
+      </fieldset>
 
-      {showButton ? (
+      {readOnly ? null : showButton ? (
         <div className="mt-2 flex justify-end">
           <button
             type="button"
