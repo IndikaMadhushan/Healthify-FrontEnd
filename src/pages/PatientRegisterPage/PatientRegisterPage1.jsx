@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import RegistrationLayout from "../../components/RegistrationLayout";
@@ -9,24 +9,6 @@ import pRegImage1 from "../../assets/p-reg-image1.png";
 export default function PatientRegisterPage1() {
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const [formData, setFormData] = useState(() => {
-    const savedData = sessionStorage.getItem("patientRegStep1");
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          fullName: "",
-          dateOfBirth: "",
-          gender: "",
-          nic: "",
-          email: "",
-          phone: "",
-        };
-=======
   const [formData, setFormData] = useState({
     firstName: "",
     secondName: "",
@@ -36,7 +18,6 @@ export default function PatientRegisterPage1() {
     nic: "",
     email: "",
     phone: "",
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
   });
 
   const [errors, setErrors] = useState({});

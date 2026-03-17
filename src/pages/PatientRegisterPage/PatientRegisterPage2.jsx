@@ -85,14 +85,7 @@ export default function PatientRegisterPage2() {
     setLoading(true);
 
     const step1Data = JSON.parse(
-<<<<<<< HEAD
       sessionStorage.getItem("patientRegStep1") || "{}",
-    );
-
-    const payload = {
-      ...step1Data,
-=======
-      sessionStorage.getItem("patientRegStep1") || "{}"
     );
     const { fullName: _FULL_NAME, ...rest } = step1Data;
     const nameParts = getNameParts(step1Data);
@@ -102,34 +95,21 @@ export default function PatientRegisterPage2() {
       firstName: nameParts.firstName,
       secondName: nameParts.secondName || undefined,
       lastName: nameParts.lastName,
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       password: formData.password,
     };
 
     try {
       await registerPatientApi(payload);
 
-<<<<<<< HEAD
       console.log(
         "Patient registered successfully. Redirecting to OTP page...",
       );
-
-      // Clean step1 data
-      sessionStorage.removeItem("patientRegStep1");
-
-      // Redirect to OTP page with email in navigation state
-      navigate("/verify-otp", {
-        replace: true,
-        state: { email: payload.email }, // ← ADD THIS LINE
-=======
-      console.log("Patient registered successfully. Redirecting to OTP page...");
 
       sessionStorage.removeItem("patientRegStep1");
 
       navigate("/verify-otp", {
         replace: true,
         state: { email: payload.email },
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
       });
     } catch (error) {
       const message = getApiErrorMessage(error, "Patient registration failed!");

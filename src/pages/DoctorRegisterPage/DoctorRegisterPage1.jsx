@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
@@ -8,26 +8,6 @@ import dRegImage1 from "../../assets/d-reg-image1.png";
 export default function DoctorRegisterPage1() {
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const [formData, setFormData] = useState(() => {
-    const savedData = sessionStorage.getItem("doctorRegStep1");
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          fullName: "",
-          gender: "",
-          email: "",
-          nic: "",
-          dateOfBirth: "",
-          specialization: "",
-          hospital: "",
-          licenseNumber: "",
-        };
-=======
   const [formData, setFormData] = useState({
     firstName: "",
     secondName: "",
@@ -39,7 +19,6 @@ export default function DoctorRegisterPage1() {
     specialization: "",
     hospital: "",
     licenseNumber: "",
->>>>>>> ef6ddb898e99941eb8ad02b1a743c3b9d4e493b1
   });
 
   const [errors, setErrors] = useState({});
@@ -67,7 +46,8 @@ export default function DoctorRegisterPage1() {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
