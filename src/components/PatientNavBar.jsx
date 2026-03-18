@@ -5,6 +5,7 @@ import { confirmLogout } from "../utils/logoutConfirmation";
 
 export function PatinetNavBar({
   patientData,
+  onProfileImageError,
   // onLogout,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -45,6 +46,7 @@ export function PatinetNavBar({
               <img
                 src={photoUrl || "/profilePic.png"}
                 alt={fullName}
+                onError={onProfileImageError}
                 className="w-10 h-10 rounded-full object-cover"
               />
 
