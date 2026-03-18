@@ -157,7 +157,8 @@ export default function BookTemplate({ data }) {
       background: "#FFF",
       padding: 10,
       borderRadius: 8,
-      marginBottom: 10
+      marginBottom: 10,
+      fontSize: 12
     }}>
       {(data?.clinicExaming || data?.consultExaming) && (
         <p><b>Examine:</b> {data.clinicExaming || data.consultExaming}</p>

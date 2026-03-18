@@ -12,6 +12,9 @@ export default function ClinicBookFlip({ book, onClose }) {
 
   const bookRef = useRef(null);
   const [pages, setPages] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  
 
   // ✅ MOVE HERE
   useEffect(() => {
@@ -45,29 +48,33 @@ export default function ClinicBookFlip({ book, onClose }) {
                 bg-black/40 backdrop-blur-md">
 
       <button onClick={handleClose}
-        className="absolute top-6 right-6 bg-white p-3 rounded-full">
+        className="absolute top-6 right-6 bg-white p-3 rounded-full hover:bg-red">
         <FaTimes />
       </button>
 
       <button onClick={flipPrev}
-        className="absolute left-6 top-1/2 -translate-y-1/2
-                   bg-white p-4 rounded-full">
+        className="absolute left-6 bottom-1/32 -translate-y-1/2
+                   bg-white p-4 rounded-full hover:bg-secondary/50">
         <FaArrowLeft />
       </button>
 
       <button onClick={flipNext}
-        className="absolute right-6 top-1/2 -translate-y-1/2
-                   bg-white p-4 rounded-full">
+        className="absolute right-6 bottom-1/32 -translate-y-1/2
+                   bg-white p-4 rounded-full hover:bg-secondary/50">
         <FaArrowRight />
       </button>
 
-      <HTMLFlipBook
-        ref={bookRef}
-        width={420}
-        height={600}
-        showCover
-        className="shadow-2xl"
-      >
+      <div className="flex justify-center items-center w-full h-full">
+
+  <div className="scale-[0.65] sm:scale-[0.85] md:scale-[1] origin-center transition-all">
+
+    <HTMLFlipBook
+      ref={bookRef}
+      width={520}
+      height={700}
+      showCover
+      className="shadow-2xl"
+    >
 
         {/* COVER */}
         <div className="bg-gradient-to-br from-[#18AAB0] to-[#86C443]
@@ -101,7 +108,11 @@ export default function ClinicBookFlip({ book, onClose }) {
           </div>
         ))}
 
-      </HTMLFlipBook>
-    </div>
+          </HTMLFlipBook>
+
+  </div>
+
+</div>
+</div>
   );
 }
