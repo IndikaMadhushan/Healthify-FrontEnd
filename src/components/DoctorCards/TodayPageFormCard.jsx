@@ -79,12 +79,12 @@ export function TodayPageFormCard({ formData, onChange, errors = {} }) {
 
         <input
           type="text"
-          value={formData.reasonForVisit || ""}
-          onChange={(e) => onChange("reasonForVisit", e.target.value)}
+          value={formData.subReason || ""}
+          onChange={(e) => onChange("subReason", e.target.value)}
           placeholder="Why is the patient visiting today?"
           className={
             inputBase +
-            (errors.reasonForVisit ? " border-red-500" : " border-gray-300")
+            (errors.subReason ? " border-red-500" : " border-gray-300")
           }
         />
 

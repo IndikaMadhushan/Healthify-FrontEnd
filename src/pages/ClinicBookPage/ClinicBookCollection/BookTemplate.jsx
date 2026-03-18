@@ -1,14 +1,15 @@
 
 import { useRef } from "react";
 import html2pdf from "html2pdf.js";
-import PrescriptionQR from "./PrescriptionQR";
+import PrescriptionQR from "../../Prescriptions/PrescriptionQR";
 
-export default function PrescriptionTemplate({ data }) {
+export default function BookTemplate({ data }) {
 
   const vitals = data?.healthMetricRequestSetDTO?.metrics;
 
   // ✅ NEW: ref for PDF
   const pdfRef = useRef();
+  
 
   // ✅ NEW: auto download function
   const downloadPDF = () => {
@@ -38,23 +39,7 @@ export default function PrescriptionTemplate({ data }) {
     }}
   >
 
-    {/* DOWNLOAD BUTTON */}
-    <button
-      onClick={downloadPDF}
-      style={{
-        position: "absolute",
-        top: 1,
-        right: 10,
-        padding: "6px 15px",
-        fontSize: 11,
-        background: "#18AAB0",
-        color: "#fff",
-        borderRadius: 6,
-        border: "none"
-      }}
-    >
-      Download
-    </button>
+    
 
     {/* HEADER */}
     <div style={{
@@ -65,12 +50,9 @@ export default function PrescriptionTemplate({ data }) {
       paddingBottom: 10,
       marginBottom: 10
     }}>
-      <div>
-        <img src="/logo.png" alt="logo" style={{ height: 80 }} />
-        <p style={{ fontSize: 12, color: "#4c4b4b" }}>Digital Prescription</p>
-      </div>
+      
 
-      <div style={{ textAlign: "right", fontSize: 12 }}>
+      <div style={{ textAlign: "left", fontSize: 10 }}>
         <p><b>Date:</b> {data.pagecreatedDate}</p>
         <p><b>Time:</b> {data.pagecreatedTime}</p>
       </div>
@@ -84,29 +66,27 @@ export default function PrescriptionTemplate({ data }) {
       padding: 10,
       borderRadius: 8,
       marginBottom: 10,
-      fontSize: 16
+      fontSize: 12
     }}>
       <div>
         <p><b>Doctor:</b> Dr.{data.createdDoctor}</p>
         <p><b>SLMC:</b> {data.slmc}</p>
       </div>
 
-      <div>
-        <p><b>Patient:</b> {data.patientName}</p>
-        <p><b>Age:</b> {data.patientAge}</p>
-        <p><b>Gender:</b> {data.patientGender}</p>
-      </div>
+      
+      <div style={{
+      marginBottom: 10,
+      padding: 5,
+      background: "#FFF",
+      borderLeft: "4px solid #18AAB0",
+      fontSize: 13
+     }}>
+            <p><b>Reason:</b> {data.consultReason || data.subReason}</p>
     </div>
 
-    {/* REASON */}
-    <div style={{
-      marginBottom: 10,
-      padding: 10,
-      background: "#FFF",
-      borderLeft: "4px solid #18AAB0"
-    }}>
-      <p><b>Reason:</b> {data.consultReason || data.subReason}</p>
     </div>
+
+    
 
     {/* VITALS */}
     <div style={{
@@ -117,7 +97,7 @@ export default function PrescriptionTemplate({ data }) {
       padding: 10,
       borderRadius: 8,
       marginBottom: 10,
-      fontSize: 14
+      fontSize: 12
     }}>
       {vitals?.BLOOD_PRESSURE_SYSTOLIC !== undefined && (
         <p><b>BP:</b> {vitals.BLOOD_PRESSURE_SYSTOLIC}/{vitals.BLOOD_PRESSURE_DIASTOLIC}</p>
@@ -177,7 +157,8 @@ export default function PrescriptionTemplate({ data }) {
       background: "#FFF",
       padding: 10,
       borderRadius: 8,
-      marginBottom: 10
+      marginBottom: 10,
+      fontSize: 12
     }}>
       {(data?.clinicExaming || data?.consultExaming) && (
         <p><b>Examine:</b> {data.clinicExaming || data.consultExaming}</p>
@@ -190,19 +171,7 @@ export default function PrescriptionTemplate({ data }) {
       )}
     </div>
 
-    {/* FOOTER */}
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginTop: 20
-    }}>
-      <p style={{ fontSize: 10, color: "#615b5b" }}>
-        This is a digitally issued prescription.
-      </p>
-
-      <PrescriptionQR prescription={data} />
-    </div>
+   
 
   </div>
 );

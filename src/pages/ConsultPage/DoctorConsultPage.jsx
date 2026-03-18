@@ -157,7 +157,7 @@ export default function DoctorConsultPage() {
     }
 
     showConfirm(
-      "Are you sure you want to save this consultation?",
+      "Are you sure you want to save this consultation? You can not Update/Delete Later ",
       async () => {
         try {
           setIsCompleting(true);

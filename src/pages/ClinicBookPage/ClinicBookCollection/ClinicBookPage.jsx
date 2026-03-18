@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 // import PatientNavBar  from "../../../components/PatientNavBar";
 import MyClinicBooks from "./MyClinicBooks";
-
+import { useEffect, useState } from "react";
 
 export default  function ClinicBookPage() {
   const navigate = useNavigate();
+  const [selectedBook, setSelectedBook] = useState(null);
   const rawRole = localStorage.getItem("role");
   const role = rawRole?.toUpperCase();
   const handleBackToDashboard = () => {
@@ -20,7 +21,7 @@ export default  function ClinicBookPage() {
   return (
 <>
     {/* <PatientNavBar/> */}
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 ">
         
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
