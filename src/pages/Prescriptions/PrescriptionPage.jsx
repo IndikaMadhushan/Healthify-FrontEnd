@@ -63,7 +63,7 @@ function PrescriptionPage() {
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
         >
           <ArrowLeft size={18} />
-          Back
+          Back to Dashboard
         </button>
 
         {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -81,7 +81,7 @@ function PrescriptionPage() {
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
               💊
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-primary drop-shadow-sm">
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary drop-shadow-sm">
               Patient Prescriptions
             </h1>
           </div>

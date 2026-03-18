@@ -38,7 +38,7 @@ export default function DoctorNotePage() {
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
               📝
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-primary drop-shadow-sm">
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary drop-shadow-sm">
               Doctor Notes
             </h1>
           </div>
