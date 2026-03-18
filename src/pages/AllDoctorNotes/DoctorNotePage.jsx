@@ -20,7 +20,7 @@ export default function DoctorNotePage() {
   return (
 <>
     <PatinetNavBar/>
-    <div className="min-h-screen bg-white md:p-6">
+    <div className="min-h-screen p-4 md:p-6 bg-gray-50">
         
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
