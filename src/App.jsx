@@ -27,7 +27,9 @@ import PrescriptionList from "./pages/Prescriptions/PrescriptionList";
 import SurgeryHistory from "./pages/SurgeryFolder/SurgeryHistory";
 import SurgeryCardFolder from "./pages/SurgeryFolder/SurgeryCardFolder";
 
+//Quick Links
 import AboutUs from "./pages/QuickLinks/AboutUs";
+import ContactUs from "./pages/QuickLinks/ContactUs";
 import FrequentlyAskedQuestions from "./pages/QuickLinks/FrequentlyAskedQuestions";
 import PrivacyPolicy from "./pages/QuickLinks/PrivacyPolicy";
 import TermsAndConditions from "./pages/QuickLinks/TermsAndConditions";
@@ -160,6 +162,7 @@ function App() {
           {/* <Route path="/patient-dashboard" element={<Dashboard />} /> */}
           {/* Quick Links */}
           <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/contactUs" element={<ContactUs />} />
           <Route path="/faq" element={<FrequentlyAskedQuestions />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
           <Route path="/termsandConditions" element={<TermsAndConditions />} />
@@ -167,7 +170,7 @@ function App() {
           <Route path="/doctor" element={<DoctorLayout />}>
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<DoctorDashBoardPage />} />
-            <Route path="doctor-profile" element={<DoctorProfile/>} />
+            <Route path="doctor-profile" element={<DoctorProfile />} />
             <Route path=":patientId/consult" element={<DoctorConsultPage />} />
             {/* <Route path="profile" element={<DoctorProfile />} /> */}
             <Route
@@ -175,7 +178,10 @@ function App() {
               element={<PatientFormDoctorView />}
             />
 
-            <Route path=":patientId/profile" element={<DoctorPatientProfile />} />
+            <Route
+              path=":patientId/profile"
+              element={<DoctorPatientProfile />}
+            />
             <Route
               path=":patientId/medical-reports"
               element={<MedicalReportsPage />}
