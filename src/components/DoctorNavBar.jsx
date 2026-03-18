@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getDisplayName, getInitial } from "../utils/nameUtils";
 import { MdDashboard } from "react-icons/md";
 import { FaUserDoctor } from "react-icons/fa6";
+import { confirmLogout } from "../utils/logoutConfirmation";
 
 export default function DoctorNavBar({ doctor }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -33,6 +34,9 @@ export default function DoctorNavBar({ doctor }) {
   };
 
   const handleLogout = () => {
+    if (!confirmLogout()) {
+      return;
+    }
     setDropdownOpen(false);
     localStorage.removeItem("token");
     localStorage.removeItem("doctor_me_cache");

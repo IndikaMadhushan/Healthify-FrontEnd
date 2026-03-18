@@ -441,6 +441,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDisplayName, getInitial } from "../utils/nameUtils";
+import { confirmLogout } from "../utils/logoutConfirmation";
 
 export default function DoctorNavBar({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -480,6 +481,9 @@ export default function DoctorNavBar({ doctor, patient }) {
   };
 
   const handleLogout = () => {
+    if (!confirmLogout()) {
+      return;
+    }
     setDropdownOpen(false);
     localStorage.clear();
     sessionStorage.clear();
