@@ -17,6 +17,7 @@ import {
   rejectSiteReviewApi,
 } from "../api/SiteReviewApi";
 import { getDisplayName } from '../utils/nameUtils';
+import { confirmLogout } from '../utils/logoutConfirmation';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -255,7 +256,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    if (confirm('Are you sure you want to logout?')) {
+    if (confirmLogout()) {
       console.log('Admin logged out');
       navigate('/login', { replace: true });
     }
