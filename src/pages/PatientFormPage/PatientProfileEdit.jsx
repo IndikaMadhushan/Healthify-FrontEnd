@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import BasicInfoForm from "./FormComponent/basicInfoForm";
 import EmergencyContactForm from "./FormComponent/Emergency";
 import { updatePatientProfileApi } from "../../api/PatientApi";
@@ -8,6 +8,7 @@ import { normalizeEmail } from "../../utils/patientProfileValidation";
 export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
   const basicRef = useRef();
   const emergencyRef = useRef();
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleUpdate = async () => {
     const basicValid = basicRef.current.validate();
@@ -77,14 +78,16 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
     };
 
     try {
-      await updatePatientProfileApi(patient.id, payload);
-      localStorage.removeItem("patient_me_cache");
+      setIsSaving(true);
+      const res = await updatePatientProfileApi(patient.id, payload);
       toast.success("Profile updated successfully");
-      onUpdated();
+      await onUpdated?.(res.data);
       onClose();
     } catch (err) {
       console.error("Profile update failed", err);
       toast.error("Failed to update profile");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -116,9 +119,10 @@ export default function PatientProfileEdit({ patient, onClose, onUpdated }) {
 
           <button
             onClick={handleUpdate}
+            disabled={isSaving}
             className="px-5 py-2 rounded-lg bg-[#18AAB0] text-white"
           >
-            Update Profile
+            {isSaving ? "Updating..." : "Update Profile"}
           </button>
         </div>
       </div>

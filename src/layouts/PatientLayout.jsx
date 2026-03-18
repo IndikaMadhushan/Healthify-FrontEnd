@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import AddReviewModal from "../components/AddReview";
 import { PatinetNavBar } from "../components/PatientNavBar";
-import { getPatientProfileApi } from "../api/PatientApi";
+import {
+  getCachedPatientProfile,
+  getPatientProfileApi,
+  PATIENT_PROFILE_UPDATED,
+} from "../api/PatientApi";
 import { getSiteReviewEligibility } from "../api/SiteReviewApi";
 
 export default function PatientLayout() {
-  const [patient, setPatient] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [patient, setPatient] = useState(() => getCachedPatientProfile());
+  const [loading, setLoading] = useState(() => !getCachedPatientProfile());
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
   const [reviewEligibilityChecked, setReviewEligibilityChecked] = useState(false);
 
@@ -23,7 +27,31 @@ export default function PatientLayout() {
       }
     };
 
-    loadPatient();
+    void loadPatient();
+  }, []);
+
+  useEffect(() => {
+    const handlePatientProfileUpdated = (event) => {
+      if (event.detail) {
+        setPatient(event.detail);
+        setLoading(false);
+        return;
+      }
+
+      const cachedPatient = getCachedPatientProfile();
+      if (cachedPatient) {
+        setPatient(cachedPatient);
+        setLoading(false);
+      }
+    };
+
+    window.addEventListener(PATIENT_PROFILE_UPDATED, handlePatientProfileUpdated);
+    return () => {
+      window.removeEventListener(
+        PATIENT_PROFILE_UPDATED,
+        handlePatientProfileUpdated,
+      );
+    };
   }, []);
 
   useEffect(() => {

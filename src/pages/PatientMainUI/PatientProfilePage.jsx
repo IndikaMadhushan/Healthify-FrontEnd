@@ -1,7 +1,12 @@
 import ProfileImageCropper from "../../components/profileImageCropper";
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PatientProfileEdit from "../PatientFormPage/PatientProfileEdit";
-import { getPatientProfileApi, uploadPatientProfileImageApi } from "../../api/PatientApi";
+import {
+  getCachedPatientProfile,
+  getPatientProfileApi,
+  PATIENT_PROFILE_UPDATED,
+  uploadPatientProfileImageApi,
+} from "../../api/PatientApi";
 import toast from "react-hot-toast";
 import { getDisplayName } from "../../utils/nameUtils";
 import { FaUser } from "react-icons/fa";
@@ -41,22 +46,47 @@ function parsePatientName(patient) {
 
 export default function MyProfile() {
   const [openEdit, setOpenEdit] = useState(false);
-  const [patient, setPatient] = useState(null);
+  const [patient, setPatient] = useState(() => getCachedPatientProfile());
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const refreshPatientProfile = useCallback(async (force = false) => {
+    const res = await getPatientProfileApi({ force });
+    setPatient(res.data);
+    return res.data;
+  }, []);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
-
-
-        const res = await getPatientProfileApi();
-        console.log(res.data);
-        setPatient(res.data);
+        await refreshPatientProfile(!getCachedPatientProfile());
       } catch (err) {
         console.error("Failed to load patient profile", err);
       }
     };
 
-    loadProfile();
+    void loadProfile();
+  }, [refreshPatientProfile]);
+
+  useEffect(() => {
+    const handlePatientProfileUpdated = (event) => {
+      if (event.detail) {
+        setPatient(event.detail);
+        return;
+      }
+
+      const cachedPatient = getCachedPatientProfile();
+      if (cachedPatient) {
+        setPatient(cachedPatient);
+      }
+    };
+
+    window.addEventListener(PATIENT_PROFILE_UPDATED, handlePatientProfileUpdated);
+    return () => {
+      window.removeEventListener(
+        PATIENT_PROFILE_UPDATED,
+        handlePatientProfileUpdated,
+      );
+    };
   }, []);
 
   if (!patient) {
@@ -69,6 +99,36 @@ export default function MyProfile() {
 
   const patientName = parsePatientName(patient);
   const patientDisplayName = getDisplayName(patient);
+
+  const handlePatientImageCropped = async (file) => {
+    try {
+      setIsUploadingImage(true);
+      await uploadPatientProfileImageApi(patient.id, file);
+
+      const cachedPatient = getCachedPatientProfile();
+      if (cachedPatient) {
+        setPatient(cachedPatient);
+      } else {
+        await refreshPatientProfile(true);
+      }
+
+      toast.success("Profile photo updated");
+    } catch (err) {
+      console.error("Image upload failed", err);
+      toast.error("Failed to upload image");
+
+      try {
+        await refreshPatientProfile(true);
+      } catch (refreshError) {
+        console.error(
+          "Failed to reload patient profile after image upload error",
+          refreshError,
+        );
+      }
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   return (
     <div className="min-h-screen px-4">
@@ -102,25 +162,9 @@ export default function MyProfile() {
             <div className="relative flex items-center justify-center">
               <div className="relative z-10">
                 <ProfileImageCropper
-
-
-
                   imageUrl={patient.photoUrl}
                   fallbackIcon={<FaUser className="text-4xl text-[#7AA7A3]" />}
-                  onCropped={async (file) => {
-                    try {
-                      await uploadPatientProfileImageApi(patient.id, file);
-
-                      // invalidate cached /me
-                      localStorage.removeItem("patient_me_cache");
-
-                      //  reload profile
-                      window.location.reload();
-                    } catch (err) {
-                      console.error("Image upload failed", err);
-                      toast.error("Failed to upload image");
-                    }
-                  }}
+                  onCropped={handlePatientImageCropped}
                 />
 
               </div>
@@ -159,6 +203,12 @@ export default function MyProfile() {
                   </span>
                 </span>
               </div>
+
+              {isUploadingImage && (
+                <p className="text-xs text-gray-500 mt-3">
+                  Updating profile photo...
+                </p>
+              )}
             </div>
 
           </div>
@@ -211,10 +261,8 @@ export default function MyProfile() {
         <PatientProfileEdit
           patient={patient}
           onClose={() => setOpenEdit(false)}
-          onUpdated={async () => {
-            localStorage.removeItem("patient_me_cache");
-            const res = await getPatientProfileApi();
-            setPatient(res.data);
+          onUpdated={(updatedPatient) => {
+            setPatient(updatedPatient);
           }}
         />
       )}

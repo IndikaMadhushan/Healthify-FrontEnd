@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import ProfileAvatar from "./ProfileAvatar";
@@ -79,6 +79,13 @@ export default function ProfileImageCropper({
 
   const hasCustomPhoto = Boolean(resolvedProfileSrc);
 
+  useEffect(() => {
+    setProfileSrc(undefined);
+    setSrc(undefined);
+    setPendingSrc(null);
+    setPendingVisible(false);
+  }, [imageUrl]);
+
   /* ========== FILE SELECT ========== */
 
   const onFileChange = (e) => {
@@ -111,23 +118,30 @@ export default function ProfileImageCropper({
     if (!resolvedCropSrc || !croppedAreaPixels) return;
 
     setLoading(true);
-    const { blob, dataUrl } = await getCroppedImg(resolvedCropSrc, croppedAreaPixels);
-    const croppedFile = new File([blob], "profile.jpg", { type: blob.type });
+    try {
+      const { blob, dataUrl } = await getCroppedImg(
+        resolvedCropSrc,
+        croppedAreaPixels,
+      );
+      const croppedFile = new File([blob], "profile.jpg", { type: blob.type });
 
-    setPendingSrc(dataUrl);
-    setPendingVisible(false);
-    requestAnimationFrame(() => setPendingVisible(true));
+      setPendingSrc(dataUrl);
+      setPendingVisible(false);
+      requestAnimationFrame(() => setPendingVisible(true));
 
-    setTimeout(() => {
+      await onCropped?.(croppedFile, dataUrl);
+
       setProfileSrc(dataUrl);
       setSrc(dataUrl);
       setPendingSrc(null);
       setPendingVisible(false);
       setShowCrop(false);
-      onCropped?.(croppedFile, dataUrl);
-    }, 500);
-
-    setLoading(false);
+    } catch {
+      setPendingSrc(null);
+      setPendingVisible(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ========== REMOVE IMAGE ========== */
