@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 // import PatientNavBar  from "../../../components/PatientNavBar";
 import MyClinicBooks from "./MyClinicBooks";
-
+import { useEffect, useState } from "react";
 
 export default  function ClinicBookPage() {
   const navigate = useNavigate();
