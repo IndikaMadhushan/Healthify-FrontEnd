@@ -154,14 +154,16 @@ export default function DoctorPatientProfile() {
         <div className="bg-white border border-[#D3F0ED] rounded-2xl px-8 py-6 mb-10 shadow-sm">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
             <div className="relative flex items-center justify-center">
-              <ProfileAvatar
-                src={patient?.photoUrl}
-                alt={patient?.fullName || patientDisplayName || "Patient"}
-                className="w-28 h-28 rounded-full border-4 border-white shadow-lg"
-                imageClassName="w-full h-full rounded-full object-cover"
-                fallbackClassName="bg-[#F7FCFB]"
-                fallbackIcon={<FaUser className="text-4xl text-[#7AA7A3]" />}
-              />
+              <div className="relative lg:w-35 lg:h-35 w-30 h-30 rounded-full border border-[#D3F0ED] overflow-hidden bg-[#F7FCFB]">
+                <ProfileAvatar
+                  src={patient?.photoUrl}
+                  alt={patient?.fullName || patientDisplayName || "Patient"}
+                  className="w-full h-full"
+                  imageClassName="w-full h-full object-cover"
+                  fallbackClassName="bg-[#F7FCFB]"
+                  fallbackIcon={<FaUser className="text-4xl text-[#7AA7A3]" />}
+                />
+              </div>
             </div>
 
             <div className="flex-1 text-center md:text-left">
