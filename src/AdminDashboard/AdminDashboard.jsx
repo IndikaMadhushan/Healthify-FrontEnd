@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { IoLogOutSharp } from "react-icons/io5";
 import { 
   getPendingDoctorsApi, 
   approveDoctorApi,
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
   const [pendingLoading, setPendingLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(true);
   const [error, setError] = useState('');
+
 
   useEffect(() => {
     // Set greeting based on time
@@ -302,7 +304,7 @@ export default function AdminDashboard() {
                 onClick={handleLogout}
                 className="px-5 py-2.5 bg-red-50 text-red-600 border-2 border-red-200 rounded-full font-semibold hover:bg-red-100 transition-all flex items-center gap-2"
               >
-                <span>🚪</span>
+                <span><IoLogOutSharp className='text-red-600 text-xl'/></span>
                 <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
