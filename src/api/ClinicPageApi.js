@@ -29,3 +29,7 @@ export const updateClinicPage= (id, body) => {
 export const deleteClinicPage = (id) => {
   return axiosInstance.delete(`/api/v1/cpage/${id}`);
 };
+
+export const getClinicPagesByBook = (id) => {
+  return axiosInstance.get(`/api/v1/cpage/list/${id}`);
+};

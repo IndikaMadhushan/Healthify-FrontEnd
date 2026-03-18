@@ -458,6 +458,7 @@ export default function MyClinicBooks() {
   const [editingBook, setEditingBook] = useState(null);
   const [openBook, setOpenBook] = useState(null);
   const [mode, setMode] = useState("edit");
+  
 
   /* -------------------- FETCH FROM BACKEND -------------------- */
   const fetchClinicBooks = async () => {

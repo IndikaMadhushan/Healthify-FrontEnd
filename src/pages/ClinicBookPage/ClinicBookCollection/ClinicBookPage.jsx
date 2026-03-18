@@ -7,6 +7,7 @@ import MyClinicBooks from "./MyClinicBooks";
 
 export default  function ClinicBookPage() {
   const navigate = useNavigate();
+  const [selectedBook, setSelectedBook] = useState(null);
   const rawRole = localStorage.getItem("role");
   const role = rawRole?.toUpperCase();
   const handleBackToDashboard = () => {
