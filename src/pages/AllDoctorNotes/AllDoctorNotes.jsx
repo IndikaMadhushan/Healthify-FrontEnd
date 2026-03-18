@@ -94,7 +94,7 @@ export default function AllDoctorNotes() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-8">
+    <div className="min-h-screen   md:p-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         {/* <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
@@ -200,10 +200,10 @@ export default function AllDoctorNotes() {
                   onClick={() => toggleNote(note.id)}
                   className="p-4 md:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex md:flex-row flex-col items-start gap-4">
                     {/* Doctor Avatar */}
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-lg shadow-md">
+                      <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm md:text-lg shadow-md">
                         {getInitials(note.doctorName)}
                       </div>
                     </div>
@@ -212,7 +212,7 @@ export default function AllDoctorNotes() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2">
                         <div>
-                          <h3 className="text-lg md:text-xl font-bold text-mainblack">
+                          <h3 className="text-[16px] md:text-xl font-bold text-mainblack">
                             {note.doctorName}
                           </h3>
                           <p className="text-sm text-gray-600 flex items-center gap-1">
@@ -241,11 +241,13 @@ export default function AllDoctorNotes() {
                       </div>
 
                       {/* Note Preview */}
+                    {expandedNoteId != note.id && (
                       <p
                         className={`text-gray-700 ${expandedNoteId === note.id ? "" : "line-clamp-2"}`}
                       >
                         {note.note}
                       </p>
+                      )}
                     </div>
 
                     {/* Expand/Collapse Icon */}
@@ -262,7 +264,7 @@ export default function AllDoctorNotes() {
                 {/* Expanded Note Details */}
                 {expandedNoteId === note.id && (
                   <div className="px-4 md:px-6 pb-4 md:pb-6 pt-2 border-t border-gray-100 bg-gray-50">
-                    <div className="pl-16 md:pl-18">
+                    <div className=" md:pl-18">
                       <h4 className="text-sm font-semibold text-gray-700 mb-2">
                         Complete Note:
                       </h4>

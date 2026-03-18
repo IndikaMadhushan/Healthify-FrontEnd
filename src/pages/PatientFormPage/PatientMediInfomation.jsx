@@ -223,6 +223,16 @@ export default function PatientMediInfomation() {
   }
 
   return (
+  <div className="m-4">
+    <div className="mb-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-[#0F4F52] mb-2">
+                        Health Info❤️
+                    </h1>
+                    <p className="text-gray-600">
+                        Manage your medicines, appointments, and health reminders
+                    </p>
+      </div>
+
     <div className="w-full bg-white rounded-xl shadow-md p-4">
       <div className="flex flex-wrap gap-2 border-b pb-3 mb-6">
         {tabs.map((tab) => {
@@ -250,5 +260,6 @@ export default function PatientMediInfomation() {
 
       <div className="min-h-[300px]">{renderSection()}</div>
     </div>
+  </div>
   );
 }

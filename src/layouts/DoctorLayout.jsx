@@ -145,8 +145,8 @@ export default function DoctorLayout() {
         <DoctorNavBar2 key={location.pathname} doctor={doctor} patient={patient} />
       )}
 
-      <div className="lg:px-14 px-6 bg-gray-50 pb-[100px]">
-        <Outlet />
+      <div className="lg:px-14  bg-gray-50 pb-[100px]">
+        <Outlet />                                                  
       </div>
       <div>
         <Footer />

@@ -97,7 +97,7 @@ export default function PrescriptionCard({ data, onClick }) {
       <div className="flex xs:flex-row flex-col xs:items-start xs:justify-between relative">
         <div className="pl-3">
           <h3 className="text-[17px] font-semibold text-[#0F4F52]">
-            {data.doctorName}
+            Dr.{data.doctorName}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
             {data.slmc}

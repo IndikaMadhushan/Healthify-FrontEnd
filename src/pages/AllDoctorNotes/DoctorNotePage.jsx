@@ -20,7 +20,7 @@ export default function DoctorNotePage() {
   return (
 <>
     <PatinetNavBar/>
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-4 md:p-6 bg-gray-50">
         
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-6">
@@ -33,27 +33,17 @@ export default function DoctorNotePage() {
       </button>
 
 
-        {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="lg:text-3xl text-2xl font-bold text-secondary">
-              📋Doctor Notes
-            </h1>
-            <p className="text-gray-500 mt-1">
-              Medical notes shared between you and your doctors
-            </p>
-          </div>
-        </div> */}
-        <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
+        <div className="mb-8 py-4 rounded-xl bg-gray-50 ">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
               📝
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-primary drop-shadow-sm">
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary drop-shadow-sm">
               Doctor Notes
             </h1>
           </div>
 
-          <p className="text-teal-800 ml-13">
+          <p className="text-[12px] md:text-[16px] text-teal-800 ml-13">
             View all medical notes from your healthcare providers
           </p>
         </div>

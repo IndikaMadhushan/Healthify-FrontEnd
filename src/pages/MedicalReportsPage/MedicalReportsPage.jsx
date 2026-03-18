@@ -153,8 +153,9 @@ export default function MedicalReportsPage() {
       id: CATEGORIES.LAB_REPORTS,
       title: "Lab Reports",
       count: counts.labReports,
-      icon: "🧪",
+      icon: "📚",
       color: "bg-blue-100",
+      text:"Access and manage all  laboratory test results, including blood tests, scans, and reports"
     },
     {
       id: CATEGORIES.PRESCRIPTIONS,
@@ -162,6 +163,7 @@ export default function MedicalReportsPage() {
       count: counts.prescriptions,
       icon: "💊",
       color: "bg-green-100",
+      text:"View and manage all digital medical prescriptions, including medications and dosages "
     },
     // { id: CATEGORIES.VACCINES, title: "Vaccines", count: vaccines.length, icon: "💉", color: "bg-purple-100" },
     {
@@ -170,7 +172,8 @@ export default function MedicalReportsPage() {
       count: counts.clinicBook,
       icon: "📋",
       color: "bg-orange-100",
-    },
+      text:"Keep a complete record of clinic visits, including doctor notes and treatments"
+      },
     // {
     //   id: CATEGORIES.SURGERIES,
     //   title: "Surgeries",
@@ -182,8 +185,9 @@ export default function MedicalReportsPage() {
       id: CATEGORIES.CUSTOM,
       title: "Doctor Notes",
       count: counts.customFolders,
-      icon: "📝",
+      icon: "🩺",
       color: "bg-purple-100",
+      text:"Store and review all doctor notes, including advice and observations"
     },
   ];
 
@@ -210,24 +214,68 @@ export default function MedicalReportsPage() {
       {/* ✅ SHOW CARDS ONLY ON ROOT */}
       {isRootMedicalReports && (
         <div>
-          <h1 className="text-3xl font-bold mb-6">Medical Reports</h1>
+          {/* <h1 className="text-3xl font-bold mb-6">Medical Reports</h1> */}
+
+          <div className="mb-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-[#0F4F52] mb-2">
+                        Medical Reports🧬
+                    </h1>
+                    <p className="text-gray-600">
+                        Manage your Medical data here
+                    </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {categories.map((c) => (
               <div
                 key={c.id}
-                className={`${c.color} min-h-[240px] rounded-xl shadow p-6 flex flex-col`}
+                className={`
+                  ${c.color}
+                  min-h-[280px] rounded-2xl
+                  p-6 flex flex-col items-center text-center
+                  border border-white/40
+                  shadow-md hover:shadow-2xl
+                  transition-all duration-300 hover:-translate-y-2
+                  relative overflow-hidden group
+                `}
               >
-                <div className="text-4xl">{c.icon}</div>
-                <h3 className="text-xl font-bold mt-2">{c.title}</h3>
-                <p className="text-sm text-gray-600">{c.count} items</p>
+                {/* subtle top highlight */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-white/40 opacity-50"></div>
 
+                {/* ICON */}
+                <div className="md:text-7xl text-6xl mb-4 transform group-hover:scale-110 transition duration-300">
+                  {c.icon}
+                </div>
+
+                {/* TITLE */}
+                <h3 className="md:text-xl text-lg font-bold text-gray-800">
+                  {c.title}
+                </h3>
+
+                {/* COUNT */}
+                <p className="text-md font-semibold text-gray-600 mt-1 mb-4">
+                  {c.count} items
+                </p>
+
+              {/* COUNT */}
+                <p className="text-sm text-gray-600 mt-1 mb-4">
+                  {c.text} 
+                </p>
+                {/* BUTTON */}
                 <button
                   onClick={() => goToCategory(c.id)}
-                  className="mt-auto w-full bg-secondary/90 hover:bg-secondary text-white py-2 rounded-lg"
+                  className="
+                    mt-auto w-full py-2 rounded-lg
+                    bg-secondary/90 hover:bg-secondary
+                    text-white font-medium
+                    shadow-sm hover:shadow-md
+                    transition-all duration-200
+                  "
                 >
-                  View Files
+                  View Files →
                 </button>
               </div>
+              
+              
             ))}
           </div>
         </div>
