@@ -356,7 +356,7 @@ export default function LabReportsPage() {
         <div className="mb-8 py-4 rounded-xl bg-gray-50 ">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
-              💊
+              📚
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-secondary drop-shadow-sm">
               Lab Reports
