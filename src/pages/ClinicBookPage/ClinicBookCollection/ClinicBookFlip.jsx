@@ -63,8 +63,7 @@ export default function ClinicBookFlip({ book, onClose }) {
                    bg-white p-4 rounded-full hover:bg-secondary/50">
         <FaArrowRight />
       </button>
-
-  <div className="scale-[0.65] sm:scale-[0.85] md:scale-[1] origin-center transition-all">
+    
       <HTMLFlipBook
         ref={bookRef}
         width={520}
@@ -106,7 +105,6 @@ export default function ClinicBookFlip({ book, onClose }) {
         ))}
 
       </HTMLFlipBook>
-        </div>
     </div>
   );
 }
