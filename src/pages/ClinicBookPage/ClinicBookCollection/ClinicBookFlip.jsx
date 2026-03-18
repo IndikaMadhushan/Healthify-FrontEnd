@@ -64,17 +64,14 @@ export default function ClinicBookFlip({ book, onClose }) {
         <FaArrowRight />
       </button>
 
-      <div className="flex justify-center items-center w-full h-full">
-
   <div className="scale-[0.65] sm:scale-[0.85] md:scale-[1] origin-center transition-all">
-
-    <HTMLFlipBook
-      ref={bookRef}
-      width={520}
-      height={700}
-      showCover
-      className="shadow-2xl"
-    >
+      <HTMLFlipBook
+        ref={bookRef}
+        width={520}
+        height={700}
+        showCover
+        className="shadow-2xl"
+      >
 
         {/* COVER */}
         <div className="bg-gradient-to-br from-[#18AAB0] to-[#86C443]
@@ -108,11 +105,8 @@ export default function ClinicBookFlip({ book, onClose }) {
           </div>
         ))}
 
-          </HTMLFlipBook>
-
-  </div>
-
-</div>
-</div>
+      </HTMLFlipBook>
+        </div>
+    </div>
   );
 }
