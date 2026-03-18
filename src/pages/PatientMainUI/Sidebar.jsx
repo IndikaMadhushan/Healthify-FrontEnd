@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   FaHome,
@@ -33,6 +33,7 @@ const getRouteActiveSection = (pathname) => {
 };
 export default function Dashboard() {
   const location = useLocation();
+  const contentRef = useRef(null);
   const [storedActive, setStoredActive] = useState(() => {
     return localStorage.getItem(PATIENT_DASHBOARD_ACTIVE_KEY) || "Summary";
   });
@@ -43,16 +44,28 @@ export default function Dashboard() {
     localStorage.setItem(PATIENT_DASHBOARD_ACTIVE_KEY, active);
   }, [active]);
 
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      contentRef.current?.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [active, location.pathname]);
+
   return (
-    <div className="h-screen bg-[#F2FBFA] flex flex-col">
+    <div className="h-[calc(100dvh-5rem)] bg-[#F2FBFA] flex flex-col overflow-hidden">
 
       {/* TOP NAVBAR */}
       <PatinetNavBar />
 
       {/* MAIN LAYOUT */}
-      <div className="flex flex-1 h-full overflow-hidden ">
+      <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* LEFT SIDEBAR (DESKTOP ONLY) */} 
-        <div className="hidden sm:flex lg:w-[260px] bg-[#EAF7F6] p-4 border-r border-[#D3F0ED] flex-col h-full overflow-hidden">
+        <div className="hidden sm:flex lg:w-[260px] shrink-0 self-start sticky top-0 bg-[#EAF7F6] p-4 border-r border-[#D3F0ED] flex-col h-full overflow-y-auto">
           <SidebarButton
             text="Summary"
             icon={<FaHome />}
@@ -86,7 +99,10 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="flex-1 py-6 bg-gray-50 overflow-y-auto">
+        <div
+          ref={contentRef}
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-gray-50 py-6 pb-24 sm:pb-6"
+        >
           {renderContent(active)}
         </div>
       </div>
