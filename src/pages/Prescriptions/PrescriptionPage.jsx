@@ -76,7 +76,7 @@ function PrescriptionPage() {
             </p>
           </div>
         </div> */}
-        <div className="mb-8 p-4 rounded-xl bg-gray-50 ">
+        <div className="mb-8 py-4 rounded-xl bg-gray-50 ">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
               💊
@@ -86,7 +86,7 @@ function PrescriptionPage() {
             </h1>
           </div>
 
-          <p className="text-teal-800 ml-13">
+          <p className="text-[12px] md:text-[16px] text-teal-800 ml-13">
             View and manage all your doctor-issued prescriptions
           </p>
         </div>
