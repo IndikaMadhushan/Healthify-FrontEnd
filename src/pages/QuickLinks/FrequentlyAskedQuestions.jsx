@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Minus, MessageCircle, Mail } from "lucide-react";
 
 export default function FAQPage() {
-  const [openIndex, setOpenIndex] = useState(null); // Second item open by default
+  const [openIndex, setOpenIndex] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const faqs = [
     {
@@ -13,7 +17,7 @@ export default function FAQPage() {
     {
       question: "Who can use the system?",
       answer:
-        "Patients and Doctors. Patients can upload medical reports, track health data, and set reminders, while doctors can view patient records after receiving access.",
+        "Patients and Doctors. Patients can upload medical reports, track health data, and set reminders, while doctors can view patient records.",
     },
     {
       question: "Can I upload medical reports and prescriptions?",
@@ -28,32 +32,17 @@ export default function FAQPage() {
     {
       question: "Will doctors be able to see my health data?",
       answer:
-        "Only if you grant access. Your data remains private unless you permit a doctor to view it.",
+        "Access to your health data is strictly limited to verified doctors, maintaining a high level of privacy and security.",
     },
     {
       question: "Can I get reminders to take my medication?",
       answer:
-        "Yes. You can set medicine schedules and the system will notify you when it's time.",
+        "Yes. You can set medicine schedules and the system will notify you through emails when it's time.",
     },
     {
       question: "Is my data secure?",
       answer:
         "Yes. We use encryption, authentication and restricted access control to ensure privacy of patient medical data.",
-    },
-    {
-      question: "Can I access the system on mobile/web?",
-      answer:
-        "The system is web-based and accessible on any device with internet connectivity.",
-    },
-    {
-      question: "Does Healthify provide diagnosis or treatment?",
-      answer:
-        "No. The system provides analytics & record management — medical decisions should be made by qualified doctors.",
-    },
-    {
-      question: "What features will be added in the future?",
-      answer:
-        "AI-health prediction, hospital API integration, multilingual support, wearable device sync and more.",
     },
   ];
 
@@ -63,72 +52,117 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          {/* <p className="text-teal-600 text-xs sm:text-sm font-medium mb-2 sm:mb-3 uppercase tracking-wide">
-            FAQS
-          </p> */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-sm sm:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed px-4">
-            Find quick answers to the most common questions about our services,
-            treatments, and patient care. We're here to make things simple and
-            clear for you.
-          </p>
+      {/* Hero Section */}
+      <section className="relative bg-white border-b border-gray-200 py-12 sm:py-20 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[10%] -right-[5%] w-64 h-64 bg-teal-50 rounded-full blur-3xl opacity-50" />
+          <div className="absolute -bottom-[10%] -left-[5%] w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-50" />
         </div>
-      </div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div className="text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 tracking-tight leading-tight">
+                Need help using{" "}
+                <span className="text-teal-600"> Healthify?</span>
+              </h1>
+
+              <p className="text-sm text-gray-500 max-w-md leading-relaxed">
+                Find answers regarding your medical data security, report
+                management, and how to effectively use our health tracking
+                tools.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {[
+                { label: "Data Security", detail: "Encryption & Privacy" },
+                { label: "Medical Records", detail: "Uploads & Storage" },
+                { label: "Health Insights", detail: "BMI & Analytics" },
+                { label: "Smart Alerts", detail: "Medicine Reminders" },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-xl border border-gray-100 bg-white shadow-sm hover:border-teal-200 transition-colors"
+                >
+                  <p className="text-[10px] font-bold text-teal-600 uppercase mb-1 tracking-wider">
+                    {item.label}
+                  </p>
+                  <p className="text-xs text-gray-600 font-medium">
+                    {item.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* FAQ Items */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="space-y-3 sm:space-y-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-gray-800 mb-6 px-2">
+            Frequently Asked Questions
+          </h2>
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200"
             >
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full flex items-start sm:items-center justify-between p-4 sm:p-6 text-left hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-gray-50 transition-colors"
               >
-                <span className="text-base sm:text-lg font-medium text-gray-900 pr-4 leading-snug sm:leading-normal">
+                <span className="text-base sm:text-lg font-semibold text-gray-800 pr-4">
                   {faq.question}
                 </span>
-                <span className="flex-shrink-0 ml-2">
+                <div
+                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openIndex === index ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-500"}`}
+                >
                   {openIndex === index ? (
-                    <Minus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+                    <Minus className="w-4 h-4" />
                   ) : (
-                    <Plus className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+                    <Plus className="w-4 h-4" />
                   )}
-                </span>
+                </div>
               </button>
 
-              {openIndex === index && (
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6">
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+              <div
+                className={`transition-all duration-300 ease-in-out ${
+                  openIndex === index
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
+                } overflow-hidden`}
+              >
+                <div className="px-5 sm:px-6 pb-6 text-gray-600">
+                  <div className="h-px bg-gray-100 mb-4"></div>
+                  <p className="text-sm sm:text-base leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Footer CTA Section */}
-      <div className="bg-white border-t mt-8 sm:mt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
-          <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-3">
-            Still have questions?
+        {/* Support Section */}
+        <div className="mt-16 bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            Still can't find what you're looking for?
           </h3>
-          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
-            Can't find the answer you're looking for? Please reach out to our
-            support team.
+
+          <p className="text-gray-600 mb-6">
+            Our team will do our best to respond to your inquiries as soon as
+            possible.{" "}
           </p>
-          <button className="bg-teal-500 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg hover:bg-teal-600 transition-colors text-sm sm:text-base font-medium">
-            Contact Support
-          </button>
+
+          {/* Email Support Button */}
+          <a
+            href="mailto:healthify@gmail.com?subject=Healthify Support Request&body=Hello Healthify Team,"
+            className="inline-flex items-center gap-2 bg-teal-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-700 transition-all shadow-md active:scale-95"
+          >
+            Email Support
+          </a>
         </div>
       </div>
     </div>

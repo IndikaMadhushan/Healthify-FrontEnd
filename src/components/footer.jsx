@@ -53,7 +53,7 @@ export default function Footer() {
           <div className="flex flex-col gap-[6px] md:gap-[10px] text-[12px] md:text-[14px] font-light">
             <Link to="/home" className="hover:text-secondary/75">Home</Link>
             <Link to="/aboutUs" className="hover:text-secondary/75">About Us</Link>
-            <Link to="/contacts" className="hover:text-secondary/75">Contact Us</Link>
+            <Link to="/contactUs" className="hover:text-secondary/75">Contact Us</Link>
             <Link to="/faq" className="hover:text-secondary/75">FAQs</Link>
             <Link to="/privacyPolicy" className="hover:text-secondary/75">Privacy Policy</Link>
             <Link to="/termsandConditions" className="hover:text-secondary/75">Terms & Conditions</Link>
