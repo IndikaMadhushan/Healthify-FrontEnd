@@ -44,6 +44,8 @@ export default function ClinicBookFlip({ book, onClose }) {
   };
 
   return (
+  <>
+  <div className="">
     <div className="fixed inset-0 z-50 flex items-center justify-center
                 bg-black/40 backdrop-blur-md">
 
@@ -106,5 +108,9 @@ export default function ClinicBookFlip({ book, onClose }) {
 
       </HTMLFlipBook>
     </div>
+  </div>
+
+</>
   );
+
 }
