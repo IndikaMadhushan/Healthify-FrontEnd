@@ -162,7 +162,7 @@ export default function ClinicBookPrescriptionPage() {
 
         {/* LEFT */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl shadow border p-6">
+          <div className="bg-white rounded-2xl shadow  border border-gray-200 p-6">
 
             <div className="flex items-center gap-3 mb-5">
               <div className="p-3 rounded-xl bg-gradient-to-r from-[#86c443] to-[#18AAB0]">
@@ -212,7 +212,7 @@ export default function ClinicBookPrescriptionPage() {
 
         {/* RIGHT */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl shadow border p-6">
+          <div className="bg-white rounded-2xl shadow  border border-gray-200 p-3 md:p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4">
               Clinic Prescriptions
             </h3>
