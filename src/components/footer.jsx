@@ -40,7 +40,7 @@ export default function Footer() {
           <div className="flex flex-col items-center">
             <img src="/Email.png" className="w-[30px] md:w-[40px] mb-1" alt="Email" />
             <p className="text-[12px] md:text-[14px] font-light">Email us</p>
-            <p className="text-[12px] md:text-[14px] font-medium">healthify@gmail.com</p>
+            <p className="text-[12px] md:text-[14px] font-medium">healthify.noreply@gmail.com</p>
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export default function Footer() {
           </p>
 
           <div className="flex flex-col gap-[6px] md:gap-[10px] text-[12px] md:text-[14px] font-light">
-            <Link to="/home" className="hover:text-secondary/75">Home</Link>
+            <Link to="/" className="hover:text-secondary/75">Home</Link>
             <Link to="/aboutUs" className="hover:text-secondary/75">About Us</Link>
             <Link to="/contactUs" className="hover:text-secondary/75">Contact Us</Link>
             <Link to="/faq" className="hover:text-secondary/75">FAQs</Link>

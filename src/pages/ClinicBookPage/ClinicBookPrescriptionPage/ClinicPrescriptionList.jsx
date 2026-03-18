@@ -333,7 +333,7 @@ export default function ClinicPrescriptionList({ clinicBookId }) {
 
   /* ---------- UI ---------- */
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="md:p-6 max-w-6xl mx-auto">
 
       {/* FILTER BAR */}
       <div className="bg-white rounded-xl shadow-md p-4 mb-6">

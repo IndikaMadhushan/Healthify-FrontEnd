@@ -38,6 +38,9 @@ export default function Header(){
 
 
   const navigate = useNavigate();
+  useEffect(() => {
+    window.scrollTo(0,0);
+  },[]);
   const [openMenu, setOpenMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function Header(){
             </div>
             
             <div>
-                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToAbout}>About Us</p> 
+                  <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={() => { navigate("/aboutUs")}}>About Us</p> 
             </div>
             <div>
                   <p className="hidden md:block cursor-pointer hover:text-secondary " onClick={goToService}>Services</p> 
@@ -106,7 +109,7 @@ export default function Header(){
 
               <p className="hover:text-white cursor-pointer"  onClick={() => { navigate("/"); setOpenMenu(false); }}>Home</p>
               <p className="hover:text-white cursor-pointer" onClick={goToService}>Services</p>
-              <p className="hover:text-white cursor-pointer" onClick={goToAbout}>About Us</p>
+              <p className="hover:text-white cursor-pointer" onClick={() => { navigate("/aboutUs")}}>About Us</p>
               <p className="hover:text-white cursor-pointer" onClick={goToFooter}>Contact</p>
               
               <Button onClick={() => {navigate("/login"); setOpenMenu(false);}}

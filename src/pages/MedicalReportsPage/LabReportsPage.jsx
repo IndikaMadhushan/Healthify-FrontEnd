@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import {
   getMyLabContents,
   getPatientLabContents,
@@ -157,22 +158,41 @@ export default function LabReportsPage() {
     loadPatientId();
   }, []);
 
-  const handleBack = () => {
-    if (currentFolder !== null) {
-      setCurrentFolder(null);
-      return;
-    }
-    if (isDoctor) {
-      navigate(
-        patientId
-          ? `/doctor/${patientId}/medical-reports`
-          : "/doctor/dashboard",
-      );
-    } else {
+  // const handleBack = () => {
+  //   if (currentFolder !== null) {
+  //     setCurrentFolder(null);
+  //     return;
+  //   }
+  //   if (isDoctor) {
+  //     navigate(
+  //       patientId
+  //         ? `/doctor/${patientId}/medical-reports`
+  //         : "/doctor/dashboard",
+  //     );
+  //   } else {
+  //     navigate("/patient/medical-reports");
+  //   }
+  // };
+
+    const handleBack = () => {
+    const role = localStorage.getItem("role")?.toUpperCase();
+    const patientId = localStorage.getItem("selectedPatientId");
+
+    if (role === "DOCTOR") {
+      if (!patientId) {
+        toast.error("No patient selected");
+        navigate("/doctor/dashboard");
+        return;
+      }
+      navigate(`/doctor/${patientId}/medical-reports`);
+    } 
+    else if (role === "PATIENT") {
       navigate("/patient/medical-reports");
+    } 
+    else {
+      navigate("/");
     }
   };
-
   // ── file select ─────────────────────────────────────────────────────────────
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
@@ -310,40 +330,73 @@ export default function LabReportsPage() {
 
   // ── render ───────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <button
+
+
+        {/* <button
           onClick={handleBack}
           className="mb-6 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition flex items-center gap-2"
         >
           <span>←</span> Back
+        </button> */}
+
+
+        {/* Header */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition mb-3"
+        >
+          <ArrowLeft size={18} />
+          Back to Dashboard
         </button>
 
+        
+        <div className="mb-8 py-4 rounded-xl bg-gray-50 ">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/10 text-secondary text-xl">
+              📚
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary drop-shadow-sm">
+              Lab Reports
+            </h1>
+          </div>
+
+          <p className="text-[12px] md:text-[16px] text-teal-800 ml-13">
+            View and manage all your lab reports
+          </p>
+        </div>
+        
+      </div>
+
+
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Lab Reports</h1>
+          <div className="flex flex-col items-left  mb-4">
+            
             {currentFolder && (
               <button
                 onClick={() => setCurrentFolder(null)}
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition text-sm font-medium flex items-center gap-2"
+                className=" text-gray-600 hover:text-gray-900 transition text-sm font-medium flex items-center gap-2 mb-4"
               >
-                <span>←</span> Back to Root
+                <span>←</span> Back to Lab Report
               </button>
             )}
+            <h1 className="md:text-xl text-lg font-semi bold text-gray-900">Upload your all lab reports</h1>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col xs:flex-row sm:items-center sm:justify-between gap-4">
             {!isDoctor && (
               <div className="flex gap-3 flex-wrap">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition font-medium flex items-center gap-2"
+                  className="md:px-6 md:py-3 px-2 py-3 text-sm md:text-md bg-secondary text-white rounded-lg hover:bg-secondary/90 transition font-medium flex items-center gap-2"
                 >
                   <span>📁</span> Upload File
                 </button>
                 <button
                   onClick={() => setShowFolderModal(true)}
-                  className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium flex items-center gap-2"
+                  className="md:px-6 md:py-3 px-2 py-3 text-sm md:text-md bg-primary text-white rounded-lg hover:bg-primary/90 transition font-medium flex items-center gap-2"
                 >
                   <span>📂</span> New Folder
                 </button>

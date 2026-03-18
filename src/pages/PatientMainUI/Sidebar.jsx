@@ -86,7 +86,7 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="flex-1 py-6 px-4 bg-white overflow-y-auto">
+        <div className="flex-1 py-6 bg-gray-50 overflow-y-auto">
           {renderContent(active)}
         </div>
       </div>
