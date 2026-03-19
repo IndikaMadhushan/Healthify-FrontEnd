@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Disallow: /api
+Disallow: /admin-dashboard
+Disallow: /patient
+Disallow: /doctor
+Disallow: /patientMain
+Disallow: /firstFillForm
+Disallow: /reminders
+Disallow: /customize-folders
+Disallow: /report-upload
+Disallow: /vaccine-page
+Disallow: /lab-reports
+Disallow: /verify-otp
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://healthify.dev/sitemap.xml
