@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
@@ -158,128 +159,137 @@ export default function PatientRegisterPage1() {
   };
 
   return (
-    <RegistrationLayout image={pRegImage1} imageAlt="Patient Registration">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
-          Patient Registration
-        </h1>
-        {/* Progress indicators */}
-        <div className="flex gap-2">
-          <span className="w-3 h-3 rounded-full bg-secondary"></span>
-          <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+    <>
+      <Helmet>
+        <title>Patient Registration | Healthify</title>
+        <meta
+          name="description"
+          content="Register as a patient on Healthify to securely manage medical records, monitor wellness, and access digital healthcare support."
+        />
+      </Helmet>
+      <RegistrationLayout image={pRegImage1} imageAlt="Patient Registration">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
+            Patient Registration
+          </h1>
+          {/* Progress indicators */}
+          <div className="flex gap-2">
+            <span className="w-3 h-3 rounded-full bg-secondary"></span>
+            <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+          </div>
         </div>
-      </div>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              label="First Name"
+              value={formData.firstName}
+              onChange={handleChange("firstName")}
+              error={errors.firstName}
+              placeholder="Enter your first name"
+              required
+              maxLength={50}
+              autoComplete="given-name"
+            />
+
+            <FormField
+              label="Second Name"
+              value={formData.secondName}
+              onChange={handleChange("secondName")}
+              error={errors.secondName}
+              placeholder="Enter your second name"
+              required={false}
+              maxLength={50}
+              autoComplete="additional-name"
+            />
+          </div>
+
           <FormField
-            label="First Name"
-            value={formData.firstName}
-            onChange={handleChange("firstName")}
-            error={errors.firstName}
-            placeholder="Enter your first name"
+            label="Last Name"
+            value={formData.lastName}
+            onChange={handleChange("lastName")}
+            error={errors.lastName}
+            placeholder="Enter your last name"
             required
             maxLength={50}
-            autoComplete="given-name"
+            autoComplete="family-name"
           />
 
           <FormField
-            label="Second Name"
-            value={formData.secondName}
-            onChange={handleChange("secondName")}
-            error={errors.secondName}
-            placeholder="Enter your second name"
-            required={false}
-            maxLength={50}
-            autoComplete="additional-name"
+            label="Date of Birth"
+            type="date"
+            value={formData.dateOfBirth}
+            onChange={handleChange("dateOfBirth")}
+            error={errors.dateOfBirth}
+            required
+            max={todayString}
           />
+
+          <RadioGroup
+            label="Gender"
+            options={["Male", "Female"]}
+            value={formData.gender}
+            onChange={handleChange("gender")}
+            error={errors.gender}
+            required
+          />
+
+          <FormField
+            label="NIC Number"
+            value={formData.nic}
+            onChange={handleChange("nic")}
+            error={errors.nic}
+            placeholder="e.g., 123456789V or 123456789012"
+            required
+            maxLength={12}
+            autoComplete="off"
+          />
+
+          <FormField
+            label="Email Address"
+            type="email"
+            value={formData.email}
+            onChange={handleChange("email")}
+            error={errors.email}
+            placeholder="your.email@example.com"
+            required
+            maxLength={254}
+            autoComplete="email"
+          />
+
+          <FormField
+            label="Contact Number"
+            value={formData.phone}
+            onChange={handleChange("phone")}
+            error={errors.phone}
+            placeholder="+94 XX XXX XXXX (optional)"
+            required={false}
+            inputMode="numeric"
+            maxLength={10}
+            autoComplete="tel"
+          />
+
+          <div className="flex justify-center pt-4">
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-12 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105"
+            >
+              Next
+            </button>
+          </div>
         </div>
 
-        <FormField
-          label="Last Name"
-          value={formData.lastName}
-          onChange={handleChange("lastName")}
-          error={errors.lastName}
-          placeholder="Enter your last name"
-          required
-          maxLength={50}
-          autoComplete="family-name"
-        />
-
-        <FormField
-          label="Date of Birth"
-          type="date"
-          value={formData.dateOfBirth}
-          onChange={handleChange("dateOfBirth")}
-          error={errors.dateOfBirth}
-          required
-          max={todayString}
-        />
-
-        <RadioGroup
-          label="Gender"
-          options={["Male", "Female"]}
-          value={formData.gender}
-          onChange={handleChange("gender")}
-          error={errors.gender}
-          required
-        />
-
-        <FormField
-          label="NIC Number"
-          value={formData.nic}
-          onChange={handleChange("nic")}
-          error={errors.nic}
-          placeholder="e.g., 123456789V or 123456789012"
-          required
-          maxLength={12}
-          autoComplete="off"
-        />
-
-        <FormField
-          label="Email Address"
-          type="email"
-          value={formData.email}
-          onChange={handleChange("email")}
-          error={errors.email}
-          placeholder="your.email@example.com"
-          required
-          maxLength={254}
-          autoComplete="email"
-        />
-
-        <FormField
-          label="Contact Number"
-          value={formData.phone}
-          onChange={handleChange("phone")}
-          error={errors.phone}
-          placeholder="+94 XX XXX XXXX (optional)"
-          required={false}
-          inputMode="numeric"
-          maxLength={10}
-          autoComplete="tel"
-        />
-
-        <div className="flex justify-center pt-4">
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{" "}
           <button
-            type="button"
-            onClick={handleNext}
-            className="px-12 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105"
+            onClick={() => navigate("/login")}
+            className="text-secondary hover:underline font-semibold"
           >
-            Next
+            Login here
           </button>
-        </div>
-      </div>
-
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="text-secondary hover:underline font-semibold"
-        >
-          Login here
-        </button>
-      </p>
-    </RegistrationLayout>
+        </p>
+      </RegistrationLayout>
+    </>
   );
 }

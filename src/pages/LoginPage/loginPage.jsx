@@ -1,7 +1,6 @@
-
-
 import Button from "../HomePage/HomeButton";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import Login from "../../assets/loginIcon.png";
 import { useState, useEffect } from "react";
 import { loginApi } from "../../api/authApi";
@@ -11,14 +10,12 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setError] = useState("");
 
-  const role = location.state?.role;
   const registerLink = "/option";
 
   useEffect(() => {
@@ -32,7 +29,6 @@ export default function LoginPage() {
       return false;
     }
 
-  
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast.error("Invalid email format", { id: "email-format-error" });
       return false;
@@ -76,118 +72,124 @@ export default function LoginPage() {
       } else if (role === "DOCTOR") {
         navigate("/doctor/dashboard");
       } else if (role === "ADMIN") {
-         navigate("/admin-dashboard");
+        navigate("/admin-dashboard");
       } else {
         setError("Unknown User Role");
       }
     } catch (err) {
-      toast.error(
-        err.response?.data?.message || "Invalid email or password"
-      );
+      toast.error(err.response?.data?.message || "Invalid email or password");
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
-      <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
-        <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+    <>
+      <Helmet>
+        <title>Login | Healthify</title>
+        <meta
+          name="description"
+          content="Log in to Healthify to securely access your personal health monitoring dashboard, medical records, and digital healthcare tools."
+        />
+      </Helmet>
+      <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
+        <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
+          <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+            {/* LEFT IMAGE */}
+            <div className="hidden lg:flex w-1/2 items-center justify-center bg-[#EAF7F6]">
+              <img
+                src={Login}
+                alt="login illustration"
+                className="max-w-[420px] w-full p-8"
+              />
+            </div>
 
-          {/* LEFT IMAGE */}
-          <div className="hidden lg:flex w-1/2 items-center justify-center bg-[#EAF7F6]">
-            <img
-              src={Login}
-              alt="login illustration"
-              className="max-w-[420px] w-full p-8"
-            />
-          </div>
+            {/* RIGHT FORM */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
+              <div className="w-full max-w-md">
+                <h1 className="text-3xl font-bold text-center text-[#18AAB0] mb-2">
+                  Welcome Back
+                </h1>
+                <p className="text-center text-gray-500 mb-6">
+                  Login to your account
+                </p>
 
-          {/* RIGHT FORM */}
-          <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
-            <div className="w-full max-w-md">
+                {errors && (
+                  <p className="text-red-500 text-sm text-center mb-4">
+                    {errors}
+                  </p>
+                )}
 
-              <h1 className="text-3xl font-bold text-center text-[#18AAB0] mb-2">
-                Welcome Back
-              </h1>
-              <p className="text-center text-gray-500 mb-6">
-                Login to your account
-              </p>
-
-              {errors && <p className="text-red-500 text-sm text-center mb-4">{errors}</p>}
-
-              {/* INPUTS */}
-              <div className="flex flex-col gap-4">
-
-                {/* EMAIL */}
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  className="h-[48px] w-full px-4 rounded-xl border
+                {/* INPUTS */}
+                <div className="flex flex-col gap-4">
+                  {/* EMAIL */}
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    className="h-[48px] w-full px-4 rounded-xl border
                              border-secondary/30 bg-secondary/5
                              focus:outline-none focus:ring-2
                              focus:ring-[#18AAB0]/40 transition"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
 
-                {/* PASSWORD WITH EYE */}
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    className="h-[48px] w-full px-4 pr-12 rounded-xl border
+                  {/* PASSWORD WITH EYE */}
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      className="h-[48px] w-full px-4 pr-12 rounded-xl border
                                border-secondary/30 bg-secondary/5
                                focus:outline-none focus:ring-2
                                focus:ring-[#18AAB0]/40 transition"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2
                                text-gray-500 hover:text-[#18AAB0]"
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
                 </div>
 
+                {/* FORGOT PASSWORD */}
+                <div className="text-right mt-2">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-secondary hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
+                {/* LOGIN BUTTON */}
+                <div className="mt-6">
+                  <Button
+                    onClick={handleLogin}
+                    className="w-full py-3 text-[18px] rounded-xl"
+                    type="button"
+                    text="Login"
+                    style={{ backgroundColor: "#18AAB0" }}
+                  />
+                </div>
+
+                {/* SIGNUP */}
+                <p className="text-center text-gray-600 mt-6">
+                  Don't have an account?{" "}
+                  <Link
+                    to={registerLink}
+                    className="text-secondary font-medium hover:underline"
+                  >
+                    Signup here
+                  </Link>
+                </p>
               </div>
-
-              {/* FORGOT PASSWORD */}
-              <div className="text-right mt-2">
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-secondary hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-
-              {/* LOGIN BUTTON */}
-              <div className="mt-6">
-                <Button
-                  onClick={handleLogin}
-                  className="w-full py-3 text-[18px] rounded-xl"
-                  type="button"
-                  text="Login"
-                  style={{ backgroundColor: "#18AAB0" }}
-                />
-              </div>
-
-              {/* SIGNUP */}
-              <p className="text-center text-gray-600 mt-6">
-                Don't have an account?{" "}
-                <Link
-                  to={registerLink}
-                  className="text-secondary font-medium hover:underline"
-                >
-                  Signup here
-                </Link>
-              </p>
-
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

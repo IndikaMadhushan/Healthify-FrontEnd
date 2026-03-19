@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
@@ -8,31 +9,33 @@ import dRegImage1 from "../../assets/d-reg-image1.png";
 export default function DoctorRegisterPage1() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    secondName: "",
-    lastName: "",
-    gender: "",
-    email: "",
-    nic: "",
-    dateOfBirth: "",
-    specialization: "",
-    hospital: "",
-    licenseNumber: "",
+  const [formData, setFormData] = useState(() => {
+    const emptyForm = {
+      firstName: "",
+      secondName: "",
+      lastName: "",
+      gender: "",
+      email: "",
+      nic: "",
+      dateOfBirth: "",
+      specialization: "",
+      hospital: "",
+      licenseNumber: "",
+    };
+
+    const savedStep1 = sessionStorage.getItem("doctorRegStep1");
+    if (!savedStep1) {
+      return emptyForm;
+    }
+
+    try {
+      return { ...emptyForm, ...JSON.parse(savedStep1) };
+    } catch {
+      return emptyForm;
+    }
   });
 
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    const savedStep1 = sessionStorage.getItem("doctorRegStep1");
-    if (savedStep1) {
-      try {
-        setFormData(JSON.parse(savedStep1));
-      } catch (e) {
-        // ignore invalid cache
-      }
-    }
-  }, []);
 
   const SPECIALIZATIONS = [
     "Cardiology",
@@ -84,129 +87,138 @@ export default function DoctorRegisterPage1() {
   };
 
   return (
-    <RegistrationLayout image={dRegImage1} imageAlt="Doctor Registration">
-      <h1 className="text-2xl lg:text-3xl font-bold text-mainblack mb-6">
-        Doctor Registration
-      </h1>
+    <>
+      <Helmet>
+        <title>Doctor Registration | Healthify</title>
+        <meta
+          name="description"
+          content="Register as a doctor on Healthify to manage patient records, consultations, and digital healthcare workflows securely."
+        />
+      </Helmet>
+      <RegistrationLayout image={dRegImage1} imageAlt="Doctor Registration">
+        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack mb-6">
+          Doctor Registration
+        </h1>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              label="First Name"
+              value={formData.firstName}
+              onChange={handleChange("firstName")}
+              error={errors.firstName}
+              placeholder="Enter your first name"
+              required
+            />
+
+            <FormField
+              label="Second Name"
+              value={formData.secondName}
+              onChange={handleChange("secondName")}
+              error={errors.secondName}
+              placeholder="Enter your second name"
+              required={false}
+            />
+          </div>
+
           <FormField
-            label="First Name"
-            value={formData.firstName}
-            onChange={handleChange("firstName")}
-            error={errors.firstName}
-            placeholder="Enter your first name"
+            label="Last Name"
+            value={formData.lastName}
+            onChange={handleChange("lastName")}
+            error={errors.lastName}
+            placeholder="Enter your last name"
+            required
+          />
+
+          <RadioGroup
+            label="Gender"
+            options={["Male", "Female"]}
+            value={formData.gender}
+            onChange={handleChange("gender")}
+            error={errors.gender}
             required
           />
 
           <FormField
-            label="Second Name"
-            value={formData.secondName}
-            onChange={handleChange("secondName")}
-            error={errors.secondName}
-            placeholder="Enter your second name"
-            required={false}
+            label="Email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange("email")}
+            error={errors.email}
+            placeholder="your.email@example.com"
+            required
           />
-        </div>
 
-        <FormField
-          label="Last Name"
-          value={formData.lastName}
-          onChange={handleChange("lastName")}
-          error={errors.lastName}
-          placeholder="Enter your last name"
-          required
-        />
+          <FormField
+            label="NIC"
+            value={formData.nic}
+            onChange={handleChange("nic")}
+            error={errors.nic}
+            placeholder="Enter your NIC"
+            required
+          />
 
-        <RadioGroup
-          label="Gender"
-          options={["Male", "Female"]}
-          value={formData.gender}
-          onChange={handleChange("gender")}
-          error={errors.gender}
-          required
-        />
+          <FormField
+            label="Date of Birth"
+            type="date"
+            value={formData.dateOfBirth}
+            onChange={handleChange("dateOfBirth")}
+            error={errors.dateOfBirth}
+            required
+          />
 
-        <FormField
-          label="Email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange("email")}
-          error={errors.email}
-          placeholder="your.email@example.com"
-          required
-        />
-
-        <FormField
-          label="NIC"
-          value={formData.nic}
-          onChange={handleChange("nic")}
-          error={errors.nic}
-          placeholder="Enter your NIC"
-          required
-        />
-
-        <FormField
-          label="Date of Birth"
-          type="date"
-          value={formData.dateOfBirth}
-          onChange={handleChange("dateOfBirth")}
-          error={errors.dateOfBirth}
-          required
-        />
-
-        {/* SPECIALIZATION DROPDOWN – UNTOUCHED UI */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">
-            Area of Specialization
-          </label>
-          <select
-            value={formData.specialization}
-            onChange={handleChange("specialization")}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300"
-          >
-            <option value="" disabled>
-              Select specialization
-            </option>
-            {SPECIALIZATIONS.map((spec) => (
-              <option key={spec} value={spec}>
-                {spec}
+          {/* SPECIALIZATION DROPDOWN – UNTOUCHED UI */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">
+              Area of Specialization
+            </label>
+            <select
+              value={formData.specialization}
+              onChange={handleChange("specialization")}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300"
+            >
+              <option value="" disabled>
+                Select specialization
               </option>
-            ))}
-          </select>
-          {errors.specialization && (
-            <p className="text-xs text-red-500">{errors.specialization}</p>
-          )}
+              {SPECIALIZATIONS.map((spec) => (
+                <option key={spec} value={spec}>
+                  {spec}
+                </option>
+              ))}
+            </select>
+            {errors.specialization && (
+              <p className="text-xs text-red-500">{errors.specialization}</p>
+            )}
+          </div>
+
+          <FormField
+            label="Hospital / Clinic"
+            value={formData.hospital}
+            onChange={handleChange("hospital")}
+            error={errors.hospital}
+            placeholder="Your hospital or clinic"
+            required
+          />
+
+          <FormField
+            label="SLMC Number"
+            value={formData.licenseNumber}
+            onChange={handleChange("licenseNumber")}
+            error={errors.licenseNumber}
+            placeholder="SLMC registration number"
+            required
+          />
+
+          <div className="flex justify-center pt-4">
+            <button
+              onClick={handleNext}
+              className="px-12 py-3 bg-secondary text-white rounded-full font-semibold"
+            >
+              Next
+            </button>
+          </div>
         </div>
-
-        <FormField
-          label="Hospital / Clinic"
-          value={formData.hospital}
-          onChange={handleChange("hospital")}
-          error={errors.hospital}
-          placeholder="Your hospital or clinic"
-          required
-        />
-
-        <FormField
-          label="SLMC Number"
-          value={formData.licenseNumber}
-          onChange={handleChange("licenseNumber")}
-          error={errors.licenseNumber}
-          placeholder="SLMC registration number"
-          required
-        />
-
-        <div className="flex justify-center pt-4">
-          <button
-            onClick={handleNext}
-            className="px-12 py-3 bg-secondary text-white rounded-full font-semibold"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    </RegistrationLayout>
+      </RegistrationLayout>
+    </>
   );
 }
