@@ -16,8 +16,9 @@ export function PatinetNavBar({
   const { email, patientId, photoUrl } = patientData;
   const fullName = getDisplayName(patientData);
 
-  const handleLogout = () => {
-    if (!confirmLogout()) {
+  const handleLogout = async () => {
+    const confirmed = await confirmLogout();
+    if (!confirmed) {
       return;
     }
     setDropdownOpen(false);

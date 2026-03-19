@@ -33,8 +33,9 @@ export default function DoctorNavBar({ doctor }) {
     navigate(path);
   };
 
-  const handleLogout = () => {
-    if (!confirmLogout()) {
+  const handleLogout = async () => {
+    const confirmed = await confirmLogout();
+    if (!confirmed) {
       return;
     }
     setDropdownOpen(false);
