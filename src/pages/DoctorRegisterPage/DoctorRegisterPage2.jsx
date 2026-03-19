@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import FileUpload from "../../components/FileUpload";
@@ -145,95 +146,105 @@ export default function DoctorRegisterPage2() {
   };
 
   return (
-    <RegistrationLayout image={pRegImage2} imageAlt="Doctor Registration">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
-          Doctor Registration
-        </h1>
-        <div className="flex gap-2">
-          <span className="w-3 h-3 rounded-full bg-gray-300"></span>
-          <span className="w-3 h-3 rounded-full bg-secondary"></span>
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        <PasswordInput
-          label="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
-          placeholder="Enter your password"
-          required
+    <>
+      <Helmet>
+        <title>Complete Doctor Registration | Healthify</title>
+        <meta
+          name="description"
+          content="Complete your Healthify doctor registration by creating secure credentials and uploading verification documents for approval."
         />
-
-        <PasswordInput
-          label="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          error={errors.confirmPassword}
-          placeholder="Re-enter your password"
-          required
-        />
-
-        <FileUpload
-          label="Upload Verification Document"
-          fileName={fileName}
-          onChange={handleFileChange}
-          error={errors.verificationDoc}
-          helperText="Upload your SLMC certificate or medical license"
-          required
-        />
-
-        <div>
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={agreedToApproval}
-              onChange={(e) => setAgreedToApproval(e.target.checked)}
-              className="mt-1 w-4 h-4 text-secondary focus:ring-secondary rounded"
-            />
-            <span className="text-sm text-gray-700">
-              I understand that my account will remain <strong>inactive</strong>{" "}
-              until verified and approved by the administrator.
-            </span>
-          </label>
-
-          {errors.agreedToApproval && (
-            <p className="text-xs text-red-500 mt-1">
-              {errors.agreedToApproval}
-            </p>
-          )}
+      </Helmet>
+      <RegistrationLayout image={pRegImage2} imageAlt="Doctor Registration">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
+            Doctor Registration
+          </h1>
+          <div className="flex gap-2">
+            <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+            <span className="w-3 h-3 rounded-full bg-secondary"></span>
+          </div>
         </div>
 
-        <div className="flex gap-4 pt-4">
+        <div className="space-y-5">
+          <PasswordInput
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
+            placeholder="Enter your password"
+            required
+          />
+
+          <PasswordInput
+            label="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={errors.confirmPassword}
+            placeholder="Re-enter your password"
+            required
+          />
+
+          <FileUpload
+            label="Upload Verification Document"
+            fileName={fileName}
+            onChange={handleFileChange}
+            error={errors.verificationDoc}
+            helperText="Upload your SLMC certificate or medical license"
+            required
+          />
+
+          <div>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreedToApproval}
+                onChange={(e) => setAgreedToApproval(e.target.checked)}
+                className="mt-1 w-4 h-4 text-secondary focus:ring-secondary rounded"
+              />
+              <span className="text-sm text-gray-700">
+                I understand that my account will remain{" "}
+                <strong>inactive</strong> until verified and approved by the
+                administrator.
+              </span>
+            </label>
+
+            {errors.agreedToApproval && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.agreedToApproval}
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/doctor-register-1")}
+              className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition"
+            >
+              Back
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFinish}
+              disabled={loading || !agreedToApproval}
+              className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {loading ? "Processing..." : "Finish"}
+            </button>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{" "}
           <button
-            type="button"
-            onClick={() => navigate("/doctor-register-1")}
-            className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition"
+            onClick={() => navigate("/login")}
+            className="text-secondary hover:underline font-semibold"
           >
-            Back
+            Login here
           </button>
-
-          <button
-            type="button"
-            onClick={handleFinish}
-            disabled={loading || !agreedToApproval}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-          >
-            {loading ? "Processing..." : "Finish"}
-          </button>
-        </div>
-      </div>
-
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="text-secondary hover:underline font-semibold"
-        >
-          Login here
-        </button>
-      </p>
-    </RegistrationLayout>
+        </p>
+      </RegistrationLayout>
+    </>
   );
 }

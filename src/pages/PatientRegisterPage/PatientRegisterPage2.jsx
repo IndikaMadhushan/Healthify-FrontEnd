@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import pRegImage2 from "../../assets/p-reg-image2.png";
 import { registerPatientApi } from "../../api/authApi";
 import toast from "react-hot-toast";
 import { getNameParts } from "../../utils/nameUtils";
-import {
-  getPasswordValidationMessage,
-} from "../../utils/patientProfileValidation";
+import { getPasswordValidationMessage } from "../../utils/patientProfileValidation";
 
 export default function PatientRegisterPage2() {
   const navigate = useNavigate();
@@ -136,101 +135,112 @@ export default function PatientRegisterPage2() {
   };
 
   return (
-    <RegistrationLayout image={pRegImage2} imageAlt="Patient Registration">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
-          Patient Registration
-        </h1>
-        <div className="flex gap-2">
-          <span className="w-3 h-3 rounded-full bg-gray-300"></span>
-          <span className="w-3 h-3 rounded-full bg-secondary"></span>
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        <PasswordInput
-          label="Password"
-          value={formData.password}
-          onChange={handleChange("password")}
-          error={errors.password}
-          placeholder="Enter your password"
-          required
-          maxLength={64}
-          autoComplete="new-password"
+    <>
+      <Helmet>
+        <title>Complete Patient Registration | Healthify</title>
+        <meta
+          name="description"
+          content="Complete your Healthify patient registration to start tracking health data, storing records, and accessing secure digital healthcare features."
         />
-
-        <PasswordInput
-          label="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange("confirmPassword")}
-          error={errors.confirmPassword}
-          placeholder="Re-enter your password"
-          required
-          maxLength={64}
-          autoComplete="new-password"
-        />
-
-        <div>
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={formData.agreedToTerms}
-              onChange={handleChange("agreedToTerms")}
-              className="mt-1 w-4 h-4 text-secondary rounded"
-            />
-            <span className="text-sm text-gray-700">
-              I agree to the{" "}
-              <button
-                type="button"
-                onClick={() => window.open("/terms", "_blank")}
-                className="text-secondary hover:underline"
-              >
-                Terms & Conditions
-              </button>{" "}
-              and{" "}
-              <button
-                type="button"
-                onClick={() => window.open("/privacy", "_blank")}
-                className="text-secondary hover:underline"
-              >
-                Privacy Policy
-              </button>
-            </span>
-          </label>
-          {errors.agreedToTerms && (
-            <p className="text-xs text-red-500 mt-1">{errors.agreedToTerms}</p>
-          )}
+      </Helmet>
+      <RegistrationLayout image={pRegImage2} imageAlt="Patient Registration">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">
+            Patient Registration
+          </h1>
+          <div className="flex gap-2">
+            <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+            <span className="w-3 h-3 rounded-full bg-secondary"></span>
+          </div>
         </div>
 
-        <div className="flex gap-4 pt-4">
-          <button
-            type="button"
-            onClick={handleBack}
-            className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition"
-          >
-            Back
-          </button>
+        <div className="space-y-5">
+          <PasswordInput
+            label="Password"
+            value={formData.password}
+            onChange={handleChange("password")}
+            error={errors.password}
+            placeholder="Enter your password"
+            required
+            maxLength={64}
+            autoComplete="new-password"
+          />
 
-          <button
-            type="button"
-            onClick={handleFinish}
-            disabled={loading || !formData.agreedToTerms}
-            className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition disabled:opacity-50"
-          >
-            {loading ? "Processing..." : "Finish"}
-          </button>
+          <PasswordInput
+            label="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange("confirmPassword")}
+            error={errors.confirmPassword}
+            placeholder="Re-enter your password"
+            required
+            maxLength={64}
+            autoComplete="new-password"
+          />
+
+          <div>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.agreedToTerms}
+                onChange={handleChange("agreedToTerms")}
+                className="mt-1 w-4 h-4 text-secondary rounded"
+              />
+              <span className="text-sm text-gray-700">
+                I agree to the{" "}
+                <button
+                  type="button"
+                  onClick={() => window.open("/terms", "_blank")}
+                  className="text-secondary hover:underline"
+                >
+                  Terms & Conditions
+                </button>{" "}
+                and{" "}
+                <button
+                  type="button"
+                  onClick={() => window.open("/privacy", "_blank")}
+                  className="text-secondary hover:underline"
+                >
+                  Privacy Policy
+                </button>
+              </span>
+            </label>
+            {errors.agreedToTerms && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.agreedToTerms}
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-full font-semibold hover:bg-gray-50 transition"
+            >
+              Back
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFinish}
+              disabled={loading || !formData.agreedToTerms}
+              className="flex-1 px-6 py-3 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition disabled:opacity-50"
+            >
+              {loading ? "Processing..." : "Finish"}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="text-secondary hover:underline font-semibold"
-        >
-          Login here
-        </button>
-      </p>
-    </RegistrationLayout>
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{" "}
+          <button
+            onClick={() => navigate("/login")}
+            className="text-secondary hover:underline font-semibold"
+          >
+            Login here
+          </button>
+        </p>
+      </RegistrationLayout>
+    </>
   );
 }
