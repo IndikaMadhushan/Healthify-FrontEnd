@@ -125,9 +125,8 @@ export default function ContactUs() {
           </div>
         </section>
 
-        {/* Main Content - Centered Layout */}
+        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 flex justify-center">
-          {/* Adjusted width for the form container to make it look balanced */}
           <div className="w-full max-w-3xl">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-10">
               <div className="text-center mb-10">
