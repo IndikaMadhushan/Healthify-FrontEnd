@@ -1,31 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { 
-  getPendingDoctorsApi, 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import {
+  getPendingDoctorsApi,
   approveDoctorApi,
   rejectDoctorApi,
-  getDoctorByIdApi, 
+  getDoctorByIdApi,
   getPatientByIdApi,
   toggleDoctorStatusApi,
   togglePatientStatusApi,
-  getAdminProfileApi
-} from '../api/AdminApi';
+  getAdminProfileApi,
+} from "../api/AdminApi";
 import {
   approveSiteReviewApi,
   getPendingSiteReviewsApi,
   rejectSiteReviewApi,
 } from "../api/SiteReviewApi";
-import { getDisplayName } from '../utils/nameUtils';
-import { confirmLogout } from '../utils/logoutConfirmation';
+import { getDisplayName } from "../utils/nameUtils";
+import { confirmLogout } from "../utils/logoutConfirmation";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [greeting, setGreeting] = useState('');
-  const [activeTab, setActiveTab] = useState('pending');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [_SEARCH_TYPE] = useState('doctorId');
-  const [_PATIENT_SEARCH_TYPE] = useState('patientId');
+  const [greeting, setGreeting] = useState("");
+  const [activeTab, setActiveTab] = useState("pending");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [_SEARCH_TYPE] = useState("doctorId");
+  const [_PATIENT_SEARCH_TYPE] = useState("patientId");
 
   // Data states
   const [pendingDoctors, setPendingDoctors] = useState([]);
@@ -34,20 +34,24 @@ export default function AdminDashboard() {
   const [showDoctorModal, setShowDoctorModal] = useState(false);
   const [showPatientModal, setShowPatientModal] = useState(false);
   const [patientData, setPatientData] = useState(null);
-  const [adminProfile, setAdminProfile] = useState({ id: 'ADMIN', email: '', name: 'Admin' });
+  const [adminProfile, setAdminProfile] = useState({
+    id: "ADMIN",
+    email: "",
+    name: "Admin",
+  });
   const [adminLoading, setAdminLoading] = useState(true);
   // Loading states
   const [loading, setLoading] = useState(false);
   const [pendingLoading, setPendingLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // Set greeting based on time
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good Morning');
-    else if (hour < 18) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
+    if (hour < 12) setGreeting("Good Morning");
+    else if (hour < 18) setGreeting("Good Afternoon");
+    else setGreeting("Good Evening");
 
     // Fetch pending doctors on mount
     fetchPendingDoctors();
@@ -60,18 +64,17 @@ export default function AdminDashboard() {
       setAdminLoading(true);
       const data = await getAdminProfileApi();
       setAdminProfile({
-        id: data?.id || 'ADMIN',
-        email: data?.email || '',
-        name: data?.name || 'Admin'
+        id: data?.id || "ADMIN",
+        email: data?.email || "",
+        name: data?.name || "Admin",
       });
     } catch (error) {
-      console.error('Error fetching admin profile:', error);
-      toast.error('Failed to load admin profile');
+      console.error("Error fetching admin profile:", error);
+      toast.error("Failed to load admin profile");
     } finally {
       setAdminLoading(false);
     }
   };
-
 
   const fetchPendingDoctors = async () => {
     try {
@@ -79,8 +82,8 @@ export default function AdminDashboard() {
       const data = await getPendingDoctorsApi();
       setPendingDoctors(data);
     } catch (error) {
-      console.error('Error fetching pending doctors:', error);
-      setError('Failed to load pending doctors');
+      console.error("Error fetching pending doctors:", error);
+      setError("Failed to load pending doctors");
     } finally {
       setPendingLoading(false);
     }
@@ -92,8 +95,8 @@ export default function AdminDashboard() {
       const data = await getPendingSiteReviewsApi();
       setPendingSiteReviews(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching pending site reviews:', error);
-      toast.error('Failed to load pending site reviews');
+      console.error("Error fetching pending site reviews:", error);
+      toast.error("Failed to load pending site reviews");
     } finally {
       setReviewLoading(false);
     }
@@ -101,20 +104,20 @@ export default function AdminDashboard() {
 
   const handleDoctorSearch = async () => {
     if (!searchQuery.trim()) {
-      toast.error('Please enter a search value');
+      toast.error("Please enter a search value");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      
+      setError("");
+
       const data = await getDoctorByIdApi(searchQuery);
       setSelectedDoctor(data);
       setShowDoctorModal(true);
     } catch (error) {
-      console.error('Error searching doctor:', error);
-      const message = error.response?.data?.message || 'Doctor not found';
+      console.error("Error searching doctor:", error);
+      const message = error.response?.data?.message || "Doctor not found";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -123,20 +126,20 @@ export default function AdminDashboard() {
 
   const handlePatientSearch = async () => {
     if (!searchQuery.trim()) {
-      toast.error('Please enter a search value');
+      toast.error("Please enter a search value");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      
+      setError("");
+
       const data = await getPatientByIdApi(searchQuery);
       setPatientData(data);
       setShowPatientModal(true);
     } catch (error) {
-      console.error('Error searching patient:', error);
-      const message = error.response?.data?.message || 'Patient not found';
+      console.error("Error searching patient:", error);
+      const message = error.response?.data?.message || "Patient not found";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -147,12 +150,15 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       await approveDoctorApi(userId);
-      toast.success('Doctor approved successfully! Activation email has been sent.');
-      
+      toast.success(
+        "Doctor approved successfully! Activation email has been sent.",
+      );
+
       await fetchPendingDoctors();
     } catch (error) {
-      console.error('Error approving doctor:', error);
-      const message = error.response?.data?.message || 'Failed to approve doctor';
+      console.error("Error approving doctor:", error);
+      const message =
+        error.response?.data?.message || "Failed to approve doctor";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -160,19 +166,24 @@ export default function AdminDashboard() {
   };
 
   const handleRejectDoctor = async (userId) => {
-    if (!confirm('Are you sure you want to reject this doctor registration? This will permanently delete the account.')) {
+    if (
+      !confirm(
+        "Are you sure you want to reject this doctor registration? This will permanently delete the account.",
+      )
+    ) {
       return;
     }
 
     try {
       setLoading(true);
       await rejectDoctorApi(userId);
-      toast.success('Doctor registration rejected successfully.');
-      
+      toast.success("Doctor registration rejected successfully.");
+
       await fetchPendingDoctors();
     } catch (error) {
-      console.error('Error rejecting doctor:', error);
-      const message = error.response?.data?.message || 'Failed to reject doctor';
+      console.error("Error rejecting doctor:", error);
+      const message =
+        error.response?.data?.message || "Failed to reject doctor";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -186,8 +197,9 @@ export default function AdminDashboard() {
       toast.success("Review approved successfully.");
       await fetchPendingReviews();
     } catch (error) {
-      console.error('Error approving site review:', error);
-      const message = error.response?.data?.message || 'Failed to approve review';
+      console.error("Error approving site review:", error);
+      const message =
+        error.response?.data?.message || "Failed to approve review";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -201,8 +213,9 @@ export default function AdminDashboard() {
       toast.success("Review rejected successfully.");
       await fetchPendingReviews();
     } catch (error) {
-      console.error('Error rejecting site review:', error);
-      const message = error.response?.data?.message || 'Failed to reject review';
+      console.error("Error rejecting site review:", error);
+      const message =
+        error.response?.data?.message || "Failed to reject review";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -210,8 +223,8 @@ export default function AdminDashboard() {
   };
 
   const handleToggleDoctorStatus = async (doctorId, currentStatus) => {
-    const action = currentStatus === 'ACTIVE' ? 'disable' : 'activate';
-    
+    const action = currentStatus === "ACTIVE" ? "disable" : "activate";
+
     if (!confirm(`Are you sure you want to ${action} this doctor's account?`)) {
       return;
     }
@@ -220,12 +233,13 @@ export default function AdminDashboard() {
       setLoading(true);
       await toggleDoctorStatusApi(doctorId);
       toast.success(`Doctor account ${action}d successfully!`);
-      
+
       const updatedDoctor = await getDoctorByIdApi(doctorId);
       setSelectedDoctor(updatedDoctor);
     } catch (error) {
-      console.error('Error toggling doctor status:', error);
-      const message = error.response?.data?.message || `Failed to ${action} doctor account`;
+      console.error("Error toggling doctor status:", error);
+      const message =
+        error.response?.data?.message || `Failed to ${action} doctor account`;
       toast.error(message);
     } finally {
       setLoading(false);
@@ -233,9 +247,11 @@ export default function AdminDashboard() {
   };
 
   const handleTogglePatientStatus = async (patientId, currentStatus) => {
-    const action = currentStatus === 'ACTIVE' ? 'disable' : 'activate';
-    
-    if (!confirm(`Are you sure you want to ${action} this patient's account?`)) {
+    const action = currentStatus === "ACTIVE" ? "disable" : "activate";
+
+    if (
+      !confirm(`Are you sure you want to ${action} this patient's account?`)
+    ) {
       return;
     }
 
@@ -243,22 +259,24 @@ export default function AdminDashboard() {
       setLoading(true);
       await togglePatientStatusApi(patientId);
       toast.success(`Patient account ${action}d successfully!`);
-      
+
       const updatedPatient = await getPatientByIdApi(patientId);
       setPatientData(updatedPatient);
     } catch (error) {
-      console.error('Error toggling patient status:', error);
-      const message = error.response?.data?.message || `Failed to ${action} patient account`;
+      console.error("Error toggling patient status:", error);
+      const message =
+        error.response?.data?.message || `Failed to ${action} patient account`;
       toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    if (confirmLogout()) {
-      console.log('Admin logged out');
-      navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    const confirmed = await confirmLogout();
+    if (confirmed) {
+      console.log("Admin logged out");
+      navigate("/login", { replace: true });
     }
   };
 
@@ -272,23 +290,23 @@ export default function AdminDashboard() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-[#0F4F52]">
-                {greeting}, {adminProfile.name || 'Admin'}! 👋
+                {greeting}, {adminProfile.name || "Admin"}! 👋
               </h1>
               <div className="mt-2 space-y-1">
                 <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">ID:</span>{' '}
-                  {adminLoading ? 'Loading...' : adminProfile.id}
+                  <span className="font-medium text-[#18AAB0]">ID:</span>{" "}
+                  {adminLoading ? "Loading..." : adminProfile.id}
                 </p>
                 <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">Email:</span>{' '}
-                  {adminLoading ? 'Loading...' : (adminProfile.email || '—')}
+                  <span className="font-medium text-[#18AAB0]">Email:</span>{" "}
+                  {adminLoading ? "Loading..." : adminProfile.email || "—"}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setActiveTab('pending')}
+                onClick={() => setActiveTab("pending")}
                 className="relative p-3 bg-[#18AAB0] text-white rounded-full hover:bg-[#86C443] transition-colors"
               >
                 <span className="text-xl">🔔</span>
@@ -313,45 +331,44 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-8">
           <TabButton
-            active={activeTab === 'pending'}
-            onClick={() => setActiveTab('pending')}
+            active={activeTab === "pending"}
+            onClick={() => setActiveTab("pending")}
             badge={pendingDoctors.length}
           >
             📋 Pending Approvals
           </TabButton>
           <TabButton
-            active={activeTab === 'reviews'}
-            onClick={() => setActiveTab('reviews')}
+            active={activeTab === "reviews"}
+            onClick={() => setActiveTab("reviews")}
             badge={pendingSiteReviews.length}
           >
             Pending Reviews
           </TabButton>
           <TabButton
-            active={activeTab === 'doctors'}
-            onClick={() => setActiveTab('doctors')}
+            active={activeTab === "doctors"}
+            onClick={() => setActiveTab("doctors")}
           >
             👨‍⚕️ Search Doctors
           </TabButton>
           <TabButton
-            active={activeTab === 'patients'}
-            onClick={() => setActiveTab('patients')}
+            active={activeTab === "patients"}
+            onClick={() => setActiveTab("patients")}
           >
             👤 Search Patients
           </TabButton>
         </div>
 
-        {pendingLoading && activeTab === 'pending' && (
+        {pendingLoading && activeTab === "pending" && (
           <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
             <div className="inline-block w-8 h-8 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-gray-500 mt-4">Loading pending doctors...</p>
           </div>
         )}
 
-        {reviewLoading && activeTab === 'reviews' && (
+        {reviewLoading && activeTab === "reviews" && (
           <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
             <div className="inline-block w-8 h-8 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-gray-500 mt-4">Loading pending reviews...</p>
@@ -364,7 +381,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {!pendingLoading && activeTab === 'pending' && (
+        {!pendingLoading && activeTab === "pending" && (
           <PendingApprovalsSection
             doctors={pendingDoctors}
             onApprove={handleApproveDoctor}
@@ -373,7 +390,7 @@ export default function AdminDashboard() {
           />
         )}
 
-        {!reviewLoading && activeTab === 'reviews' && (
+        {!reviewLoading && activeTab === "reviews" && (
           <PendingSiteReviewsSection
             reviews={pendingSiteReviews}
             onApprove={handleApproveSiteReview}
@@ -382,7 +399,7 @@ export default function AdminDashboard() {
           />
         )}
 
-        {activeTab === 'doctors' && (
+        {activeTab === "doctors" && (
           <DoctorSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -392,7 +409,7 @@ export default function AdminDashboard() {
           />
         )}
 
-        {activeTab === 'patients' && (
+        {activeTab === "patients" && (
           <PatientSearchSection
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -427,7 +444,6 @@ export default function AdminDashboard() {
   );
 }
 
-
 // Tab Button Component
 function TabButton({ active, onClick, children, badge }) {
   return (
@@ -435,8 +451,8 @@ function TabButton({ active, onClick, children, badge }) {
       onClick={onClick}
       className={`relative px-6 py-3 rounded-xl font-semibold transition-all ${
         active
-          ? 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg'
-          : 'bg-white text-gray-600 hover:bg-[#F7FCFB] border border-[#D3F0ED]'
+          ? "bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg"
+          : "bg-white text-gray-600 hover:bg-[#F7FCFB] border border-[#D3F0ED]"
       }`}
     >
       {children}
@@ -456,7 +472,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
         Pending Doctor Registrations
       </h2>
-      
+
       {doctors.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
           <span className="text-6xl">✅</span>
@@ -475,7 +491,9 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                   <h3 className="text-lg font-bold text-[#0F4F52]">
                     {getDisplayName(doctor)}
                   </h3>
-                  <p className="text-sm text-[#18AAB0] font-medium">{doctor.specialization || 'N/A'}</p>
+                  <p className="text-sm text-[#18AAB0] font-medium">
+                    {doctor.specialization || "N/A"}
+                  </p>
                 </div>
                 <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
                   Pending
@@ -484,10 +502,13 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                 <InfoItem label="User ID" value={doctor.doctorId} />
-                <InfoItem label="SLMC Number" value={doctor.licenseNumber || 'N/A'} />
-                <InfoItem label="NIC" value={doctor.nic || 'N/A'} />
+                <InfoItem
+                  label="SLMC Number"
+                  value={doctor.licenseNumber || "N/A"}
+                />
+                <InfoItem label="NIC" value={doctor.nic || "N/A"} />
                 <InfoItem label="Email" value={doctor.email} />
-                <InfoItem label="Hospital" value={doctor.hospital || 'N/A'} />
+                <InfoItem label="Hospital" value={doctor.hospital || "N/A"} />
                 <InfoItem label="Role" value={doctor.role} />
               </div>
 
@@ -515,7 +536,9 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                 </div>
               ) : (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <p className="text-sm text-gray-500">No verification document</p>
+                  <p className="text-sm text-gray-500">
+                    No verification document
+                  </p>
                 </div>
               )}
 
@@ -526,7 +549,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                   disabled={loading}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Processing...' : '✓ Approve & Activate'}
+                  {loading ? "Processing..." : "✓ Approve & Activate"}
                 </button>
                 <button
                   onClick={() => onReject(doctor.id)}
@@ -544,7 +567,12 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
   );
 }
 
-function PendingSiteReviewsSection({ reviews, onApprove, onReject, loading = false }) {
+function PendingSiteReviewsSection({
+  reviews,
+  onApprove,
+  onReject,
+  loading = false,
+}) {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
@@ -635,11 +663,18 @@ function PendingSiteReviewsSection({ reviews, onApprove, onReject, loading = fal
 }
 
 // Doctor Search Section
-function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
+function DoctorSearchSection({
+  searchQuery,
+  setSearchQuery,
+  onSearch,
+  loading,
+}) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Doctor</h2>
-      
+      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">
+        Search Doctor
+      </h2>
+
       <div className="space-y-4">
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
           <p className="text-sm text-blue-800">
@@ -654,7 +689,7 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading })
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Enter Doctor ID"
             className="flex-1 px-4 py-3 border-2 border-[#D3F0ED] rounded-xl focus:border-[#18AAB0] focus:ring-4 focus:ring-[#18AAB0]/20 outline-none transition-all"
-            onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+            onKeyPress={(e) => e.key === "Enter" && onSearch()}
           />
           <button
             onClick={onSearch}
@@ -667,7 +702,7 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading })
                 Searching...
               </span>
             ) : (
-              '🔍 Search'
+              "🔍 Search"
             )}
           </button>
         </div>
@@ -677,15 +712,23 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading })
 }
 
 // Patient Search Section
-function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }) {
+function PatientSearchSection({
+  searchQuery,
+  setSearchQuery,
+  onSearch,
+  loading,
+}) {
   return (
     <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">Search Patient</h2>
-      
+      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">
+        Search Patient
+      </h2>
+
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
         <p className="text-sm text-amber-800">
-          ⚠️ <strong>Privacy Notice:</strong> You can only check patient existence and manage account status. 
-          Patient details are protected and not visible to admin.
+          ⚠️ <strong>Privacy Notice:</strong> You can only check patient
+          existence and manage account status. Patient details are protected and
+          not visible to admin.
         </p>
       </div>
 
@@ -703,7 +746,7 @@ function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Enter Patient ID"
             className="flex-1 px-4 py-3 border-2 border-[#D3F0ED] rounded-xl focus:border-[#18AAB0] focus:ring-4 focus:ring-[#18AAB0]/20 outline-none transition-all"
-            onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+            onKeyPress={(e) => e.key === "Enter" && onSearch()}
           />
           <button
             onClick={onSearch}
@@ -716,7 +759,7 @@ function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }
                 Checking...
               </span>
             ) : (
-              '🔍 Check'
+              "🔍 Check"
             )}
           </button>
         </div>
@@ -753,8 +796,8 @@ function ReviewStars({ rating }) {
 // Doctor Details Modal
 function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
   const isEnabled = doctor.user?.enabled ?? doctor.enabled ?? true;
-  const accountStatus = isEnabled ? 'ACTIVE' : 'DISABLED';
-  
+  const accountStatus = isEnabled ? "ACTIVE" : "DISABLED";
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -771,22 +814,30 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
         <div className="space-y-4">
           <DetailRow label="Name" value={getDisplayName(doctor)} />
           <DetailRow label="Doctor ID" value={doctor.doctorId} />
-          <DetailRow label="License Number" value={doctor.licenseNumber || 'N/A'} />
-          <DetailRow label="NIC" value={doctor.nic || 'N/A'} />
+          <DetailRow
+            label="License Number"
+            value={doctor.licenseNumber || "N/A"}
+          />
+          <DetailRow label="NIC" value={doctor.nic || "N/A"} />
           <DetailRow label="Email" value={doctor.email} />
-          <DetailRow label="Phone" value={doctor.phone || 'N/A'} />
-          <DetailRow label="Specialization" value={doctor.specialization || 'N/A'} />
-          <DetailRow label="Hospital" value={doctor.hospital || 'N/A'} />
-          <DetailRow label="Age" value={doctor.age || 'N/A'} />
-          <DetailRow 
-            label="Account Status" 
+          <DetailRow label="Phone" value={doctor.phone || "N/A"} />
+          <DetailRow
+            label="Specialization"
+            value={doctor.specialization || "N/A"}
+          />
+          <DetailRow label="Hospital" value={doctor.hospital || "N/A"} />
+          <DetailRow label="Age" value={doctor.age || "N/A"} />
+          <DetailRow
+            label="Account Status"
             value={
-              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                isEnabled 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-red-100 text-red-700'
-              }`}>
-                {isEnabled ? '✓ Active' : '✗ Disabled'}
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  isEnabled
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {isEnabled ? "✓ Active" : "✗ Disabled"}
               </span>
             }
           />
@@ -815,11 +866,11 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
             onClick={() => onToggleStatus(doctor.doctorId, accountStatus)}
             className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
               isEnabled
-                ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
-                : 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg'
+                ? "bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100"
+                : "bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg"
             }`}
           >
-            {isEnabled ? '🔒 Disable Account' : '✓ Activate Account'}
+            {isEnabled ? "🔒 Disable Account" : "✓ Activate Account"}
           </button>
           <button
             onClick={onClose}
@@ -837,13 +888,15 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
 function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
   const patientExists = patient && patient.patientId;
   const isEnabled = patient?.user?.enabled ?? patient?.enabled ?? true;
-  const accountStatus = isEnabled ? 'ACTIVE' : 'DISABLED';
-  
+  const accountStatus = isEnabled ? "ACTIVE" : "DISABLED";
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full">
         <div className="flex justify-between items-start mb-6">
-          <h2 className="text-2xl font-bold text-[#0F4F52]">Patient Search Result</h2>
+          <h2 className="text-2xl font-bold text-[#0F4F52]">
+            Patient Search Result
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-2xl"
@@ -861,28 +914,34 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
 
             <DetailRow label="Patient ID" value={patient.patientId} />
             <DetailRow label="Email" value={patient.email} />
-            <DetailRow label="Phone" value={patient.phone || 'N/A'} />
-            
+            <DetailRow label="Phone" value={patient.phone || "N/A"} />
+
             {patient.registrationDate && (
-              <DetailRow label="Registered Date" value={new Date(patient.registrationDate).toLocaleDateString()} />
+              <DetailRow
+                label="Registered Date"
+                value={new Date(patient.registrationDate).toLocaleDateString()}
+              />
             )}
 
-            <DetailRow 
-              label="Account Status" 
+            <DetailRow
+              label="Account Status"
               value={
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                  isEnabled 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {isEnabled ? '✓ Active' : '✗ Disabled'}
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    isEnabled
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {isEnabled ? "✓ Active" : "✗ Disabled"}
                 </span>
               }
             />
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-4">
               <p className="text-xs text-amber-800">
-                🔒 Full patient details are protected for privacy reasons. Only basic info is shown.
+                🔒 Full patient details are protected for privacy reasons. Only
+                basic info is shown.
               </p>
             </div>
 
@@ -891,11 +950,11 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
                 onClick={() => onToggleStatus(patient.patientId, accountStatus)}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
                   isEnabled
-                    ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
-                    : 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg'
+                    ? "bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100"
+                    : "bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white hover:shadow-lg"
                 }`}
               >
-                {isEnabled ? 'Disable Account' : 'Activate Account'}
+                {isEnabled ? "Disable Account" : "Activate Account"}
               </button>
               <button
                 onClick={onClose}
@@ -928,7 +987,9 @@ function DetailRow({ label, value }) {
   return (
     <div className="flex justify-between items-center py-3 border-b border-gray-100">
       <span className="text-gray-600 font-medium">{label}</span>
-      <span className="text-[#0F4F52] font-semibold">{typeof value === 'string' ? value : value}</span>
+      <span className="text-[#0F4F52] font-semibold">
+        {typeof value === "string" ? value : value}
+      </span>
     </div>
   );
 }
