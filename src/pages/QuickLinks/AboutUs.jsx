@@ -55,9 +55,7 @@ export default function AboutUs() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* Introduction Card */}
 
-          {/* Who We Are - FIXED ALIGNMENT AND STYLING */}
           <section className="mb-10 sm:mb-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
-            {/* Header Container - Centered */}
             <div className="flex flex-col items-center justify-center gap-3 mb-6">
               <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
                 <Users className="w-5 h-5 text-teal-600" />
@@ -67,14 +65,18 @@ export default function AboutUs() {
               </h2>
             </div>
 
-            {/* Content Container - Centered */}
             <div className="max-w-2xl mx-auto">
               <div className="space-y-4 text-gray-700 text-sm sm:text-base leading-relaxed">
                 <p>
-                  <strong>Healthify </strong> is developed by Group 2, a team of
-                  passionate 3rd-year Computer Science students from the 13th
-                  batch, Department of Computer Science, University of Ruhuna,
-                  as their group project.
+                  <strong>Healthify</strong> is developed by Group 2, a
+                  dedicated team of third-year Computer Science undergraduates
+                  from the 13th batch at the Department of Computer Science,
+                  University of Ruhuna. The team combines technical knowledge
+                  with a strong commitment to developing innovative digital
+                  solutions in the healthcare domain. Through this project, we
+                  aim to enhance personal health management by leveraging modern
+                  technologies to create a reliable, user-friendly, and
+                  efficient system.
                 </p>
               </div>
             </div>
@@ -150,10 +152,13 @@ export default function AboutUs() {
                 <h2 className="text-xl sm:text-2xl font-bold">Our Mission</h2>
               </div>
               <p className="text-sm sm:text-base leading-relaxed opacity-95">
-                To empower patients with digital access, understanding, and
-                control over their health data while enabling doctors to make
-                better decisions through accurate, organized, and visualized
-                medical information.
+                Our mission is to empower patients by providing secure digital
+                access to their health information, enhancing their
+                understanding, and enabling greater control over their personal
+                healthcare. At the same time, we support healthcare
+                professionals by delivering accurate, well-organized, and
+                visually meaningful medical data to facilitate informed and
+                effective decision-making.
               </p>
             </div>
           </section>
@@ -166,16 +171,16 @@ export default function AboutUs() {
                 <h2 className="text-xl sm:text-2xl font-bold">Our Vision</h2>
               </div>
               <div className="space-y-3 text-sm sm:text-base">
-                {[
-                  "Patients manage their healthcare digitally",
-                  "Doctors have quick, reliable access to patient history",
-                  "National-level digital health platform support",
-                ].map((text, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full mt-2 shrink-0"></div>
-                    <p className="opacity-95">{text}</p>
-                  </div>
-                ))}
+                <p>
+                  Our vision is to enable a future where patients can seamlessly
+                  manage their healthcare through digital platforms, ensuring
+                  convenience, accessibility, and control. We aim to support
+                  healthcare professionals with quick and reliable access to
+                  comprehensive patient histories, enhancing the quality of
+                  care. Ultimately, we aspire to contribute towards the
+                  development of a scalable, national-level digital health
+                  platform that improves healthcare delivery for all.
+                </p>
               </div>
             </div>
           </section>

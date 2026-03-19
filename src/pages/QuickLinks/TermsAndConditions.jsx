@@ -309,7 +309,7 @@ export default function TermsConditionsPage() {
 
           {/* Email Support Button */}
           <a
-            href="mailto:healthify@gmail.com?subject=Healthify Support Request&body=Hello Healthify Team,"
+            href="mailto:healthify.noreply@gmail.com?subject=Healthify Support Request&body=Hello Healthify Team,"
             className="inline-flex items-center gap-2 bg-teal-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-700 transition-all shadow-md active:scale-95"
           >
             Email Support
