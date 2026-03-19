@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { IoLogOutSharp } from "react-icons/io5";
 import { 
   getPendingDoctorsApi, 
   approveDoctorApi,
@@ -41,6 +42,7 @@ export default function AdminDashboard() {
   const [pendingLoading, setPendingLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(true);
   const [error, setError] = useState('');
+
 
   useEffect(() => {
     // Set greeting based on time
@@ -275,10 +277,7 @@ export default function AdminDashboard() {
                 {greeting}, {adminProfile.name || 'Admin'}! 👋
               </h1>
               <div className="mt-2 space-y-1">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">ID:</span>{' '}
-                  {adminLoading ? 'Loading...' : adminProfile.id}
-                </p>
+                
                 <p className="text-sm text-gray-600">
                   <span className="font-medium text-[#18AAB0]">Email:</span>{' '}
                   {adminLoading ? 'Loading...' : (adminProfile.email || '—')}
@@ -286,7 +285,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center sm:gap-3 justify-between sm:justify-end w-full ">
               <button
                 onClick={() => setActiveTab('pending')}
                 className="relative p-3 bg-[#18AAB0] text-white rounded-full hover:bg-[#86C443] transition-colors"
@@ -303,8 +302,8 @@ export default function AdminDashboard() {
                 onClick={handleLogout}
                 className="px-5 py-2.5 bg-red-50 text-red-600 border-2 border-red-200 rounded-full font-semibold hover:bg-red-100 transition-all flex items-center gap-2"
               >
-                <span>🚪</span>
-                <span className="hidden sm:inline">Logout</span>
+                <span><IoLogOutSharp className='text-red-600 text-xl '/></span>
+                <span className="">Logout</span>
               </button>
             </div>
           </div>
@@ -312,10 +311,10 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex  sm:flex-row flex-wrap gap-2 mb-8">
           <TabButton
             active={activeTab === 'pending'}
             onClick={() => setActiveTab('pending')}
@@ -328,7 +327,7 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('reviews')}
             badge={pendingSiteReviews.length}
           >
-            Pending Reviews
+            ⭐Pending Reviews
           </TabButton>
           <TabButton
             active={activeTab === 'doctors'}
@@ -433,7 +432,7 @@ function TabButton({ active, onClick, children, badge }) {
   return (
     <button
       onClick={onClick}
-      className={`relative px-6 py-3 rounded-xl font-semibold transition-all ${
+      className={`relative sm:w-[200px] w-[180px] py-3 rounded-xl font-semibold sm:text-[16px] text-sm transition-all ${
         active
           ? 'bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg'
           : 'bg-white text-gray-600 hover:bg-[#F7FCFB] border border-[#D3F0ED]'
@@ -659,7 +658,7 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading })
           <button
             onClick={onSearch}
             disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed hidden sm:block"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -668,6 +667,20 @@ function DoctorSearchSection({ searchQuery, setSearchQuery, onSearch, loading })
               </span>
             ) : (
               '🔍 Search'
+            )}
+          </button>
+          <button
+            onClick={onSearch}
+            disabled={loading}
+            className="px-4 py-4 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-full font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed sm:hidden block"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Searching...
+              </span>
+            ) : (
+              '🔍'
             )}
           </button>
         </div>
@@ -708,7 +721,7 @@ function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }
           <button
             onClick={onSearch}
             disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-8 py-3 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed  hidden sm:block"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -717,6 +730,20 @@ function PatientSearchSection({ searchQuery, setSearchQuery, onSearch, loading }
               </span>
             ) : (
               '🔍 Check'
+            )}
+          </button>
+          <button
+            onClick={onSearch}
+            disabled={loading}
+            className="px-4 py-4 bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white rounded-full font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed  block sm:hidden"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Checking...
+              </span>
+            ) : (
+              '🔍 '
             )}
           </button>
         </div>
