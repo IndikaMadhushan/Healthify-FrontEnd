@@ -1,3 +1,9 @@
+# Healthify - Personal Health Monitoring System
+
+Live Demo: https://healthify.dev
+
+Healthify is a web-based health monitoring system that helps patients track their health and doctors manage medical data efficiently.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
