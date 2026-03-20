@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 
 export default function PrivacyPolicyPage() {
   useEffect(() => {
@@ -8,13 +8,10 @@ export default function PrivacyPolicyPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy | Healthify</title>
-        <meta
-          name="description"
-          content="Read the Healthify Privacy Policy to understand how personal information and health data are collected, stored, protected, and shared."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Privacy Policy | Healthify"
+        description="Read the Healthify Privacy Policy to understand how personal information and health data are collected, stored, protected, and shared."
+      />
       <div className="min-h-screen bg-[#F9FAFB] pb-20">
         {/* Hero Section */}
         <header className="bg-white border-b border-gray-200 py-8">

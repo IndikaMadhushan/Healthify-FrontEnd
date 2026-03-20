@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import { requestPasswordResetApi } from "../../api/PasswordResetApi";
 
 export default function ForgotPasswordPage() {
@@ -53,13 +53,10 @@ export default function ForgotPasswordPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Forgot Password | Healthify</title>
-        <meta
-          name="description"
-          content="Request a password reset for your Healthify account and receive a secure verification code to restore access."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Forgot Password | Healthify"
+        description="Request a password reset for your Healthify account and receive a secure verification code to restore access."
+      />
       <div className="min-h-screen bg-gradient-to-br from-[#F2FBFA] via-white to-[#EAF7F6] flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Main Card */}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import FormField from "../../components/FormField";
 import RadioGroup from "../../components/RadioGroup";
@@ -160,13 +160,10 @@ export default function PatientRegisterPage1() {
 
   return (
     <>
-      <Helmet>
-        <title>Patient Registration | Healthify</title>
-        <meta
-          name="description"
-          content="Register as a patient on Healthify to securely manage medical records, monitor wellness, and access digital healthcare support."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Patient Registration | Healthify"
+        description="Register as a patient on Healthify to securely manage medical records, monitor wellness, and access digital healthcare support."
+      />
       <RegistrationLayout image={pRegImage1} imageAlt="Patient Registration">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">

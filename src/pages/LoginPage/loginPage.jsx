@@ -1,6 +1,6 @@
 import Button from "../HomePage/HomeButton";
 import { Link, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import Login from "../../assets/loginIcon.png";
 import { useState, useEffect } from "react";
 import { loginApi } from "../../api/authApi";
@@ -83,13 +83,10 @@ export default function LoginPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Login | Healthify</title>
-        <meta
-          name="description"
-          content="Log in to Healthify to securely access your personal health monitoring dashboard, medical records, and digital healthcare tools."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Login | Healthify"
+        description="Log in to Healthify to securely access your personal health monitoring dashboard, medical records, and digital healthcare tools."
+      />
       <div className="min-h-screen flex flex-col bg-[#F2FBFA]">
         <div className="flex flex-1 items-center justify-center px-4 sm:px-6 lg:px-16">
           <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
