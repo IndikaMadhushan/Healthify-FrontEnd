@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Send, CheckCircle } from "lucide-react";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import { submitContactUsApi } from "../../api/ContactUsApi";
 
 const EMPTY_FORM = {
@@ -96,13 +96,10 @@ export default function ContactUs() {
 
   return (
     <>
-      <Helmet>
-        <title>Contact Healthify | Support and Inquiries</title>
-        <meta
-          name="description"
-          content="Contact the Healthify team for support, product questions, and healthcare platform inquiries through our secure contact page."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Contact Healthify | Support and Inquiries"
+        description="Contact the Healthify team for support, product questions, and healthcare platform inquiries through our secure contact page."
+      />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-teal-600 via-teal-500 to-green-500 text-white py-16 sm:py-20 overflow-hidden">

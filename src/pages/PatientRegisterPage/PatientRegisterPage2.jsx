@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import RegistrationLayout from "../../components/RegistrationLayout";
 import PasswordInput from "../../components/PasswordInput";
 import pRegImage2 from "../../assets/p-reg-image2.png";
@@ -136,13 +136,10 @@ export default function PatientRegisterPage2() {
 
   return (
     <>
-      <Helmet>
-        <title>Complete Patient Registration | Healthify</title>
-        <meta
-          name="description"
-          content="Complete your Healthify patient registration to start tracking health data, storing records, and accessing secure digital healthcare features."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Complete Patient Registration | Healthify"
+        description="Complete your Healthify patient registration to start tracking health data, storing records, and accessing secure digital healthcare features."
+      />
       <RegistrationLayout image={pRegImage2} imageAlt="Patient Registration">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl lg:text-3xl font-bold text-mainblack">

@@ -1,18 +1,15 @@
 import OptionCard from "./optionCard";
 import { FaUserDoctor } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 
 export default function OptionPage() {
   return (
     <>
-      <Helmet>
-        <title>Register | Healthify</title>
-        <meta
-          name="description"
-          content="Create your Healthify account to start tracking health data and managing patient information securely as a patient or doctor."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Register | Healthify"
+        description="Create your Healthify account to start tracking health data and managing patient information securely as a patient or doctor."
+      />
       <div className="min-h-screen w-full items-center justify-center bg-gradient-to-br flex from-[#F7FCFB] via-white to-[#EAF7F6]  ">
         <div className="flex flex-col items-center justify-center px-4 py-16">
           {/* TITLE SECTION */}

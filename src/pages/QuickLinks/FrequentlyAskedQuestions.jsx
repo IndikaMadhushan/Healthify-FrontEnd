@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Minus } from "lucide-react";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 
 export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -53,13 +53,10 @@ export default function FAQPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Healthify FAQ | Help and Support</title>
-        <meta
-          name="description"
-          content="Find answers to common questions about Healthify, including health data security, report management, reminders, and platform usage."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Healthify FAQ | Help and Support"
+        description="Find answers to common questions about Healthify, including health data security, report management, reminders, and platform usage."
+      />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative bg-white border-b border-gray-200 py-12 sm:py-20 overflow-hidden">

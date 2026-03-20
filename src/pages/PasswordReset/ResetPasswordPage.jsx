@@ -4,7 +4,7 @@ import {
   confirmPasswordResetApi,
   resendPasswordResetOtpApi,
 } from "../../api/PasswordResetApi";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import toast from "react-hot-toast";
 
 export default function ResetPasswordPage() {
@@ -167,13 +167,10 @@ export default function ResetPasswordPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Reset Password | Healthify</title>
-        <meta
-          name="description"
-          content="Reset your Healthify account password securely by verifying your OTP and creating a new password."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Reset Password | Healthify"
+        description="Reset your Healthify account password securely by verifying your OTP and creating a new password."
+      />
       <div className="min-h-screen bg-gradient-to-br from-[#F2FBFA] via-white to-[#EAF7F6] flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Main Card */}

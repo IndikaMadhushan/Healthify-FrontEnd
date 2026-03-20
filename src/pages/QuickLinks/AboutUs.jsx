@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import {
   Users,
   Shield,
@@ -18,13 +18,10 @@ export default function AboutUs() {
 
   return (
     <>
-      <Helmet>
-        <title>About Healthify | Digital Health Monitoring Platform</title>
-        <meta
-          name="description"
-          content="Learn about Healthify, a secure digital health monitoring platform built to help patients and doctors manage medical information more effectively."
-        />
-      </Helmet>
+      <PageHelmet
+        title="About Healthify | Digital Health Monitoring Platform"
+        description="Learn about Healthify, a secure digital health monitoring platform built to help patients and doctors manage medical information more effectively."
+      />
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative bg-linear-to-br from-secondary to-[#86C443] text-white py-16 sm:py-24 overflow-hidden">

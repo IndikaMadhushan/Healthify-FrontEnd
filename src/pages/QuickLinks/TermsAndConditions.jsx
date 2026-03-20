@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 
 export default function TermsConditionsPage() {
   // Scroll to top when component mounts
@@ -9,13 +9,10 @@ export default function TermsConditionsPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Terms and Conditions | Healthify</title>
-        <meta
-          name="description"
-          content="Review the Healthify Terms and Conditions covering platform use, user responsibilities, data practices, and medical service disclaimers."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Terms and Conditions | Healthify"
+        description="Review the Healthify Terms and Conditions covering platform use, user responsibilities, data practices, and medical service disclaimers."
+      />
       <div className="min-h-screen bg-gray-50">
         {/* Header Section */}
         <div className="bg-white border-b">

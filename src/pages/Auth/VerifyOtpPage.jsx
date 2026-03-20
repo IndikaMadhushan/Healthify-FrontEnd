@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyOtpApi, resendOtpApi } from "../../api/authApi";
-import { Helmet } from "react-helmet";
+import PageHelmet from "../../components/PageHelmet";
 import toast from "react-hot-toast";
 
 export default function VerifyOtpPage() {
@@ -138,13 +138,10 @@ export default function VerifyOtpPage() {
   /* ================= UI ================= */
   return (
     <>
-      <Helmet>
-        <title>Verify Account | Healthify</title>
-        <meta
-          name="description"
-          content="Verify your Healthify account with the one-time password sent to your email to activate secure access."
-        />
-      </Helmet>
+      <PageHelmet
+        title="Verify Account | Healthify"
+        description="Verify your Healthify account with the one-time password sent to your email to activate secure access."
+      />
       <div className="min-h-screen bg-gradient-to-br from-[#F2FBFA] via-white to-[#EAF7F6] flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-3xl shadow-xl p-8 border border-[#D3F0ED]">
