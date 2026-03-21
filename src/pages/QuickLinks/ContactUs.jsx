@@ -226,7 +226,7 @@ export default function ContactUs() {
                   )}
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                       Message
                     </label>
                     <textarea
