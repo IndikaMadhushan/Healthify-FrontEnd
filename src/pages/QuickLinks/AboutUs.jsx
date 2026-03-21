@@ -142,7 +142,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* Our Mission */}
+          {/* Our Mission section*/}
           <section className="mb-10 sm:mb-16">
             <div className="bg-linear-to-br from-teal-500 to-green-600 text-white rounded-xl shadow-lg p-6 sm:p-10 border border-teal-400">
               <div className="flex items-center gap-3 mb-4">
