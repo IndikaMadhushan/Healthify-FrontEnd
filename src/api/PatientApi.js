@@ -3,6 +3,7 @@ import axiosInstance from "./axiosInstance";
 const PATIENT_CACHE_KEY = "patient_me_cache";
 const PATIENT_CACHE_TTL_MS = 5 * 60 * 1000;
 const PATIENT_PROFILE_UPDATED_EVENT = "patient-profile-updated";
+let patientProfileRequest = null;
 
 function buildPatientFullName(patient = {}) {
     return [patient.firstName, patient.secondName, patient.lastName]
@@ -126,13 +127,25 @@ export const getPatientProfileApi = async (options = {}) => {
         return { data: cachedPatient };
     }
 
-    const res = await axiosInstance.get("/api/patients/me");
-    const normalized = setPatientProfileCache(res.data);
+    if (patientProfileRequest) {
+        return patientProfileRequest;
+    }
 
-    return {
-        ...res,
-        data: normalized,
-    };
+    patientProfileRequest = axiosInstance
+        .get("/api/patients/me")
+        .then((res) => {
+            const normalized = setPatientProfileCache(res.data);
+
+            return {
+                ...res,
+                data: normalized,
+            };
+        })
+        .finally(() => {
+            patientProfileRequest = null;
+        });
+
+    return patientProfileRequest;
 };
 
 // patient profile by id
