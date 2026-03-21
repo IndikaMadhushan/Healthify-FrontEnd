@@ -551,15 +551,6 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                     <span>👁️</span>
                     <span>View Verification Document</span>
                   </a>
-                  <a
-                    href={doctor.verificationDocUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors font-medium"
-                  >
-                    <span>📄</span>
-                    <span>Open Document</span>
-                  </a>
                 </div>
               ) : (
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
@@ -716,12 +707,6 @@ function DoctorSearchSection({
       </p>
 
       <div className="space-y-4">
-        <div className="rounded-2xl border border-[#D7EDF7] bg-[#F4FBFF] p-4">
-          <p className="text-sm text-blue-800">
-            ℹ️ Currently only Doctor ID search is supported by the backend
-          </p>
-        </div>
-
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
@@ -780,21 +765,7 @@ function PatientSearchSection({
         necessary.
       </p>
 
-      <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <p className="text-sm text-amber-800">
-          ⚠️ <strong>Privacy Notice:</strong> You can only check patient
-          existence and manage account status. Patient details are protected and
-          not visible to admin.
-        </p>
-      </div>
-
       <div className="space-y-4">
-        <div className="rounded-2xl border border-[#D7EDF7] bg-[#F4FBFF] p-4">
-          <p className="text-sm text-blue-800">
-            ℹ️ Currently only Patient ID search is supported by the backend
-          </p>
-        </div>
-
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"

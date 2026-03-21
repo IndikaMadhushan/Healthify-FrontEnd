@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getDisplayName, getInitial } from "../utils/nameUtils";
 import { MdDashboard } from "react-icons/md";
 import { FaUserDoctor } from "react-icons/fa6";
+import { IoLogOutSharp } from "react-icons/io5";
 import { confirmLogout } from "../utils/logoutConfirmation";
 
 export default function DoctorNavBar({ doctor }) {
@@ -101,31 +102,36 @@ export default function DoctorNavBar({ doctor }) {
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                {isProfilePage && (
-                  <button
-                    onClick={() => handleNavigation("/doctor/dashboard")}
-                    className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    <MdDashboard className="text-base" />
-                    Dashboard
-                  </button>
-                )}
-                {isDashboardPage && (
-                  <button
-                    onClick={goToProfile}
-                    className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    <FaUserDoctor className="text-base" />
-                    My Profile
-                  </button>
-                )}
+                <button
+                  onClick={() => handleNavigation("/doctor/dashboard")}
+                  className={`w-full flex items-center gap-2 text-left px-4 py-2 text-sm transition ${
+                    isDashboardPage
+                      ? "bg-[#F2FBFA] text-[#18AAB0] font-semibold"
+                      : "hover:bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  <MdDashboard className="text-base" />
+                  Dashboard
+                </button>
+                <button
+                  onClick={goToProfile}
+                  className={`w-full flex items-center gap-2 text-left px-4 py-2 text-sm transition ${
+                    isProfilePage
+                      ? "bg-[#F2FBFA] text-[#18AAB0] font-semibold"
+                      : "hover:bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  <FaUserDoctor className="text-base" />
+                  My Profile
+                </button>
 
                 <hr className="my-2" />
 
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold"
+                  className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-semibold"
                 >
+                  <IoLogOutSharp className="text-base" />
                   Logout
                 </button>
               </div>

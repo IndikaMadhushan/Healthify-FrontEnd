@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IoLogOutSharp } from "react-icons/io5";
 import { getDisplayName } from "../utils/nameUtils";
 import { confirmLogout } from "../utils/logoutConfirmation";
 
@@ -78,8 +79,9 @@ export function PatinetNavBar({
               <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
+                  className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition font-semibold"
                 >
+                  <IoLogOutSharp className="text-base" />
                   Logout
                 </button>
               </div>
