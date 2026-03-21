@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import DoctorNavBar from "../components/DoctorNavBar";
 import DoctorNavBar2 from "../components/DoctorNavBar2";
+import HealthifyChatbot from "../components/HealthifyChatbot";
 import {
   DOCTOR_PROFILE_UPDATED,
   getCachedDoctorProfile,
@@ -128,6 +129,12 @@ export default function DoctorLayout() {
   const isDoctorProfile =
     location.pathname === "/doctor/doctor-profile" ||
     location.pathname === "/doctor/doctor-profile/";
+  const chatbotContextUserId =
+    patient?.id != null
+      ? String(patient.id)
+      : /^\d+$/.test(String(patientId ?? ""))
+        ? String(patientId)
+        : undefined;
 
   if (!doctor) {
     return (
@@ -142,15 +149,27 @@ export default function DoctorLayout() {
       {isDashboard || isDoctorProfile ? (
         <DoctorNavBar key={location.pathname} doctor={doctor} />
       ) : (
-        <DoctorNavBar2 key={location.pathname} doctor={doctor} patient={patient} />
+        <DoctorNavBar2
+          key={location.pathname}
+          doctor={doctor}
+          patient={patient}
+        />
       )}
 
       <div className="lg:px-14  bg-gray-50 pb-[100px]">
-        <Outlet />                                                  
+        <Outlet />
       </div>
       <div>
         <Footer />
       </div>
+      <HealthifyChatbot
+        contextUserId={chatbotContextUserId}
+        contextLabel={
+          chatbotContextUserId
+            ? "Current patient context is enabled for more relevant guidance."
+            : undefined
+        }
+      />
     </>
   );
 }
