@@ -23,7 +23,7 @@ export default function AboutUs() {
         description="Learn about Healthify, a secure digital health monitoring platform built to help patients and doctors manage medical information more effectively."
       />
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
+        {/* Header Section */}
         <section className="relative bg-linear-to-br from-secondary to-[#86C443] text-white py-16 sm:py-24 overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
