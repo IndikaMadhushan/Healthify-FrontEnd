@@ -161,7 +161,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* Our Vision */}
+          {/* Our Vision section*/}
           <section className="mb-10 sm:mb-16">
             <div className="bg-linear-to-br from-[#86C443] to-secondary text-white rounded-xl shadow-lg p-6 sm:p-10 border border-green-400">
               <div className="flex items-center gap-3 mb-4">
