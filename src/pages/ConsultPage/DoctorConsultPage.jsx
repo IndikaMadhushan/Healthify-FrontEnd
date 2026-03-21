@@ -16,6 +16,7 @@ import { ExaminationAndTestsCard } from "../../components/DoctorCards/Examinatio
 import { MedicationCard } from "../../components/DoctorCards/MedicationCard";
 import { TodayPageFormCard } from "../../components/DoctorCards/TodayPageFormCard";
 import { VitalSignsCard } from "../../components/DoctorCards/VitalSignsCard";
+import ProfileAvatar from "../../components/ProfileAvatar";
 import { createConsultPage } from "../../api/ConsultationApi";
 import { getDisplayName, getInitial } from "../../utils/nameUtils";
 
@@ -85,6 +86,7 @@ export default function DoctorConsultPage() {
   };
 
   const patientDisplayName = getDisplayName(patientInfo);
+  const patientPhotoUrl = patientInfo.photoUrl || patientInfo.profilePic || "";
   const completedFieldCount = [
     formData.reasonForVisit.trim(),
     formData.clinicExaming.trim(),
@@ -286,8 +288,15 @@ export default function DoctorConsultPage() {
 
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="flex items-start gap-4">
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[28px] bg-white/15 text-3xl font-bold text-white shadow-[0_16px_36px_rgba(15,79,82,0.24)]">
-                  {getInitial(patientInfo)}
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-[28px] border-4 border-white/20 shadow-[0_16px_36px_rgba(15,79,82,0.24)]">
+                  <ProfileAvatar
+                    src={patientPhotoUrl}
+                    alt={patientDisplayName || "Patient"}
+                    className="h-full w-full"
+                    imageClassName="h-full w-full object-cover"
+                    fallbackClassName="bg-white/15 text-3xl font-bold text-white"
+                    fallbackIcon={<span>{getInitial(patientInfo)}</span>}
+                  />
                 </div>
 
                 <div>
@@ -297,10 +306,10 @@ export default function DoctorConsultPage() {
                   <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                     {patientDisplayName}
                   </h1>
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80 sm:text-base">
+                  {/* <p className="mt-3 max-w-2xl text-sm leading-6 text-white/80 sm:text-base">
                     Complete the current consultation with structured clinical
                     notes, vitals, medications, and follow-up instructions.
-                  </p>
+                  </p> */}
                 </div>
               </div>
 
