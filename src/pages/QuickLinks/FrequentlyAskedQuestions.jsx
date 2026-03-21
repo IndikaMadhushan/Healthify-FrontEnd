@@ -57,29 +57,36 @@ export default function FAQPage() {
         title="Healthify FAQ | Help and Support"
         description="Find answers to common questions about Healthify, including health data security, report management, reminders, and platform usage."
       />
+
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="relative bg-white border-b border-gray-200 py-12 sm:py-20 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute -top-[10%] -right-[5%] w-64 h-64 bg-teal-50 rounded-full blur-3xl opacity-50" />
-            <div className="absolute -bottom-[10%] -left-[5%] w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-50" />
-          </div>
+        {/* ✅ Updated Hero Section */}
+        <section className="relative bg-linear-to-br from-secondary to-[#86C443] text-white py-12 sm:py-20 overflow-hidden">
+          {/* Pattern background (same as About page) */}
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage:
+                'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+            }}
+          ></div>
 
           <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-10 items-center">
+              {/* Left Content */}
               <div className="text-left">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 tracking-tight leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3 tracking-tight leading-tight">
                   Need help using{" "}
-                  <span className="text-teal-600"> Healthify?</span>
+                  <span className="text-teal-200">Healthify?</span>
                 </h1>
 
-                <p className="text-sm text-gray-500 max-w-md leading-relaxed">
+                <p className="text-sm text-gray-100 max-w-md leading-relaxed">
                   Find answers regarding your medical data security, report
                   management, and how to effectively use our health tracking
                   tools.
                 </p>
               </div>
 
+              {/* Right Cards */}
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { label: "Data Security", detail: "Encryption & Privacy" },
@@ -89,12 +96,12 @@ export default function FAQPage() {
                 ].map((item, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-xl border border-gray-100 bg-white shadow-sm hover:border-teal-200 transition-colors"
+                    className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-colors"
                   >
-                    <p className="text-[10px] font-bold text-teal-600 uppercase mb-1 tracking-wider">
+                    <p className="text-[10px] font-bold text-teal-200 uppercase mb-1 tracking-wider">
                       {item.label}
                     </p>
-                    <p className="text-xs text-gray-600 font-medium">
+                    <p className="text-xs text-white font-medium">
                       {item.detail}
                     </p>
                   </div>
@@ -110,6 +117,7 @@ export default function FAQPage() {
             <h2 className="text-xl font-bold text-gray-800 mb-6 px-2">
               Frequently Asked Questions
             </h2>
+
             {faqs.map((faq, index) => (
               <div
                 key={index}
@@ -122,8 +130,13 @@ export default function FAQPage() {
                   <span className="text-base sm:text-lg font-semibold text-gray-800 pr-4">
                     {faq.question}
                   </span>
+
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openIndex === index ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-500"}`}
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                      openIndex === index
+                        ? "bg-teal-600 text-white"
+                        : "bg-gray-100 text-gray-500"
+                    }`}
                   >
                     {openIndex === index ? (
                       <Minus className="w-4 h-4" />
@@ -159,10 +172,9 @@ export default function FAQPage() {
 
             <p className="text-gray-600 mb-6">
               Our team will do our best to respond to your inquiries as soon as
-              possible.{" "}
+              possible.
             </p>
 
-            {/* Email Support Button */}
             <a
               href="mailto:healthify.noreply@gmail.com?subject=Healthify Support Request&body=Hello Healthify Team,"
               className="inline-flex items-center gap-2 bg-teal-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-700 transition-all shadow-md active:scale-95"
