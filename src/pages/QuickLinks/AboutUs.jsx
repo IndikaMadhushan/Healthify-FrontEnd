@@ -23,7 +23,7 @@ export default function AboutUs() {
         description="Learn about Healthify, a secure digital health monitoring platform built to help patients and doctors manage medical information more effectively."
       />
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
+        {/* Header Section */}
         <section className="relative bg-linear-to-br from-secondary to-[#86C443] text-white py-16 sm:py-24 overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
@@ -50,7 +50,8 @@ export default function AboutUs() {
 
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          {/* Introduction Card */}
+
+          {/* Who we are Card */}
 
           <section className="mb-10 sm:mb-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
             <div className="flex flex-col items-center justify-center gap-3 mb-6">
@@ -79,7 +80,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* What We Do */}
+          {/* What We Do Section*/}
           <section className="mb-10 sm:mb-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -141,7 +142,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* Our Mission */}
+          {/* Our Mission section*/}
           <section className="mb-10 sm:mb-16">
             <div className="bg-linear-to-br from-teal-500 to-green-600 text-white rounded-xl shadow-lg p-6 sm:p-10 border border-teal-400">
               <div className="flex items-center gap-3 mb-4">
@@ -160,7 +161,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* Our Vision */}
+          {/* Our Vision section*/}
           <section className="mb-10 sm:mb-16">
             <div className="bg-linear-to-br from-[#86C443] to-secondary text-white rounded-xl shadow-lg p-6 sm:p-10 border border-green-400">
               <div className="flex items-center gap-3 mb-4">
