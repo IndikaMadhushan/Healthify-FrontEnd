@@ -192,7 +192,7 @@ export default function ContactUs() {
 
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                         Phone Number
                       </label>
                       <input
