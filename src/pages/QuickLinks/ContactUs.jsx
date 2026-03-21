@@ -200,7 +200,7 @@ export default function ContactUs() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="+94 123 456"
+                        placeholder="+94 771234567"
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition"
                       />
                     </div>
