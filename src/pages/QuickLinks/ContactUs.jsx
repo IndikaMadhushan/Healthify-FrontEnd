@@ -122,7 +122,7 @@ export default function ContactUs() {
           </div>
         </section>
 
-        {/* Main Content */}
+        {/* Main Content Section*/}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 flex justify-center">
           <div className="w-full max-w-3xl">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-10">
