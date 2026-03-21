@@ -80,7 +80,7 @@ export default function AboutUs() {
             </div>
           </section>
 
-          {/* What We Do */}
+          {/* What We Do Section*/}
           <section className="mb-10 sm:mb-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
