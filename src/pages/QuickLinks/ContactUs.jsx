@@ -149,7 +149,7 @@ export default function ContactUs() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5  tracking-wider">
                         Full Name
                       </label>
                       <input
