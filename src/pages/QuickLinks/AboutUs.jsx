@@ -50,7 +50,8 @@ export default function AboutUs() {
 
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
-          {/* Introduction Card */}
+
+          {/* Who we are Card */}
 
           <section className="mb-10 sm:mb-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
             <div className="flex flex-col items-center justify-center gap-3 mb-6">
