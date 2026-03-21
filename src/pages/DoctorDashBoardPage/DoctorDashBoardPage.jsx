@@ -122,8 +122,8 @@ export default function DoctorDashBoardPage() {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top_left,_rgba(24,170,176,0.18),_transparent_55%),radial-gradient(circle_at_top_right,_rgba(134,196,67,0.16),_transparent_45%)]" />
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top_left,_rgba(24,170,176,0.18),_transparent_55%),radial-gradient(circle_at_top_right,_rgba(134,196,67,0.16),_transparent_45%)]" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-secondary via-[#15959C] to-primary px-6 py-8 text-white shadow-[0_28px_70px_rgba(24,170,176,0.22)] sm:px-8 lg:px-10">
           <div className="absolute inset-y-0 right-0 hidden w-64 bg-[radial-gradient(circle,_rgba(255,255,255,0.24),_transparent_65%)] lg:block" />
           <div className="relative">
@@ -135,7 +135,7 @@ export default function DoctorDashBoardPage() {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-12">
+        <div className="relative z-10 mt-6 grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <DoctorInfoCard
               doctor={doctor}
