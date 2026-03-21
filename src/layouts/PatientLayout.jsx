@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Outlet } from "react-router-dom";
 import AddReviewModal from "../components/AddReview";
+import HealthifyChatbot from "../components/HealthifyChatbot";
 import { PatinetNavBar } from "../components/PatientNavBar";
 import {
   getCachedPatientProfile,
@@ -210,6 +211,15 @@ export default function PatientLayout() {
         isOpen={showReviewPrompt}
         onClose={handleCloseReviewPrompt}
         onSubmitted={handleSubmittedReview}
+      />
+      <HealthifyChatbot
+        contextUserId={patient?.id ? String(patient.id) : undefined}
+        contextLabel={
+          patient?.id
+            ? "Your health context is enabled for more personalized guidance."
+            : undefined
+        }
+        launcherOffsetClassName="bottom-20 sm:bottom-6"
       />
     </>
   );
