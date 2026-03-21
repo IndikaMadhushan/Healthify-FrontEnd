@@ -70,9 +70,9 @@ export default function DoctorInfoCard({ doctor, recentPatientsCount = 0 }) {
             </div>
 
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-secondary">
+              {/* <p className="text-xs font-semibold uppercase tracking-[0.22em] text-secondary">
                 Doctor profile
-              </p>
+              </p> */}
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#0F4F52]">
                 {doctorHeadingName}
               </h2>

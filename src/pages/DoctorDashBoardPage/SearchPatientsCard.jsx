@@ -36,7 +36,7 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
   }, [patients, searchQuery]);
 
   return (
-    <section className="h-full rounded-[32px] border border-[#DCEFED] bg-white/95 p-6 shadow-[0_18px_44px_rgba(15,79,82,0.08)] sm:p-8">
+    <section className="relative z-20 h-full rounded-[32px] border border-[#DCEFED] bg-white/95 p-6 shadow-[0_18px_44px_rgba(15,79,82,0.08)] sm:p-8">
       <div className="flex items-start gap-4">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
           <FiSearch className="text-xl" />
@@ -45,10 +45,10 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
           <h2 className="text-2xl font-bold tracking-tight text-[#0F4F52]">
             Search Patients
           </h2>
-          <p className="mt-2 text-sm leading-6 text-[#5D7B7D]">
+          {/* <p className="mt-2 text-sm leading-6 text-[#5D7B7D]">
             Find patients by ID, NIC, name, or email and open their medical
             record directly.
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -67,13 +67,13 @@ export default function SearchPatientsCard({ patients, onViewProfile }) {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6B8A8C]">
           Search results
         </p>
-        <p className="mt-2 text-sm text-[#0F4F52]">
+        {/* <p className="mt-2 text-sm text-[#0F4F52]">
           {searchQuery.trim() === ""
             ? "Start typing to find a patient record."
             : `${filteredPatients.length} matching patient${
                 filteredPatients.length === 1 ? "" : "s"
               }`}
-        </p>
+        </p> */}
       </div>
 
       <div className="mt-5 space-y-3 max-h-[28rem] overflow-y-auto pr-1">
