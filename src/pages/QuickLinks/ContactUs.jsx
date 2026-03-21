@@ -101,7 +101,7 @@ export default function ContactUs() {
         description="Contact the Healthify team for support, product questions, and healthcare platform inquiries through our secure contact page."
       />
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
+        {/* Header Section */}
         <section className="relative bg-gradient-to-br from-teal-600 via-teal-500 to-green-500 text-white py-16 sm:py-20 overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
