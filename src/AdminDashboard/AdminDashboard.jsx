@@ -284,34 +284,38 @@ export default function AdminDashboard() {
   const pendingActionCount = pendingDoctors.length + pendingSiteReviews.length;
 
   return (
-    <div className="min-h-screen bg-[#F2FBFA]">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#F4FBFA_0%,#EEF8F6_48%,#FFFFFF_100%)]">
       {/* Header */}
-      <div className="bg-white border-b border-[#D3F0ED] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-[#0F4F52]">
+      <div className="border-b border-[#D3F0ED]/70 bg-white/75 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+          <div className="relative rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-[0_24px_60px_rgba(15,79,82,0.08)] sm:p-8">
+            <div className="space-y-5 lg:pr-[360px]">
+              <h1 className="text-3xl font-bold tracking-tight text-[#0F4F52] sm:text-4xl">
                 {greeting}, {adminProfile.name || "Admin"}! 👋
               </h1>
-              <div className="mt-2 space-y-1">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">ID:</span>{" "}
-                  {adminLoading ? "Loading..." : adminProfile.id}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium text-[#18AAB0]">Email:</span>{" "}
+              <div className="mt-3 flex flex-wrap gap-3">
+                <p className="inline-flex items-center gap-2 rounded-full bg-[#EAF7F6] px-4 py-2 text-sm text-[#0F4F52]">
+                  <span className="font-semibold text-[#18AAB0]">Email</span>
                   {adminLoading ? "Loading..." : adminProfile.email || "—"}
                 </p>
               </div>
             </div>
-            <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center lg:absolute lg:right-8 lg:top-8 lg:mt-0">
               <button
                 onClick={() => setActiveTab("pending")}
-                className="relative p-3 bg-[#18AAB0] text-white rounded-full hover:bg-[#86C443] transition-colors"
+                className="relative inline-flex min-w-[220px] items-center justify-between rounded-2xl border border-[#D3F0ED] bg-[#F7FCFB] px-5 py-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
+                <div className="pr-8">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#18AAB0]">
+                    Pending Queue
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#0F4F52]">
+                    {pendingActionCount} items need attention
+                  </p>
+                </div>
                 <span className="text-xl">🔔</span>
                 {pendingActionCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                  <span className="absolute -right-2 -top-2 inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-gradient-to-r from-[#18AAB0] to-[#86C443] px-2 text-xs font-bold text-white shadow-[0_8px_18px_rgba(24,170,176,0.28)]">
                     {pendingActionCount}
                   </span>
                 )}
@@ -319,7 +323,7 @@ export default function AdminDashboard() {
 
               <button
                 onClick={handleLogout}
-                className="px-5 py-2.5 bg-red-50 text-red-600 border-2 border-red-200 rounded-full font-semibold hover:bg-red-100 transition-all flex items-center gap-2"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-600 transition-all hover:-translate-y-0.5 hover:bg-red-100 hover:shadow-sm"
               >
                 <span>
                   <IoLogOutSharp className="text-red-600 text-xl " />
@@ -330,55 +334,56 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="flex  sm:flex-row flex-wrap gap-2 mb-8">
-          <TabButton
-            active={activeTab === "pending"}
-            onClick={() => setActiveTab("pending")}
-            badge={pendingDoctors.length}
-          >
-            📋 Pending Approvals
-          </TabButton>
-          <TabButton
-            active={activeTab === "reviews"}
-            onClick={() => setActiveTab("reviews")}
-            badge={pendingSiteReviews.length}
-          >
-            ⭐Pending Reviews
-          </TabButton>
-          <TabButton
-            active={activeTab === "doctors"}
-            onClick={() => setActiveTab("doctors")}
-          >
-            👨‍⚕️ Search Doctors
-          </TabButton>
-          <TabButton
-            active={activeTab === "patients"}
-            onClick={() => setActiveTab("patients")}
-          >
-            👤 Search Patients
-          </TabButton>
+        <div className="mb-8 rounded-[28px] border border-white/80 bg-white/80 p-2 shadow-[0_18px_40px_rgba(15,79,82,0.06)] backdrop-blur-sm">
+          <div className="flex flex-wrap gap-2">
+            <TabButton
+              active={activeTab === "pending"}
+              onClick={() => setActiveTab("pending")}
+              badge={pendingDoctors.length}
+            >
+              📋 Pending Approvals
+            </TabButton>
+            <TabButton
+              active={activeTab === "reviews"}
+              onClick={() => setActiveTab("reviews")}
+              badge={pendingSiteReviews.length}
+            >
+              ⭐Pending Reviews
+            </TabButton>
+            <TabButton
+              active={activeTab === "doctors"}
+              onClick={() => setActiveTab("doctors")}
+            >
+              👨‍⚕️ Search Doctors
+            </TabButton>
+            <TabButton
+              active={activeTab === "patients"}
+              onClick={() => setActiveTab("patients")}
+            >
+              👤 Search Patients
+            </TabButton>
+          </div>
         </div>
 
         {pendingLoading && activeTab === "pending" && (
-          <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+          <div className="rounded-[28px] border border-[#D3F0ED] bg-white/90 p-12 text-center shadow-[0_18px_40px_rgba(15,79,82,0.05)]">
             <div className="inline-block w-8 h-8 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-gray-500 mt-4">Loading pending doctors...</p>
           </div>
         )}
 
         {reviewLoading && activeTab === "reviews" && (
-          <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+          <div className="rounded-[28px] border border-[#D3F0ED] bg-white/90 p-12 text-center shadow-[0_18px_40px_rgba(15,79,82,0.05)]">
             <div className="inline-block w-8 h-8 border-4 border-[#18AAB0] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-gray-500 mt-4">Loading pending reviews...</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
+          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
             <p className="text-red-600 text-sm">❌ {error}</p>
           </div>
         )}
@@ -446,20 +451,29 @@ export default function AdminDashboard() {
   );
 }
 
+function SummaryPill({ label, value }) {
+  return (
+    <div className="inline-flex items-center gap-3 rounded-full bg-[#EAF7F6] px-4 py-2.5 text-sm text-[#0F4F52]">
+      <span className="font-semibold text-[#18AAB0]">{label}</span>
+      <span className="truncate font-medium">{value}</span>
+    </div>
+  );
+}
+
 // Tab Button Component
 function TabButton({ active, onClick, children, badge }) {
   return (
     <button
       onClick={onClick}
-      className={`relative sm:w-[200px] w-[180px] py-3 rounded-xl font-semibold sm:text-[16px] text-sm transition-all ${
+      className={`relative min-h-[68px] w-full min-w-[180px] flex-1 rounded-2xl px-5 py-4 text-left font-semibold text-sm transition-all sm:w-[200px] sm:text-[15px] ${
         active
-          ? "bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-lg"
-          : "bg-white text-gray-600 hover:bg-[#F7FCFB] border border-[#D3F0ED]"
+          ? "bg-gradient-to-r from-[#18AAB0] to-[#86C443] text-white shadow-[0_16px_34px_rgba(24,170,176,0.22)]"
+          : "border border-[#D3F0ED] bg-[#F7FCFB] text-[#4F6F71] hover:border-[#B8E4DF] hover:bg-white hover:shadow-sm"
       }`}
     >
       {children}
       {badge > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+        <span className="absolute -right-2 -top-2 inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-white px-2 text-xs font-bold text-[#0F4F52] shadow-sm">
           {badge}
         </span>
       )}
@@ -470,13 +484,24 @@ function TabButton({ active, onClick, children, badge }) {
 // Pending Approvals Section
 function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
-        Pending Doctor Registrations
-      </h2>
+    <div className="rounded-[32px] border border-[#D3F0ED] bg-white/90 p-6 shadow-[0_18px_40px_rgba(15,79,82,0.06)] sm:p-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-[#0F4F52]">
+            Pending Doctor Registrations
+          </h2>
+          <p className="mt-2 text-sm text-[#4F6F71]">
+            Review submitted doctor accounts and approve them for platform
+            access.
+          </p>
+        </div>
+        <span className="inline-flex items-center rounded-full bg-[#EAF7F6] px-4 py-2 text-sm font-semibold text-[#0F4F52]">
+          {doctors.length} waiting
+        </span>
+      </div>
 
       {doctors.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+        <div className="rounded-[28px] border border-dashed border-[#CBE9E6] bg-[#F7FCFB] p-12 text-center">
           <span className="text-6xl">✅</span>
           <p className="text-gray-500 mt-4">No pending approvals</p>
         </div>
@@ -484,7 +509,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
         doctors.map((doctor) => (
           <div
             key={doctor.id}
-            className="bg-white rounded-2xl p-6 border border-[#D3F0ED] shadow-sm hover:shadow-md transition-shadow"
+            className="rounded-[28px] border border-[#D3F0ED] bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
           >
             <div className="flex flex-col gap-6">
               {/* Doctor Info */}
@@ -502,7 +527,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 rounded-2xl bg-[#F7FCFB] p-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
                 <InfoItem label="User ID" value={doctor.doctorId} />
                 <InfoItem
                   label="SLMC Number"
@@ -516,7 +541,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
 
               {/* Document Actions */}
               {doctor.verificationDocUrl ? (
-                <div className="flex flex-wrap gap-3 pt-2 border-t border-gray-100">
+                <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-2">
                   <a
                     href={doctor.verificationDocUrl}
                     target="_blank"
@@ -545,7 +570,7 @@ function PendingApprovalsSection({ doctors, onApprove, onReject, loading }) {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <button
                   onClick={() => onApprove(doctor.id)}
                   disabled={loading}
@@ -576,13 +601,24 @@ function PendingSiteReviewsSection({
   loading = false,
 }) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-4">
-        Pending Site Reviews
-      </h2>
+    <div className="rounded-[32px] border border-[#D3F0ED] bg-white/90 p-6 shadow-[0_18px_40px_rgba(15,79,82,0.06)] sm:p-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-[#0F4F52]">
+            Pending Site Reviews
+          </h2>
+          <p className="mt-2 text-sm text-[#4F6F71]">
+            Approve community feedback before it becomes visible on the public
+            site.
+          </p>
+        </div>
+        <span className="inline-flex items-center rounded-full bg-[#EAF7F6] px-4 py-2 text-sm font-semibold text-[#0F4F52]">
+          {reviews.length} waiting
+        </span>
+      </div>
 
       {reviews.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center border border-[#D3F0ED]">
+        <div className="rounded-[28px] border border-dashed border-[#CBE9E6] bg-[#F7FCFB] p-12 text-center">
           <span className="text-6xl">⭐</span>
           <p className="text-gray-500 mt-4">No pending reviews</p>
         </div>
@@ -590,7 +626,7 @@ function PendingSiteReviewsSection({
         reviews.map((review) => (
           <div
             key={review.id}
-            className="bg-white rounded-2xl p-6 border border-[#D3F0ED] shadow-sm hover:shadow-md transition-shadow"
+            className="rounded-[28px] border border-[#D3F0ED] bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
           >
             <div className="flex flex-col gap-5">
               <div className="flex items-start justify-between gap-4">
@@ -634,13 +670,13 @@ function PendingSiteReviewsSection({
                 </div>
               </div>
 
-              <div className="bg-[#F7FCFB] border border-[#D3F0ED] rounded-xl p-4">
+              <div className="rounded-2xl border border-[#D3F0ED] bg-[#F7FCFB] p-4">
                 <p className="text-sm text-gray-700 whitespace-pre-wrap">
                   {review.review}
                 </p>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={() => onApprove(review.id)}
                   disabled={loading}
@@ -672,19 +708,21 @@ function DoctorSearchSection({
   loading,
 }) {
   return (
-    <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">
-        Search Doctor
-      </h2>
+    <div className="rounded-[32px] border border-[#D3F0ED] bg-white/90 p-6 shadow-[0_18px_40px_rgba(15,79,82,0.06)] lg:p-8">
+      <h2 className="text-2xl font-semibold text-[#0F4F52]">Search Doctor</h2>
+      <p className="mt-2 mb-6 text-sm text-[#4F6F71]">
+        Look up a doctor account by doctor ID and review the current access
+        status.
+      </p>
 
       <div className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+        <div className="rounded-2xl border border-[#D7EDF7] bg-[#F4FBFF] p-4">
           <p className="text-sm text-blue-800">
             ℹ️ Currently only Doctor ID search is supported by the backend
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
             value={searchQuery}
@@ -735,12 +773,14 @@ function PatientSearchSection({
   loading,
 }) {
   return (
-    <div className="bg-white rounded-2xl p-6 lg:p-8 border border-[#D3F0ED]">
-      <h2 className="text-xl font-semibold text-[#0F4F52] mb-6">
-        Search Patient
-      </h2>
+    <div className="rounded-[32px] border border-[#D3F0ED] bg-white/90 p-6 shadow-[0_18px_40px_rgba(15,79,82,0.06)] lg:p-8">
+      <h2 className="text-2xl font-semibold text-[#0F4F52]">Search Patient</h2>
+      <p className="mt-2 mb-6 text-sm text-[#4F6F71]">
+        Confirm whether a patient account exists and manage account access when
+        necessary.
+      </p>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+      <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
         <p className="text-sm text-amber-800">
           ⚠️ <strong>Privacy Notice:</strong> You can only check patient
           existence and manage account status. Patient details are protected and
@@ -749,13 +789,13 @@ function PatientSearchSection({
       </div>
 
       <div className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+        <div className="rounded-2xl border border-[#D7EDF7] bg-[#F4FBFF] p-4">
           <p className="text-sm text-blue-800">
             ℹ️ Currently only Patient ID search is supported by the backend
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
             value={searchQuery}
@@ -801,8 +841,10 @@ function PatientSearchSection({
 // Info Item Component
 function InfoItem({ label, value }) {
   return (
-    <div>
-      <span className="text-gray-500 text-xs block mb-1">{label}</span>
+    <div className="min-w-0">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-[0.12em] text-[#6C8A8C]">
+        {label}
+      </span>
       <span className="text-[#0F4F52] font-medium block truncate">{value}</span>
     </div>
   );
@@ -829,13 +871,13 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
   const accountStatus = isEnabled ? "ACTIVE" : "DISABLED";
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F4F52]/45 p-4 backdrop-blur-sm">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[32px] border border-white/80 bg-white p-6 shadow-[0_24px_60px_rgba(15,79,82,0.18)] lg:p-8">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-2xl font-bold text-[#0F4F52]">Doctor Details</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className="text-2xl text-gray-400 transition hover:text-[#0F4F52]"
           >
             ×
           </button>
@@ -873,7 +915,7 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
           />
 
           {doctor.verificationDocUrl ? (
-            <div className="pt-4 border-t">
+            <div className="border-t border-[#D3F0ED] pt-4">
               <a
                 href={doctor.verificationDocUrl}
                 target="_blank"
@@ -885,13 +927,13 @@ function DoctorDetailsModal({ doctor, onClose, onToggleStatus }) {
               </a>
             </div>
           ) : (
-            <div className="pt-4 border-t">
+            <div className="border-t border-[#D3F0ED] pt-4">
               <p className="text-sm text-gray-500">No verification document</p>
             </div>
           )}
         </div>
 
-        <div className="mt-8 flex gap-3">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <button
             onClick={() => onToggleStatus(doctor.doctorId, accountStatus)}
             className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
@@ -921,15 +963,15 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
   const accountStatus = isEnabled ? "ACTIVE" : "DISABLED";
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F4F52]/45 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-[32px] border border-white/80 bg-white p-6 shadow-[0_24px_60px_rgba(15,79,82,0.18)] lg:p-8">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-2xl font-bold text-[#0F4F52]">
             Patient Search Result
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className="text-2xl text-gray-400 transition hover:text-[#0F4F52]"
           >
             ×
           </button>
@@ -937,7 +979,7 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
 
         {patientExists ? (
           <div className="space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+            <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-center">
               <span className="text-4xl">✓</span>
               <p className="text-green-700 font-semibold mt-2">Patient Found</p>
             </div>
@@ -968,14 +1010,14 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
               }
             />
 
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-4">
+            <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3">
               <p className="text-xs text-amber-800">
                 🔒 Full patient details are protected for privacy reasons. Only
                 basic info is shown.
               </p>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={() => onToggleStatus(patient.patientId, accountStatus)}
                 className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
@@ -1015,8 +1057,8 @@ function PatientExistenceModal({ patient, onClose, onToggleStatus }) {
 // Detail Row Component
 function DetailRow({ label, value }) {
   return (
-    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-      <span className="text-gray-600 font-medium">{label}</span>
+    <div className="flex items-center justify-between border-b border-[#E5F3F1] py-3">
+      <span className="font-medium text-[#5D7B7D]">{label}</span>
       <span className="text-[#0F4F52] font-semibold">
         {typeof value === "string" ? value : value}
       </span>
