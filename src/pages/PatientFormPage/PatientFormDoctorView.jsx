@@ -129,13 +129,18 @@ function getStoredSelectedPatient(patientId) {
   const storedPatientId = localStorage.getItem("selectedPatientId");
   const storedPatientRaw = localStorage.getItem("selectedPatient");
 
-  if (!storedPatientRaw || String(storedPatientId) !== String(patientId)) {
+  if (!storedPatientRaw) {
     return null;
   }
 
   try {
     const storedPatient = JSON.parse(storedPatientRaw);
-    return String(storedPatient?.id) === String(patientId) ? storedPatient : null;
+    const matchesRoute =
+      String(storedPatientId) === String(patientId) ||
+      String(storedPatient?.id) === String(patientId) ||
+      String(storedPatient?.patientId) === String(patientId);
+
+    return matchesRoute ? storedPatient : null;
   } catch (error) {
     console.error("Failed to parse stored patient", error);
     return null;
@@ -172,7 +177,9 @@ async function loadPatientProfile(patientId) {
     try {
       const patientListResponse = await getAllPatients();
       const matchedPatient = patientListResponse.data?.find(
-        (item) => String(item.id) === String(patientId)
+        (item) =>
+          String(item.id) === String(patientId) ||
+          String(item.patientId) === String(patientId)
       );
 
       if (matchedPatient) {
@@ -189,6 +196,48 @@ async function loadPatientProfile(patientId) {
 
     throw profileError;
   }
+}
+
+function normalizeRecordId(...values) {
+  for (const value of values) {
+    const parsedValue = Number(value);
+
+    if (Number.isInteger(parsedValue) && parsedValue > 0) {
+      return parsedValue;
+    }
+  }
+
+  return null;
+}
+
+async function loadPatientMedicalInfo(patientId, profile, storedPatient) {
+  const candidateIds = [
+    normalizeRecordId(profile?.id),
+    normalizeRecordId(storedPatient?.id),
+    normalizeRecordId(localStorage.getItem("selectedPatientId")),
+    normalizeRecordId(patientId),
+  ].filter(Boolean);
+  const uniqueCandidateIds = [...new Set(candidateIds)];
+  let lastError = null;
+
+  for (const candidateId of uniqueCandidateIds) {
+    try {
+      const response = await getPatientMedicalInfoApi(candidateId);
+      return normalizeMedicalInfoResponse(response.data || {});
+    } catch (error) {
+      lastError = error;
+      console.error(
+        `Failed to load patient medical info for record ${candidateId}`,
+        error
+      );
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return DEFAULT_MEDICAL_INFO_STATE;
 }
 
 export default function PatientFormDoctorView() {
@@ -254,20 +303,22 @@ export default function PatientFormDoctorView() {
         setIsLoading(true);
         setLoadError("");
 
-        const [profile, medicalInfoResponse] = await Promise.all([
-          loadPatientProfile(patientId),
-          getPatientMedicalInfoApi(patientId).catch((error) => {
-            console.error("Failed to load patient medical info", error);
-            return { data: DEFAULT_MEDICAL_INFO_STATE };
-          }),
-        ]);
+        const profile = await loadPatientProfile(patientId);
+        const normalizedMedicalInfo = await loadPatientMedicalInfo(
+          patientId,
+          profile,
+          storedPatient
+        );
 
         if (isCancelled) return;
 
         setPatientProfile(profile);
-        setMedicalInfoState(
-          normalizeMedicalInfoResponse(medicalInfoResponse.data || {})
-        );
+        setMedicalInfoState(normalizedMedicalInfo);
+
+        if (profile?.id) {
+          localStorage.setItem("selectedPatientId", String(profile.id));
+          localStorage.setItem("selectedPatient", JSON.stringify(profile));
+        }
       } catch (error) {
         console.error("Failed to load doctor patient form view", error);
         if (isCancelled) return;

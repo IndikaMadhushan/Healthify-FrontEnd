@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getDoctorPatientProfileApi } from "../../api/DoctorApi";
+import { getPatientProfileByIdApi } from "../../api/PatientApi";
 import { getDisplayName, getNameParts } from "../../utils/nameUtils";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import { FaUser } from "react-icons/fa";
@@ -76,7 +76,7 @@ export default function DoctorPatientProfile() {
         setLoading(true);
         setError("");
 
-        const response = await getDoctorPatientProfileApi(patientId);
+        const response = await getPatientProfileByIdApi(patientId);
         if (isCancelled) {
           return;
         }

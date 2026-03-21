@@ -3,6 +3,7 @@ import axiosInstance from "./axiosInstance";
 const DOCTOR_CACHE_KEY = "doctor_me_cache";
 const DOCTOR_CACHE_TTL_MS = 5 * 60 * 1000;
 const DOCTOR_PROFILE_UPDATED_EVENT = "doctor-profile-updated";
+let doctorProfileRequest = null;
 
 function dispatchDoctorProfileUpdated(data) {
   window.dispatchEvent(
@@ -60,9 +61,21 @@ export const getMyDoctorProfile = async (options = {}) => {
     return { data: cachedDoctor };
   }
 
-  const res = await axiosInstance.get("/api/doctors/me");
-  setDoctorProfileCache(res.data);
-  return res;
+  if (doctorProfileRequest) {
+    return doctorProfileRequest;
+  }
+
+  doctorProfileRequest = axiosInstance
+    .get("/api/doctors/me")
+    .then((res) => {
+      setDoctorProfileCache(res.data);
+      return res;
+    })
+    .finally(() => {
+      doctorProfileRequest = null;
+    });
+
+  return doctorProfileRequest;
 };
 
 export const updateMyDoctorProfile = async (data) => {

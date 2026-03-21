@@ -8,18 +8,10 @@ import {
   getCachedDoctorProfile,
   getDoctorProfileApi,
 } from "../api/DoctorApi";
-import { getAllPatients } from "../api/PatientApi";
+import { getPatientProfileByIdApi } from "../api/PatientApi";
 import Footer from "../components/footer";
 
-function getStoredPatient(patientId, locationPatient) {
-  if (
-    locationPatient &&
-    (String(locationPatient.id) === String(patientId) ||
-      String(locationPatient.patientId) === String(patientId))
-  ) {
-    return locationPatient;
-  }
-
+function getStoredPatient(patientId) {
   const storedPatientRaw = localStorage.getItem("selectedPatient");
 
   if (!storedPatientRaw) {
@@ -82,14 +74,19 @@ export default function DoctorLayout() {
   }, []);
 
   useEffect(() => {
+    let isActive = true;
+
     if (!patientId) {
       const resetFrame = window.requestAnimationFrame(() => {
         setPatient(null);
       });
-      return () => window.cancelAnimationFrame(resetFrame);
+      return () => {
+        isActive = false;
+        window.cancelAnimationFrame(resetFrame);
+      };
     }
 
-    const storedPatient = getStoredPatient(patientId, location.state?.patient);
+    const storedPatient = getStoredPatient(patientId);
     const patientForView = storedPatient || {
       id: patientId,
       fullName: `Patient #${patientId}`,
@@ -100,14 +97,10 @@ export default function DoctorLayout() {
 
     const loadSelectedPatient = async () => {
       try {
-        const res = await getAllPatients();
-        const matchedPatient = res.data?.find(
-          (item) =>
-            String(item.id) === String(patientId) ||
-            String(item.patientId) === String(patientId),
-        );
+        const res = await getPatientProfileByIdApi(patientId);
+        const matchedPatient = res.data;
 
-        if (!matchedPatient) {
+        if (!isActive || !matchedPatient) {
           return;
         }
 
@@ -120,8 +113,11 @@ export default function DoctorLayout() {
     };
 
     void loadSelectedPatient();
-    return () => window.cancelAnimationFrame(frameId);
-  }, [location.state, patientId]);
+    return () => {
+      isActive = false;
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [patientId]);
 
   const isDashboard =
     location.pathname === "/doctor/dashboard" ||
