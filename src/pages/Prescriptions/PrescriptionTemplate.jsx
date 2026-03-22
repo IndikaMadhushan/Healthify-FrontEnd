@@ -33,6 +33,9 @@ export default function PrescriptionTemplate({ data }) {
       position: "relative",
       background: "#fff",
       padding: 20,
+      width: "100%",
+      maxWidth: "100%",
+      boxSizing: "border-box",
       fontFamily: "Arial, sans-serif",
       color: "#030303"
     }}
@@ -61,6 +64,8 @@ export default function PrescriptionTemplate({ data }) {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      flexWrap: "wrap",
+      gap: 12,
       borderBottom: "2px solid #18AAB0",
       paddingBottom: 10,
       marginBottom: 10
@@ -80,6 +85,9 @@ export default function PrescriptionTemplate({ data }) {
     <div style={{
       display: "flex",
       justifyContent: "space-between",
+      alignItems: "flex-start",
+      flexWrap: "wrap",
+      gap: 12,
       background: "#F8FAFB",
       padding: 10,
       borderRadius: 8,
@@ -142,33 +150,35 @@ export default function PrescriptionTemplate({ data }) {
     {/* MEDICATION */}
     {data?.medication?.length > 0 && (
       <div style={{ marginBottom: 10 }}>
-        
-        <table style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: 12
-        }}>
-          <thead>
-            <tr style={{background: "#F2FBFA" , color: "#3d3b3b" }}>
-              <th style={cell}>Medicine</th>
-              <th style={cell}>Dose</th>
-              <th style={cell}>Frequency</th>
-              <th style={cell}>Duration</th>
-              <th style={cell}>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.medication.map((m, i) => (
-              <tr key={i} style={{ background: i % 2 === 0 ? "#F9F9F9" : "#fff" }}>
-                <td style={cell}>{m.drugName}</td>
-                <td style={cell}>{m.dosage}</td>
-                <td style={cell}>{m.frequency}</td>
-                <td style={cell}>{m.duration}</td>
-                <td style={cell}>{m.instruction}</td>
+        <div style={{ width: "100%", overflowX: "auto" }}>
+          <table style={{
+            width: "100%",
+            minWidth: 640,
+            borderCollapse: "collapse",
+            fontSize: 12
+          }}>
+            <thead>
+              <tr style={{background: "#F2FBFA" , color: "#3d3b3b" }}>
+                <th style={cell}>Medicine</th>
+                <th style={cell}>Dose</th>
+                <th style={cell}>Frequency</th>
+                <th style={cell}>Duration</th>
+                <th style={cell}>Time</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.medication.map((m, i) => (
+                <tr key={i} style={{ background: i % 2 === 0 ? "#F9F9F9" : "#fff" }}>
+                  <td style={cell}>{m.drugName}</td>
+                  <td style={cell}>{m.dosage}</td>
+                  <td style={cell}>{m.frequency}</td>
+                  <td style={cell}>{m.duration}</td>
+                  <td style={cell}>{m.instruction}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     )}
 
@@ -195,6 +205,8 @@ export default function PrescriptionTemplate({ data }) {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      flexWrap: "wrap",
+      gap: 12,
       marginTop: 20
     }}>
       <p style={{ fontSize: 10, color: "#615b5b" }}>

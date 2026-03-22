@@ -43,17 +43,50 @@ const formatDate = (dateString) => {
   });
 };
 
+const downloadFromUrl = async (url, fileName) => {
+  if (!url) {
+    throw new Error("Missing file URL");
+  }
+
+  if (url.startsWith("blob:") || url.startsWith("data:")) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName || "download";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return;
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Download failed with status ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  const blobUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = fileName || "download";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+};
+
 // ── File viewer modal ─────────────────────────────────────────────────────────
 function FileViewerModal({ file, onClose }) {
   if (!file) return null;
-  const isImage = file.fileType?.startsWith("image/");
+  const resolvedUrl = file.data || file.fileUrl || "";
+  const isImage = (file.fileType || file.type || "").startsWith("image/");
+  const fileName = file.originalName || file.name || file.title;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="p-4 border-b flex items-center justify-between bg-gray-50">
           <div>
             <h3 className="font-bold text-lg">{file.title}</h3>
-            <p className="text-sm text-gray-600">{file.originalName}</p>
+            <p className="text-sm text-gray-600">{fileName}</p>
           </div>
           <button
             onClick={onClose}
@@ -65,13 +98,13 @@ function FileViewerModal({ file, onClose }) {
         <div className="flex-1 overflow-auto p-4 bg-gray-100 flex items-center justify-center">
           {isImage ? (
             <img
-              src={file.fileUrl}
+              src={resolvedUrl}
               alt={file.title}
               className="max-w-full max-h-full object-contain"
             />
           ) : (
             <iframe
-              src={file.fileUrl}
+              src={resolvedUrl}
               className="w-full h-full min-h-[600px]"
               title={file.title}
             />
@@ -308,19 +341,23 @@ export default function LabReportsPage() {
   const resolveFileUrl = async (file) => {
     if (file.data) return file.data;
     if (!file.fileUrl) return "";
+    if (
+      file.fileUrl.startsWith("http://") ||
+      file.fileUrl.startsWith("https://") ||
+      file.fileUrl.startsWith("blob:")
+    ) {
+      return file.fileUrl;
+    }
     return getSignedUrlApi("medical-files", file.fileUrl);
   };
 
   const handleDownload = (file) => {
     resolveFileUrl(file)
       .then((url) => {
-        if (!url) throw new Error("Missing file URL");
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        return downloadFromUrl(
+          url,
+          file.originalName || file.name || file.title || "download",
+        );
       })
       .catch((error) => {
         console.error("Failed to download file", error);
@@ -525,9 +562,10 @@ export default function LabReportsPage() {
                   className="w-full block"
                 >
                   <div className="h-40 bg-gray-50 flex items-center justify-center">
-                    {file.type?.startsWith("image/") && file.data ? (
+                    {(file.fileType || file.type || "").startsWith("image/") &&
+                    (file.data || file.fileUrl) ? (
                       <img
-                        src={file.data}
+                        src={file.data || file.fileUrl}
                         alt={file.title}
                         className="h-full w-full object-cover"
                       />

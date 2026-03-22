@@ -15,6 +15,37 @@ import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
 import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
 
+const downloadFromUrl = async (url, fileName) => {
+  if (!url) {
+    throw new Error("Missing file URL");
+  }
+
+  if (url.startsWith("blob:") || url.startsWith("data:")) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName || "download";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    return;
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Download failed with status ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  const blobUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = fileName || "download";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+};
+
 export default function FileUploadView({
   userId,
   category,
@@ -148,13 +179,7 @@ export default function FileUploadView({
   const handleDownload = (file) => {
     resolveFileUrl(file)
       .then((url) => {
-        if (!url) throw new Error("Missing file URL");
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        return downloadFromUrl(url, file.name || file.title || "download");
       })
       .catch((error) => {
         console.error("Failed to download file", error);
@@ -165,6 +190,13 @@ export default function FileUploadView({
   const resolveFileUrl = async (file) => {
     if (file.data) return file.data;
     if (!file.fileUrl) return "";
+    if (
+      file.fileUrl.startsWith("http://") ||
+      file.fileUrl.startsWith("https://") ||
+      file.fileUrl.startsWith("blob:")
+    ) {
+      return file.fileUrl;
+    }
     return getSignedUrlApi("medical-files", file.fileUrl);
   };
 
