@@ -15,6 +15,7 @@ import { getPatientProfileApi } from "../../api/PatientApi";
 import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
 import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
+import { confirmDeletion } from "../../utils/deleteConfirmation";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const validateFile = (file) => {
@@ -315,7 +316,13 @@ export default function LabReportsPage() {
 
   // ── delete ──────────────────────────────────────────────────────────────────
   const handleDeleteFolder = async (folderId) => {
-    if (!confirm("Delete this folder and all its contents?")) return;
+    const confirmed = await confirmDeletion({
+      title: "Delete lab folder?",
+      message: "This folder and all lab report files inside it will be removed permanently.",
+      confirmLabel: "Delete Folder",
+    });
+    if (!confirmed) return;
+
     try {
       await deleteLabFolder(folderId);
       toast.success("Folder deleted");
@@ -327,7 +334,13 @@ export default function LabReportsPage() {
   };
 
   const handleDeleteFile = async (fileId) => {
-    if (!confirm("Delete this file?")) return;
+    const confirmed = await confirmDeletion({
+      title: "Delete lab report?",
+      message: "This lab report file will be removed permanently.",
+      confirmLabel: "Delete Report",
+    });
+    if (!confirmed) return;
+
     try {
       await deleteLabFile(fileId);
       toast.success("File deleted");

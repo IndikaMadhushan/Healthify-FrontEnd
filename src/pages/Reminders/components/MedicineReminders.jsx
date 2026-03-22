@@ -6,6 +6,7 @@ import {
   updateMedicineReminderApi,
   deleteMedicineReminderApi
 } from '../../../api/RemindersApi';
+import { confirmDeletion } from '../../../utils/deleteConfirmation';
 
 export default function MedicineReminders() {
   const [reminders, setReminders] = useState([]);
@@ -40,7 +41,12 @@ export default function MedicineReminders() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this medicine reminder?')) return;
+    const confirmed = await confirmDeletion({
+      title: 'Delete medicine reminder?',
+      message: 'This medicine reminder will be removed permanently.',
+      confirmLabel: 'Delete Reminder',
+    });
+    if (!confirmed) return;
     
     try {
       await deleteMedicineReminderApi(id);

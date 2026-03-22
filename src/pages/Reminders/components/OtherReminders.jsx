@@ -6,6 +6,7 @@ import {
   updateOtherReminderApi,
   deleteOtherReminderApi
 } from '../../../api/RemindersApi';
+import { confirmDeletion } from '../../../utils/deleteConfirmation';
 
 export default function OtherReminders() {
   const [reminders, setReminders] = useState([]);
@@ -40,7 +41,12 @@ export default function OtherReminders() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this reminder?')) return;
+    const confirmed = await confirmDeletion({
+      title: 'Delete reminder?',
+      message: 'This custom reminder will be removed permanently.',
+      confirmLabel: 'Delete Reminder',
+    });
+    if (!confirmed) return;
     
     try {
       await deleteOtherReminderApi(id);
