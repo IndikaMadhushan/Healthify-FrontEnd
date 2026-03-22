@@ -161,6 +161,8 @@ export default function HabitsAndAllergiesForm({
     "focus:ring-2 focus:ring-secondary focus:border-secondary outline-none resize-y transition";
   const actionButtonClass =
     "px-5 py-2 bg-secondary/90 hover:bg-secondary text-white rounded-full text-[15px] font-semibold";
+  const choiceInputClass =
+    "h-4 w-4 shrink-0 accent-blue-600 disabled:opacity-100 disabled:cursor-not-allowed";
 
   return (
     <form onSubmit={handleSubmit} className="text-mainblack space-y-6">
@@ -180,6 +182,7 @@ export default function HabitsAndAllergiesForm({
                 value="never"
                 checked={form.smokingStatus === "never"}
                 onChange={handleChange("smokingStatus")}
+                className={choiceInputClass}
               />
               No, never
             </label>
@@ -190,6 +193,7 @@ export default function HabitsAndAllergiesForm({
                 value="current"
                 checked={form.smokingStatus === "current"}
                 onChange={handleChange("smokingStatus")}
+                className={choiceInputClass}
               />
               Yes, I smoke now
             </label>
@@ -200,6 +204,7 @@ export default function HabitsAndAllergiesForm({
                 value="stopped"
                 checked={form.smokingStatus === "stopped"}
                 onChange={handleChange("smokingStatus")}
+                className={choiceInputClass}
               />
               I used to smoke, but I stopped
             </label>
@@ -217,6 +222,7 @@ export default function HabitsAndAllergiesForm({
                     value="occasional"
                     checked={form.smokingFrequency === "occasional"}
                     onChange={handleChange("smokingFrequency")}
+                    className={choiceInputClass}
                   />
                   Occasionally (less than once a week)
                 </label>
@@ -227,6 +233,7 @@ export default function HabitsAndAllergiesForm({
                     value="1-5"
                     checked={form.smokingFrequency === "1-5"}
                     onChange={handleChange("smokingFrequency")}
+                    className={choiceInputClass}
                   />
                   1-5 cigarettes per day
                 </label>
@@ -237,6 +244,7 @@ export default function HabitsAndAllergiesForm({
                     value="6-10"
                     checked={form.smokingFrequency === "6-10"}
                     onChange={handleChange("smokingFrequency")}
+                    className={choiceInputClass}
                   />
                   6-10 cigarettes per day
                 </label>
@@ -247,6 +255,7 @@ export default function HabitsAndAllergiesForm({
                     value="10-plus"
                     checked={form.smokingFrequency === "10-plus"}
                     onChange={handleChange("smokingFrequency")}
+                    className={choiceInputClass}
                   />
                   More than 10 per day
                 </label>
@@ -269,6 +278,7 @@ export default function HabitsAndAllergiesForm({
                 value="never"
                 checked={form.alcoholStatus === "never"}
                 onChange={handleChange("alcoholStatus")}
+                className={choiceInputClass}
               />
               No, I don&apos;t drink
             </label>
@@ -279,6 +289,7 @@ export default function HabitsAndAllergiesForm({
                 value="current"
                 checked={form.alcoholStatus === "current"}
                 onChange={handleChange("alcoholStatus")}
+                className={choiceInputClass}
               />
               Yes, I drink
             </label>
@@ -289,6 +300,7 @@ export default function HabitsAndAllergiesForm({
                 value="stopped"
                 checked={form.alcoholStatus === "stopped"}
                 onChange={handleChange("alcoholStatus")}
+                className={choiceInputClass}
               />
               I used to drink, but I stopped
             </label>
@@ -306,6 +318,7 @@ export default function HabitsAndAllergiesForm({
                     value="monthly"
                     checked={form.alcoholFrequency === "monthly"}
                     onChange={handleChange("alcoholFrequency")}
+                    className={choiceInputClass}
                   />
                   Less than once a month
                 </label>
@@ -316,6 +329,7 @@ export default function HabitsAndAllergiesForm({
                     value="1-3-month"
                     checked={form.alcoholFrequency === "1-3-month"}
                     onChange={handleChange("alcoholFrequency")}
+                    className={choiceInputClass}
                   />
                   1-3 times per month
                 </label>
@@ -326,6 +340,7 @@ export default function HabitsAndAllergiesForm({
                     value="1-2-week"
                     checked={form.alcoholFrequency === "1-2-week"}
                     onChange={handleChange("alcoholFrequency")}
+                    className={choiceInputClass}
                   />
                   1-2 times per week
                 </label>
@@ -336,6 +351,7 @@ export default function HabitsAndAllergiesForm({
                     value="3-plus-week"
                     checked={form.alcoholFrequency === "3-plus-week"}
                     onChange={handleChange("alcoholFrequency")}
+                    className={choiceInputClass}
                   />
                   3 or more times per week
                 </label>
@@ -358,6 +374,7 @@ export default function HabitsAndAllergiesForm({
                 value="never"
                 checked={form.drugUseStatus === "never"}
                 onChange={handleChange("drugUseStatus")}
+                className={choiceInputClass}
               />
               No
             </label>
@@ -368,6 +385,7 @@ export default function HabitsAndAllergiesForm({
                 value="current"
                 checked={form.drugUseStatus === "current"}
                 onChange={handleChange("drugUseStatus")}
+                className={choiceInputClass}
               />
               Yes
             </label>
@@ -378,6 +396,7 @@ export default function HabitsAndAllergiesForm({
                 value="stopped"
                 checked={form.drugUseStatus === "stopped"}
                 onChange={handleChange("drugUseStatus")}
+                className={choiceInputClass}
               />
               I used to, but I stopped
             </label>
@@ -395,6 +414,7 @@ export default function HabitsAndAllergiesForm({
                     value="tried"
                     checked={form.drugUseFrequency === "tried"}
                     onChange={handleChange("drugUseFrequency")}
+                    className={choiceInputClass}
                   />
                   Tried once or twice
                 </label>
@@ -405,6 +425,7 @@ export default function HabitsAndAllergiesForm({
                     value="occasional"
                     checked={form.drugUseFrequency === "occasional"}
                     onChange={handleChange("drugUseFrequency")}
+                    className={choiceInputClass}
                   />
                   Occasionally
                 </label>
@@ -415,6 +436,7 @@ export default function HabitsAndAllergiesForm({
                     value="regular"
                     checked={form.drugUseFrequency === "regular"}
                     onChange={handleChange("drugUseFrequency")}
+                    className={choiceInputClass}
                   />
                   Regularly
                 </label>
@@ -437,6 +459,7 @@ export default function HabitsAndAllergiesForm({
               value="low"
               checked={form.stressLevel === "low"}
               onChange={handleChange("stressLevel")}
+              className={choiceInputClass}
             />
             Low
           </label>
@@ -447,6 +470,7 @@ export default function HabitsAndAllergiesForm({
               value="medium"
               checked={form.stressLevel === "medium"}
               onChange={handleChange("stressLevel")}
+              className={choiceInputClass}
             />
             Medium
           </label>
@@ -457,6 +481,7 @@ export default function HabitsAndAllergiesForm({
               value="high"
               checked={form.stressLevel === "high"}
               onChange={handleChange("stressLevel")}
+              className={choiceInputClass}
             />
             High
           </label>

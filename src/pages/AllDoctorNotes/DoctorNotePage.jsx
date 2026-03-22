@@ -1,21 +1,28 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { PatinetNavBar } from "../../components/PatientNavBar";
-import DoctorNotesSection from "../MedicalReportsPage/DoctorNotesSection";
 import AllDoctorNotes from "./AllDoctorNotes";
 
 export default function DoctorNotePage() {
   const navigate = useNavigate();
-    const rawRole = localStorage.getItem("role");
+  const { patientId } = useParams();
+  const rawRole = localStorage.getItem("role");
   const role = rawRole?.toUpperCase();
+  const resolvedPatientId = patientId || localStorage.getItem("selectedPatientId");
+
   const handleBackToDashboard = () => {
-  if (role === "PATIENT") {
-    navigate("/patient/medical-reports");
-  } else if (role === "DOCTOR") {
-    navigate("/doctor/4/medical-reports");
-  } 
-};
+    if (role === "PATIENT") {
+      navigate("/patient/medical-reports");
+      return;
+    }
+
+    if (role === "DOCTOR" && resolvedPatientId) {
+      navigate(`/doctor/${resolvedPatientId}/medical-reports`);
+      return;
+    }
+
+    navigate("/doctor/dashboard");
+  };
 
   return (
 <>
