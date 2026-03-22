@@ -297,6 +297,8 @@ const BasicInfoForm = forwardRef(({
 
   const labelCss = "text-[15px] font-semibold text-gray-700";
   const sectionHeading = "text-xl font-bold text-mainblack mb-4";
+  const choiceInputClass =
+    "h-4 w-4 shrink-0 accent-blue-600 disabled:opacity-100 disabled:cursor-not-allowed";
 
   return (
     <div className="text-mainblack">
@@ -384,15 +386,15 @@ const BasicInfoForm = forwardRef(({
           <div className="mt-1 flex gap-6 ml-4 text-[15px] text-gray-700">
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="male"
-                checked={form.gender === "male"} onChange={handleChange("gender")} className={withError("basic.gender")} /> Male
+                checked={form.gender === "male"} onChange={handleChange("gender")} className={`${choiceInputClass} ${withError("basic.gender")}`} /> Male
             </label>
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="female"
-                checked={form.gender === "female"} onChange={handleChange("gender")} className={withError("basic.gender")} /> Female
+                checked={form.gender === "female"} onChange={handleChange("gender")} className={`${choiceInputClass} ${withError("basic.gender")}`} /> Female
             </label>
             <label className="flex items-center gap-2">
               <input type="radio" name="gender" value="other"
-                checked={form.gender === "other"} onChange={handleChange("gender")} className={withError("basic.gender")} /> Other
+                checked={form.gender === "other"} onChange={handleChange("gender")} className={`${choiceInputClass} ${withError("basic.gender")}`} /> Other
             </label>
           </div>
           {errors["basic.gender"] && (
@@ -427,12 +429,12 @@ const BasicInfoForm = forwardRef(({
             <label className="flex items-center gap-2">
               <input type="radio" name="status" value="married"
                 checked={form.maritalStatus === "married"}
-                onChange={handleChange("maritalStatus")} /> Married
+                onChange={handleChange("maritalStatus")} className={choiceInputClass} /> Married
             </label>
             <label className="flex items-center gap-2">
               <input type="radio" name="status" value="unmarried"
                 checked={form.maritalStatus === "unmarried"}
-                onChange={handleChange("maritalStatus")} /> Unmarried
+                onChange={handleChange("maritalStatus")} className={choiceInputClass} /> Unmarried
             </label>
           </div>
           {errors["basic.maritalStatus"] && (

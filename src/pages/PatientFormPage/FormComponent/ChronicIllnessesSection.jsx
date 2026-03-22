@@ -64,6 +64,8 @@ export default function ChronicIllnessesSection({ value, onChange, errors = {} }
   const inputBase =
     "w-full h-10 px-3 text-[15px] rounded-md bg-gray-100 border " +
     "focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition";
+  const choiceInputClass =
+    "h-4 w-4 shrink-0 accent-blue-600 disabled:opacity-100 disabled:cursor-not-allowed";
 
   return (
     <div className="mt-4">
@@ -80,6 +82,7 @@ export default function ChronicIllnessesSection({ value, onChange, errors = {} }
                 type="checkbox"
                 checked={value.chronicIllnesses.includes(item)}
                 onChange={handleChronicCheckbox(item)}
+                className={choiceInputClass}
               />
               {item}
             </label>

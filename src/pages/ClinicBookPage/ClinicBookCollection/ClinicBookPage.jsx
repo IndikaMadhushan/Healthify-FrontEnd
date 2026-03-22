@@ -1,22 +1,27 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-// import PatientNavBar  from "../../../components/PatientNavBar";
 import MyClinicBooks from "./MyClinicBooks";
-import { useEffect, useState } from "react";
 
 export default  function ClinicBookPage() {
   const navigate = useNavigate();
-  const [selectedBook, setSelectedBook] = useState(null);
+  const { patientId } = useParams();
   const rawRole = localStorage.getItem("role");
   const role = rawRole?.toUpperCase();
+  const resolvedPatientId = patientId || localStorage.getItem("selectedPatientId");
+
   const handleBackToDashboard = () => {
-  if (role === "PATIENT") {
-    navigate("/patient/medical-reports");
-  } else if (role === "DOCTOR") {
-    navigate("/doctor/4/medical-reports");
-  } 
-};
+    if (role === "PATIENT") {
+      navigate("/patient/medical-reports");
+      return;
+    }
+
+    if (role === "DOCTOR" && resolvedPatientId) {
+      navigate(`/doctor/${resolvedPatientId}/medical-reports`);
+      return;
+    }
+
+    navigate("/doctor/dashboard");
+  };
 
   return (
 <>
