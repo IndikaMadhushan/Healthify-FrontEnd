@@ -6,6 +6,7 @@ import { MdDashboard } from "react-icons/md";
 import { TbStethoscope } from "react-icons/tb";
 import { confirmLogout } from "../utils/logoutConfirmation";
 import { getDisplayName, getInitial } from "../utils/nameUtils";
+import { clearAuthStorage } from "../utils/authStorage";
 
 export default function DoctorNavBar2({ doctor, patient }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,8 +72,7 @@ export default function DoctorNavBar2({ doctor, patient }) {
     }
 
     setDropdownOpen(false);
-    localStorage.clear();
-    sessionStorage.clear();
+    clearAuthStorage();
     navigate("/login");
   };
 
