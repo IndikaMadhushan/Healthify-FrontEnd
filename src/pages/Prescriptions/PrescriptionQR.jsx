@@ -4,7 +4,7 @@ export default function PrescriptionQR({ prescription }) {
   const clinicPageId = prescription?.clinicPageId;
   const consultId = prescription?.consultId;
   const frontendBaseUrl = (
-    import.meta.env.VITE_APP_BASE_URL || window.location.origin
+    import.meta.env.VITE_APP_BASE_URL || "https://healthify.dev"
   ).replace(/\/+$/, "");
 
   let verifyUrl = "";
