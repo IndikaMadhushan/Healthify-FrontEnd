@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaNotesMedical,
@@ -8,8 +8,6 @@ import {
   FaUser
 } from "react-icons/fa";
 
-
-import { PatinetNavBar } from "../../components/PatientNavBar";
 import RemindersPage from "../Reminders/RemindersPage";
 import MyProfile from "./PatientProfilePage";
 import PatientMediInfomation from "../PatientFormPage/PatientMediInfomation";
@@ -33,12 +31,22 @@ const getRouteActiveSection = (pathname) => {
 };
 export default function Dashboard() {
   const location = useLocation();
+  const navigate = useNavigate();
   const contentRef = useRef(null);
   const [storedActive, setStoredActive] = useState(() => {
     return localStorage.getItem(PATIENT_DASHBOARD_ACTIVE_KEY) || "Summary";
   });
 
   const active = getRouteActiveSection(location.pathname) || storedActive;
+  const isRootDashboardRoute = location.pathname === "/patient/medical-reports";
+
+  const handleSectionSelect = (section) => {
+    setStoredActive(section);
+
+    if (!isRootDashboardRoute) {
+      navigate("/patient/medical-reports");
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem(PATIENT_DASHBOARD_ACTIVE_KEY, active);
@@ -59,9 +67,6 @@ export default function Dashboard() {
   return (
     <div className="h-[calc(100dvh-5rem)] bg-[#F2FBFA] flex flex-col overflow-hidden">
 
-      {/* TOP NAVBAR */}
-      <PatinetNavBar />
-
       {/* MAIN LAYOUT */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* LEFT SIDEBAR (DESKTOP ONLY) */} 
@@ -69,32 +74,32 @@ export default function Dashboard() {
           <SidebarButton
             text="Summary"
             icon={<FaHome />}
-            active={active}
-            setActive={setStoredActive}
+            isActive={active === "Summary"}
+            onClick={() => handleSectionSelect("Summary")}
           />
           <SidebarButton
             text="My Profile"
             icon={<FaUser />}
-            active={active}
-            setActive={setStoredActive}
+            isActive={active === "My Profile"}
+            onClick={() => handleSectionSelect("My Profile")}
           />
           <SidebarButton
             text="Medical Info"
             icon={<FaNotesMedical />}
-            active={active}
-            setActive={setStoredActive}
+            isActive={active === "Medical Info"}
+            onClick={() => handleSectionSelect("Medical Info")}
           />
           <SidebarButton
             text="Upload Report"
             icon={<FaFileUpload />}
-            active={active}
-            setActive={setStoredActive}
+            isActive={active === "Upload Report"}
+            onClick={() => handleSectionSelect("Upload Report")}
           />
           <SidebarButton
             text="Reminders"
             icon={<FaBell />}
-            active={active}
-            setActive={setStoredActive}
+            isActive={active === "Reminders"}
+            onClick={() => handleSectionSelect("Reminders")}
           />
         </div>
 
@@ -112,32 +117,32 @@ export default function Dashboard() {
         <MobileNavButton
           icon={<FaHome />}
           text="Summary"
-          active={active}
-          setActive={setStoredActive}
+          isActive={active === "Summary"}
+          onClick={() => handleSectionSelect("Summary")}
         />
         <MobileNavButton
           icon={<FaUser />}
           text="My Profile"
-          active={active}
-          setActive={setStoredActive}
+          isActive={active === "My Profile"}
+          onClick={() => handleSectionSelect("My Profile")}
         />
         <MobileNavButton
           icon={<FaNotesMedical />}
           text="Medical Info"
-          active={active}
-          setActive={setStoredActive}
+          isActive={active === "Medical Info"}
+          onClick={() => handleSectionSelect("Medical Info")}
         />
         <MobileNavButton
           icon={<FaFileUpload />}
           text="Reports"
-          active={active === "Medical Reports" || active === "Upload Report"}
-          setActive={() => setStoredActive("Upload Report")}
+          isActive={active === "Upload Report"}
+          onClick={() => handleSectionSelect("Upload Report")}
         />
         <MobileNavButton
           icon={<FaBell />}
           text="Reminders"
-          active={active}
-          setActive={setStoredActive}
+          isActive={active === "Reminders"}
+          onClick={() => handleSectionSelect("Reminders")}
         />
       </div>
     </div>
@@ -146,14 +151,10 @@ export default function Dashboard() {
 
 /* ---------------- SIDEBAR BUTTON ---------------- */
 
-function SidebarButton({ text, icon, active, setActive }) {
-  const isActive =
-    active === text ||
-    (text === "Medical Reports" && active === "Upload Report");
-
+function SidebarButton({ text, icon, isActive, onClick }) {
   return (
     <button
-      onClick={() => setActive(text)}
+      onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 text-[15px] transition
         ${isActive
           ? "bg-[#18AAB0] text-white shadow"
@@ -171,12 +172,10 @@ function SidebarButton({ text, icon, active, setActive }) {
 
 /* ---------------- MOBILE NAV BUTTON ---------------- */
 
-function MobileNavButton({ icon, text, active, setActive }) {
-  const isActive = active === text;
-
+function MobileNavButton({ icon, text, isActive, onClick }) {
   return (
     <button
-      onClick={() => setActive(text)}
+      onClick={onClick}
       className={`flex flex-col items-center text-[11px]
         ${isActive ? "text-[#18AAB0]" : "text-gray-500"}
       `}

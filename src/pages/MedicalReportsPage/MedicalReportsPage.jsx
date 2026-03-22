@@ -23,11 +23,13 @@ const CATEGORIES = {
 
 export default function MedicalReportsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { patientId } = useParams(); // 👈 IMPORTANT
+  const isRootMedicalReports = location.pathname.endsWith("/medical-reports");
 
   const userId = "user_123"; // replace later with auth user id
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => isRootMedicalReports);
   const [counts, setCounts] = useState({
     labReports: 0,
     prescriptions: 0,
@@ -191,13 +193,11 @@ export default function MedicalReportsPage() {
     },
   ];
 
-  const location = useLocation();
-
-  // if path is exactly /medical-reports OR /doctor/:id/medical-reports
-  const isRootMedicalReports = location.pathname.endsWith("/medical-reports");
-
   useEffect(() => {
-    if (!isRootMedicalReports) return undefined;
+    if (!isRootMedicalReports) {
+      setLoading(false);
+      return undefined;
+    }
 
     const frameId = window.requestAnimationFrame(() => {
       void loadAllData();
@@ -206,7 +206,7 @@ export default function MedicalReportsPage() {
     return () => window.cancelAnimationFrame(frameId);
   }, [isRootMedicalReports, loadAllData]);
 
-  if (loading) {
+  if (isRootMedicalReports && loading) {
     return <div className="flex justify-center p-10">Loading...</div>;
   }
   return (

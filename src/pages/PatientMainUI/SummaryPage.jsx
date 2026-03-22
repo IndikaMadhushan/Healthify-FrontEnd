@@ -11,6 +11,7 @@ import {
 } from "recharts";
 
 import {
+  getCachedPatientProfile,
   getPatientProfileApi,
   getPatientBmiApi,
   getPatientMetricGraphApi,
@@ -57,7 +58,9 @@ const getHealthStatusFromBmi = (bmiData) => {
 
 export default function SummaryPage() {
   const [greeting, setGreeting] = useState("");
-  const [patient, setPatient] = useState(null);
+  const [patient, setPatient] = useState(() => getCachedPatientProfile());
+  const [isLoading, setIsLoading] = useState(() => !getCachedPatientProfile());
+  const [loadError, setLoadError] = useState(false);
   const [bmiInfo, setBmiInfo] = useState(null);
   const [healthStatus, setHealthStatus] = useState(null);
   const [metrics, setMetrics] = useState({
@@ -118,6 +121,7 @@ export default function SummaryPage() {
     : null;
 
   useEffect(() => {
+    let isMounted = true;
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good Morning");
     else if (hour < 18) setGreeting("Good Afternoon");
@@ -125,8 +129,14 @@ export default function SummaryPage() {
 
     const loadSummary = async () => {
       try {
+        setLoadError(false);
+        if (!getCachedPatientProfile()) {
+          setIsLoading(true);
+        }
+
         const profileRes = await getPatientProfileApi();
         const patientData = profileRes.data;
+        if (!isMounted) return;
         setPatient(patientData);
 
         const patientId = patientData.id;
@@ -153,6 +163,8 @@ export default function SummaryPage() {
           getPatientMetricGraphApi(patientId, "CHOLESTEROL"),
         ]);
 
+        if (!isMounted) return;
+
         setBmiInfo(bmiRes.data);
         setHealthStatus(getHealthStatusFromBmi(bmiRes.data));
 
@@ -171,10 +183,21 @@ export default function SummaryPage() {
         });
       } catch (err) {
         console.error("Failed to load summary data", err);
+        if (isMounted) {
+          setLoadError(true);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    loadSummary();
+    void loadSummary();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const METRIC_TYPES = {
@@ -298,10 +321,23 @@ export default function SummaryPage() {
     }
   };
 
-  if (!patient) {
+  if (isLoading && !patient) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500">Loading summary...</p>
+      </div>
+    );
+  }
+
+  if (loadError && !patient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="rounded-2xl border border-red-100 bg-white px-6 py-5 text-center shadow-sm">
+          <p className="font-semibold text-red-600">Unable to load summary</p>
+          <p className="mt-2 text-sm text-gray-500">
+            Please try again from the dashboard.
+          </p>
+        </div>
       </div>
     );
   }
