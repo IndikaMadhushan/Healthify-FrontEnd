@@ -5,6 +5,7 @@ import { MdDashboard } from "react-icons/md";
 import { FaUserDoctor } from "react-icons/fa6";
 import { IoLogOutSharp } from "react-icons/io5";
 import { confirmLogout } from "../utils/logoutConfirmation";
+import { clearAuthStorage } from "../utils/authStorage";
 
 export default function DoctorNavBar({ doctor }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,8 +41,7 @@ export default function DoctorNavBar({ doctor }) {
       return;
     }
     setDropdownOpen(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("doctor_me_cache");
+    clearAuthStorage();
     navigate("/");
   };
 

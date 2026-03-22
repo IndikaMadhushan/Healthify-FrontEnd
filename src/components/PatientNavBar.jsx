@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { IoLogOutSharp } from "react-icons/io5";
 import { getDisplayName } from "../utils/nameUtils";
 import { confirmLogout } from "../utils/logoutConfirmation";
+import { clearAuthStorage } from "../utils/authStorage";
 
 export function PatinetNavBar({
   patientData,
@@ -23,7 +24,7 @@ export function PatinetNavBar({
       return;
     }
     setDropdownOpen(false);
-    localStorage.clear();
+    clearAuthStorage();
     navigate("/");
   };
 

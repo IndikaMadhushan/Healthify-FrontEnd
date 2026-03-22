@@ -19,6 +19,7 @@ import {
 } from "../api/SiteReviewApi";
 import { getDisplayName } from "../utils/nameUtils";
 import { confirmLogout } from "../utils/logoutConfirmation";
+import { clearAuthStorage } from "../utils/authStorage";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -276,7 +277,7 @@ export default function AdminDashboard() {
   const handleLogout = async () => {
     const confirmed = await confirmLogout();
     if (confirmed) {
-      console.log("Admin logged out");
+      clearAuthStorage();
       navigate("/login", { replace: true });
     }
   };
