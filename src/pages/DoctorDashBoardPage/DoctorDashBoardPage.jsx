@@ -13,22 +13,57 @@ function getRecentPatientsStorageKey(doctorId) {
   return `doctor_recent_patients:${doctorId}`;
 }
 
+function getNextMidnightTimestamp(baseDate = new Date()) {
+  const nextMidnight = new Date(baseDate);
+  nextMidnight.setHours(24, 0, 0, 0);
+  return nextMidnight.getTime();
+}
+
+function createRecentPatientsPayload(patients) {
+  return {
+    patients: patients.slice(0, MAX_RECENT_PATIENTS),
+    expiresAt: getNextMidnightTimestamp(),
+  };
+}
+
 function loadRecentPatients(doctorId) {
   if (!doctorId) {
     return [];
   }
 
-  const raw = localStorage.getItem(getRecentPatientsStorageKey(doctorId));
+  const storageKey = getRecentPatientsStorageKey(doctorId);
+  const raw = localStorage.getItem(storageKey);
   if (!raw) {
     return [];
   }
 
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+
+    if (Array.isArray(parsed)) {
+      localStorage.removeItem(storageKey);
+      return [];
+    }
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      !Array.isArray(parsed.patients) ||
+      typeof parsed.expiresAt !== "number"
+    ) {
+      localStorage.removeItem(storageKey);
+      return [];
+    }
+
+    if (Date.now() >= parsed.expiresAt) {
+      localStorage.removeItem(storageKey);
+      return [];
+    }
+
+    return parsed.patients.slice(0, MAX_RECENT_PATIENTS);
   } catch (error) {
     console.error("Failed to parse recent patients", error);
-    localStorage.removeItem(getRecentPatientsStorageKey(doctorId));
+    localStorage.removeItem(storageKey);
     return [];
   }
 }
@@ -83,7 +118,7 @@ export default function DoctorDashBoardPage() {
     if (doctor?.id) {
       localStorage.setItem(
         getRecentPatientsStorageKey(doctor.id),
-        JSON.stringify(updatedRecentPatients),
+        JSON.stringify(createRecentPatientsPayload(updatedRecentPatients)),
       );
     }
 
@@ -116,8 +151,21 @@ export default function DoctorDashBoardPage() {
 
     localStorage.setItem(
       recentPatientsStorageKey,
-      JSON.stringify(recentPatients.slice(0, MAX_RECENT_PATIENTS)),
+      JSON.stringify(createRecentPatientsPayload(recentPatients)),
     );
+  }, [recentPatients, recentPatientsStorageKey]);
+
+  useEffect(() => {
+    if (!recentPatientsStorageKey) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setRecentPatients([]);
+      localStorage.removeItem(recentPatientsStorageKey);
+    }, Math.max(getNextMidnightTimestamp() - Date.now(), 0));
+
+    return () => window.clearTimeout(timeoutId);
   }, [recentPatients, recentPatientsStorageKey]);
 
   return (

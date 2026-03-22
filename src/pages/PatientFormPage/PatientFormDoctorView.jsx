@@ -125,6 +125,20 @@ const normalizeMedicalInfoResponse = (data) => ({
   },
 });
 
+const doctorReadonlyControlStyles = `
+  .doctor-readonly-form input[type="checkbox"]:disabled,
+  .doctor-readonly-form input[type="radio"]:disabled {
+    accent-color: #2563eb;
+    opacity: 1 !important;
+    filter: saturate(1.4);
+  }
+
+  .doctor-readonly-form input[type="checkbox"]:disabled:checked,
+  .doctor-readonly-form input[type="radio"]:disabled:checked {
+    accent-color: #2563eb;
+  }
+`;
+
 function getStoredSelectedPatient(patientId) {
   const storedPatientId = localStorage.getItem("selectedPatientId");
   const storedPatientRaw = localStorage.getItem("selectedPatient");
@@ -491,6 +505,8 @@ export default function PatientFormDoctorView() {
 
   return (
     <>
+      <style>{doctorReadonlyControlStyles}</style>
+
       {!isMobileSidebarOpen && (
         <button
           type="button"
@@ -615,7 +631,7 @@ export default function PatientFormDoctorView() {
                   </div>
                 </div>
 
-                <div className="p-5 sm:p-6 lg:p-8">
+                <div className="doctor-readonly-form p-5 sm:p-6 lg:p-8">
                   {isLoading ? (
                     <div className="rounded-[28px] border border-dashed border-[#CFE8E5] bg-[linear-gradient(135deg,#F8FCFB_0%,#F1F9F7_100%)] p-8 text-center">
                       <p className="text-base font-semibold text-[#0F4F52]">

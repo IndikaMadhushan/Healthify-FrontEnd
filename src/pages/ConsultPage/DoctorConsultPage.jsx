@@ -38,6 +38,22 @@ const initialFormData = () => ({
   },
 });
 
+function parseOptionalMetricValue(rawValue) {
+  if (rawValue === null || rawValue === undefined) {
+    return null;
+  }
+
+  const normalizedValue =
+    typeof rawValue === "string" ? rawValue.trim() : String(rawValue).trim();
+
+  if (normalizedValue === "") {
+    return null;
+  }
+
+  const value = Number(normalizedValue);
+  return Number.isFinite(value) ? value : null;
+}
+
 function getStoredSelectedPatient(patientId) {
   const storedPatientRaw = localStorage.getItem("selectedPatient");
 
@@ -180,14 +196,14 @@ export default function DoctorConsultPage() {
 
     if (vitalSigns.BP && vitalSigns.BP.includes("/")) {
       const [systolic, diastolic] = vitalSigns.BP.split("/");
-      const systolicValue = Number(systolic);
-      const diastolicValue = Number(diastolic);
+      const systolicValue = parseOptionalMetricValue(systolic);
+      const diastolicValue = parseOptionalMetricValue(diastolic);
 
-      if (Number.isFinite(systolicValue)) {
+      if (systolicValue !== null) {
         metrics.BLOOD_PRESSURE_SYSTOLIC = systolicValue;
       }
 
-      if (Number.isFinite(diastolicValue)) {
+      if (diastolicValue !== null) {
         metrics.BLOOD_PRESSURE_DIASTOLIC = diastolicValue;
       }
     }
@@ -201,9 +217,9 @@ export default function DoctorConsultPage() {
     };
 
     Object.entries(metricMap).forEach(([formKey, apiKey]) => {
-      const value = Number(vitalSigns[formKey]);
+      const value = parseOptionalMetricValue(vitalSigns[formKey]);
 
-      if (Number.isFinite(value)) {
+      if (value !== null) {
         metrics[apiKey] = value;
       }
     });
