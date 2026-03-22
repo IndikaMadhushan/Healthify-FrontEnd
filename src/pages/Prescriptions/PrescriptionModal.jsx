@@ -401,21 +401,39 @@ export default function PrescriptionModal({ data, pageType, onClose }) {
   }, [data, pageType]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      <div className="bg-white rounded-xl w-full max-w-4xl">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/55 px-3 py-4 sm:px-6 sm:py-8">
+      <div className="flex min-h-full items-center justify-center">
+        <div className="flex max-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-[#18AAB0]/15 bg-white shadow-[0_32px_80px_rgba(15,79,82,0.22)]">
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-4 py-4 backdrop-blur sm:px-6">
+            <div>
+              <h2 className="text-lg font-semibold text-secondary sm:text-xl">
+                Prescription
+              </h2>
+              <p className="text-xs text-slate-500 sm:text-sm">
+                View the doctor-issued prescription in a full-screen preview.
+              </p>
+            </div>
 
-        <div className="flex justify-between p-4 border-b">
-          <h2 className="font-semibold">Prescription</h2>
-          <button onClick={onClose}>✕</button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-300"
+              aria-label="Close prescription preview"
+            >
+              <span className="text-base leading-none">✕</span>
+              <span>Close</span>
+            </button>
+          </div>
+
+          <div className="overflow-auto bg-slate-50 px-3 py-3 sm:px-6 sm:py-5">
+            {loading && <p className="py-10 text-center text-slate-500">Loading...</p>}
+            {!loading && prescription && (
+              <div className="mx-auto w-full max-w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <PrescriptionTemplate data={prescription} />
+              </div>
+            )}
+          </div>
         </div>
-
-        <div className="p-6">
-          {loading && <p>Loading...</p>}
-          {!loading && prescription && (
-            <PrescriptionTemplate data={prescription} />
-          )}
-        </div>
-
       </div>
     </div>
   );

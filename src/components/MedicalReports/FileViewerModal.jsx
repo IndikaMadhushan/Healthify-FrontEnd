@@ -6,13 +6,36 @@ import React from "react";
 export default function FileViewerModal({ file, onClose }) {
   if (!file) return null;
 
-  const downloadFile = () => {
+  const downloadFile = async () => {
+    const fileName =
+      file.name ||
+      file.originalName ||
+      `${file.title}.${(file.type || "application/octet-stream").split("/")[1]}`;
+
+    if (file.data?.startsWith("blob:") || file.data?.startsWith("data:")) {
+      const link = document.createElement("a");
+      link.href = file.data;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
+    const response = await fetch(file.data);
+    if (!response.ok) {
+      throw new Error(`Download failed with status ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = file.data;
-    link.download = file.name || `${file.title}.${file.type.split("/")[1]}`;
+    link.href = blobUrl;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    window.setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
   };
 
   return (
@@ -30,7 +53,11 @@ export default function FileViewerModal({ file, onClose }) {
 
         <div className="flex gap-3">
           <button
-            onClick={downloadFile}
+            onClick={() => {
+              downloadFile().catch((error) => {
+                console.error("Failed to download file", error);
+              });
+            }}
             className="px-4 py-2 bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition font-medium flex items-center gap-2"
           >
             <span>📥</span>
@@ -67,7 +94,11 @@ export default function FileViewerModal({ file, onClose }) {
               Preview not available for this file type
             </p>
             <button
-              onClick={downloadFile}
+              onClick={() => {
+                downloadFile().catch((error) => {
+                  console.error("Failed to download file", error);
+                });
+              }}
               className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90"
             >
               Download to view

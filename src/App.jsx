@@ -147,6 +147,15 @@ function App() {
           <Route path="/patientMain" element={<Dashboard />} />
           <Route path="/reminders" element={<RemindersPage />} />
           <Route path="/verify-otp" element={<VerifyOtpPage />} />
+          <Route path="/verify/:clinicPageId" element={<PrescriptionVerify />} />
+          <Route
+            path="/verify/clinic/:clinicPageId"
+            element={<PrescriptionVerify />}
+          />
+          <Route
+            path="/verify/consult/:consultId"
+            element={<PrescriptionVerify />}
+          />
           {/* Doctor Registration Routes */}
           <Route path="/doctor-register-1" element={<DoctorRegisterPage1 />} />
           <Route path="/doctor-register-2" element={<DoctorRegisterPage2 />} />
