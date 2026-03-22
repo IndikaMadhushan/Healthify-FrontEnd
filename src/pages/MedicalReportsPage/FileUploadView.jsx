@@ -14,6 +14,7 @@ import { getPatientProfileApi } from "../../api/PatientApi";
 import { uploadPatientReportApi } from "../../api/ReportsApi";
 import { getSignedUrlApi } from "../../api/FilesApi";
 import { sanitizeStorageLabel } from "../../utils/patientProfileValidation";
+import { confirmDeletion } from "../../utils/deleteConfirmation";
 
 const downloadFromUrl = async (url, fileName) => {
   if (!url) {
@@ -169,7 +170,12 @@ export default function FileUploadView({
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this file?")) return;
+    const confirmed = await confirmDeletion({
+      title: "Delete uploaded report?",
+      message: "This uploaded file will be removed permanently.",
+      confirmLabel: "Delete Report",
+    });
+    if (!confirmed) return;
 
     const updated = files.filter((f) => f.id !== id);
     await saveToStorage(userId, category, updated);

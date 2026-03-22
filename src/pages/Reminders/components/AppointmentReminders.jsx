@@ -6,6 +6,7 @@ import {
   updateAppointmentReminderApi,
   deleteAppointmentReminderApi
 } from '../../../api/RemindersApi';
+import { confirmDeletion } from '../../../utils/deleteConfirmation';
 
 export default function AppointmentReminders() {
   const [reminders, setReminders] = useState([]);
@@ -30,7 +31,12 @@ export default function AppointmentReminders() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this appointment?')) return;
+    const confirmed = await confirmDeletion({
+      title: 'Delete appointment reminder?',
+      message: 'This appointment reminder will be removed permanently.',
+      confirmLabel: 'Delete Appointment',
+    });
+    if (!confirmed) return;
     
     try {
       await deleteAppointmentReminderApi(id);

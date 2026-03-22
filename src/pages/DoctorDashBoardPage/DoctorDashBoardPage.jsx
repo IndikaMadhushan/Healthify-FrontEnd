@@ -175,8 +175,8 @@ export default function DoctorDashBoardPage() {
         <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-secondary via-[#15959C] to-primary px-6 py-8 text-white shadow-[0_28px_70px_rgba(24,170,176,0.22)] sm:px-8 lg:px-10">
           <div className="absolute inset-y-0 right-0 hidden w-64 bg-[radial-gradient(circle,_rgba(255,255,255,0.24),_transparent_65%)] lg:block" />
           <div className="relative">
-            <div className="max-w-3xl">
-              <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <div className="max-w-full overflow-x-auto pb-1">
+              <h1 className="mt-4 whitespace-nowrap text-[clamp(1.85rem,4vw,2.25rem)] font-bold tracking-tight">
                 {greeting}, {doctorHeadingName}
               </h1>
             </div>

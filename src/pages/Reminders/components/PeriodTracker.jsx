@@ -5,6 +5,7 @@ import {
   updatePeriodTrackerApi,
   deletePeriodTrackerApi
 } from '../../../api/RemindersApi';
+import { confirmDeletion } from '../../../utils/deleteConfirmation';
 
 export default function PeriodTracker() {
   const [tracker, setTracker] = useState(null);
@@ -28,7 +29,12 @@ export default function PeriodTracker() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete period tracking data?')) return;
+    const confirmed = await confirmDeletion({
+      title: 'Delete period tracker?',
+      message: 'Your saved cycle tracking data will be removed permanently.',
+      confirmLabel: 'Delete Tracker',
+    });
+    if (!confirmed) return;
     
     try {
       await deletePeriodTrackerApi(tracker.id);
