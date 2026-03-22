@@ -101,7 +101,7 @@ export default function ContactUs() {
         description="Contact the Healthify team for support, product questions, and healthcare platform inquiries through our secure contact page."
       />
       <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
+        {/* Header Section */}
         <section className="relative bg-gradient-to-br from-teal-600 via-teal-500 to-green-500 text-white py-16 sm:py-20 overflow-hidden">
           <div
             className="absolute inset-0 opacity-10"
@@ -122,7 +122,7 @@ export default function ContactUs() {
           </div>
         </section>
 
-        {/* Main Content */}
+        {/* Main Content Section*/}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 flex justify-center">
           <div className="w-full max-w-3xl">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-10">
@@ -149,7 +149,7 @@ export default function ContactUs() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5  tracking-wider">
                         Full Name
                       </label>
                       <input
@@ -169,7 +169,7 @@ export default function ContactUs() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                         Email Address
                       </label>
                       <input
@@ -192,7 +192,7 @@ export default function ContactUs() {
 
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                         Phone Number
                       </label>
                       <input
@@ -200,12 +200,12 @@ export default function ContactUs() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="+94 123 456"
+                        placeholder="+94 771234567"
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                         Subject
                       </label>
                       <input
@@ -226,7 +226,7 @@ export default function ContactUs() {
                   )}
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5 tracking-wider">
                       Message
                     </label>
                     <textarea
